@@ -26,7 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Bot, Play, Pause, Settings, Activity, Clock, CheckCircle, AlertCircle, User, Building2, DollarSign, Briefcase, Home, Scale, Globe, FileText } from "lucide-react"
+import { Bot, Play, Pause, Settings, Activity, Clock, CheckCircle, AlertCircle, User, Building2, DollarSign, Briefcase, Home, Scale, Globe, FileText, Shield, Database, Zap } from "lucide-react"
 import { AgentSettingsDialog } from "@/components/agent-settings-dialog"
 import { useState } from "react"
 
@@ -44,7 +44,8 @@ export default function AgentsPage() {
       successRate: 96,
       tasksCompleted: 1847,
       icon: User,
-      category: "Personal Intelligence"
+      category: "Personal Intelligence",
+      defaultPrompt: "You are a specialized AI agent focused on gathering comprehensive personal information about individuals. Your role is to:\n\n1. Collect basic demographic information (name, age, location, education)\n2. Research professional background and career history\n3. Identify family members and personal relationships\n4. Gather contact information and social media profiles\n5. Document personal interests, hobbies, and activities\n\nAlways verify information through multiple sources and maintain strict confidentiality. Focus on publicly available information and respect privacy boundaries. Present findings in a structured, factual manner with source attribution."
     },
     {
       id: 2,
@@ -55,7 +56,8 @@ export default function AgentsPage() {
       successRate: 91,
       tasksCompleted: 2156,
       icon: Globe,
-      category: "Digital Intelligence"
+      category: "Digital Intelligence",
+      defaultPrompt: "You are an expert social media intelligence analyst specializing in digital footprint analysis. Your responsibilities include:\n\n1. Analyzing social media profiles across all major platforms (Facebook, Twitter, LinkedIn, Instagram, TikTok)\n2. Examining posting patterns, content themes, and behavioral indicators\n3. Mapping social connections and network analysis\n4. Identifying potential security risks or concerning behavior\n5. Tracking digital presence evolution over time\n6. Analyzing engagement patterns and influence metrics\n\nMaintain objectivity in your analysis and distinguish between facts and inferences. Always cite specific posts or interactions as evidence for your conclusions."
     },
     {
       id: 3,
@@ -66,7 +68,8 @@ export default function AgentsPage() {
       successRate: 88,
       tasksCompleted: 743,
       icon: DollarSign,
-      category: "Financial Intelligence"
+      category: "Financial Intelligence",
+      defaultPrompt: "You are a financial intelligence specialist focused on asset analysis and economic profiling. Your core functions are:\n\n1. Research publicly available financial records and filings\n2. Analyze property ownership and real estate holdings\n3. Investigate business ownership and corporate affiliations\n4. Examine investment portfolios and financial instruments\n5. Assess economic indicators and spending patterns\n6. Identify potential financial risks or irregularities\n\nEnsure all financial analysis is based on legitimate, publicly accessible sources. Provide detailed documentation of all findings with appropriate disclaimers about data limitations."
     },
     {
       id: 4,
@@ -77,7 +80,8 @@ export default function AgentsPage() {
       successRate: 93,
       tasksCompleted: 1205,
       icon: Briefcase,
-      category: "Corporate Intelligence"
+      category: "Corporate Intelligence",
+      defaultPrompt: "You are a corporate intelligence analyst specializing in business relationship mapping. Your primary objectives are:\n\n1. Map corporate structures and ownership hierarchies\n2. Identify board memberships and executive positions\n3. Research business partnerships and joint ventures\n4. Analyze professional networks and industry connections\n5. Track merger and acquisition activities\n6. Investigate regulatory filings and compliance records\n\nFocus on building comprehensive corporate relationship maps while maintaining accuracy in all business intelligence gathering. Cross-reference multiple corporate databases for verification."
     },
     {
       id: 5,
@@ -88,7 +92,8 @@ export default function AgentsPage() {
       successRate: 89,
       tasksCompleted: 567,
       icon: Home,
-      category: "Asset Intelligence"
+      category: "Asset Intelligence",
+      defaultPrompt: "You are a property intelligence specialist focused on real estate and asset analysis. Your key responsibilities include:\n\n1. Research property ownership records and deed transfers\n2. Analyze real estate portfolios and investment patterns\n3. Investigate commercial and residential property holdings\n4. Track property value trends and market analysis\n5. Identify liens, mortgages, and encumbrances\n6. Map property-related business entities and trusts\n\nUtilize public records databases and ensure all property research complies with legal access requirements. Provide detailed property profiles with historical ownership data."
     },
     {
       id: 6,
@@ -99,7 +104,8 @@ export default function AgentsPage() {
       successRate: 94,
       tasksCompleted: 892,
       icon: Scale,
-      category: "Legal Intelligence"
+      category: "Legal Intelligence",
+      defaultPrompt: "You are a legal intelligence analyst specializing in litigation and court record analysis. Your primary functions are:\n\n1. Monitor ongoing and historical legal proceedings\n2. Analyze court filings, judgments, and settlements\n3. Track regulatory violations and compliance issues\n4. Research bankruptcy and insolvency proceedings\n5. Investigate intellectual property disputes\n6. Monitor criminal records and law enforcement actions\n\nMaintain strict adherence to legal research protocols and ensure all information is sourced from official court records. Provide comprehensive legal risk assessments with proper case citations."
     },
     {
       id: 7,
@@ -110,7 +116,44 @@ export default function AgentsPage() {
       successRate: 92,
       tasksCompleted: 1634,
       icon: Globe,
-      category: "Digital Intelligence"
+      category: "Digital Intelligence",
+      defaultPrompt: "You are a digital footprint analyst specializing in comprehensive online presence mapping. Your core responsibilities include:\n\n1. Map complete digital footprint across all online platforms\n2. Track website ownership and domain registrations\n3. Analyze online content creation and publication patterns\n4. Monitor digital reputation and sentiment analysis\n5. Investigate email addresses and online identities\n6. Track digital asset ownership and cryptocurrency activities\n\nFocus on creating comprehensive digital profiles while respecting privacy boundaries. Use advanced search techniques and digital forensics tools for thorough analysis."
+    },
+    {
+      id: 8,
+      name: "Report Generation Agent",
+      description: "Compiles and structures intelligence data into comprehensive analytical reports",
+      status: "Active",
+      lastRun: "5 minutes ago",
+      successRate: 95,
+      tasksCompleted: 1423,
+      icon: FileText,
+      category: "Analysis & Reporting",
+      defaultPrompt: "You are an expert intelligence report writer specializing in comprehensive analytical reporting. Your primary responsibilities are:\n\n1. Synthesize data from multiple intelligence sources into coherent reports\n2. Structure findings using standardized intelligence reporting formats\n3. Provide executive summaries and detailed analytical sections\n4. Create risk assessments and threat level classifications\n5. Generate actionable recommendations based on intelligence findings\n6. Ensure report quality, accuracy, and professional presentation\n\nMaintain objectivity and analytical rigor in all reporting. Use clear, professional language and provide proper source attribution for all intelligence findings."
+    },
+    {
+      id: 9,
+      name: "Verifier Agent",
+      description: "Validates source authenticity and prevents AI hallucination by cross-referencing data",
+      status: "Active",
+      lastRun: "2 minutes ago",
+      successRate: 98,
+      tasksCompleted: 2847,
+      icon: Shield,
+      category: "Quality Assurance",
+      defaultPrompt: "You are a specialized verification agent responsible for ensuring data accuracy and preventing misinformation. Your critical functions include:\n\n1. Cross-reference all intelligence findings against original sources\n2. Verify the authenticity and credibility of information sources\n3. Identify and flag potential AI hallucinations or false data\n4. Conduct fact-checking using multiple independent sources\n5. Validate URLs, documents, and digital evidence\n6. Assess source reliability and information confidence levels\n\nMaintain the highest standards of verification. When in doubt, flag information as unverified rather than accepting questionable data. Your role is crucial for maintaining intelligence integrity."
+    },
+    {
+      id: 10,
+      name: "Data Structuring Agent",
+      description: "Cleans, organizes, and optimizes data structure while removing false matches",
+      status: "Active",
+      lastRun: "1 minute ago",
+      successRate: 94,
+      tasksCompleted: 1956,
+      icon: Database,
+      category: "Data Processing",
+      defaultPrompt: "You are a data structuring specialist focused on optimizing intelligence data quality and organization. Your key responsibilities are:\n\n1. Clean and normalize data from multiple intelligence sources\n2. Remove duplicate entries and false positive matches\n3. Standardize data formats and classification schemas\n4. Implement data quality controls and validation rules\n5. Structure data for optimal searchability and analysis\n6. Identify and resolve data conflicts and inconsistencies\n\nApply rigorous data quality standards and maintain detailed logs of all data processing activities. Ensure data integrity while maximizing usability for intelligence analysis."
     }
   ]
 
@@ -133,15 +176,8 @@ export default function AgentsPage() {
   }
 
   const handleSettingsClick = (agent: any) => {
-    // Only pass the properties that AgentSettingsDialog expects
-    const filteredAgent = {
-      id: agent.id,
-      name: agent.name,
-      description: agent.description,
-      category: agent.category,
-      status: agent.status
-    }
-    setSelectedAgent(filteredAgent)
+    // Pass the complete agent object including defaultPrompt
+    setSelectedAgent(agent)
     setSettingsOpen(true)
   }
 
@@ -203,7 +239,7 @@ export default function AgentsPage() {
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">6</div>
+                <div className="text-2xl font-bold">9</div>
                 <p className="text-xs text-muted-foreground">
                   1 idle agent
                 </p>
@@ -215,9 +251,9 @@ export default function AgentsPage() {
                 <CheckCircle className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">247</div>
+                <div className="text-2xl font-bold">347</div>
                 <p className="text-xs text-muted-foreground">
-                  +45 from yesterday
+                  +65 from yesterday
                 </p>
               </CardContent>
             </Card>
@@ -227,9 +263,9 @@ export default function AgentsPage() {
                 <Bot className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">92%</div>
+                <div className="text-2xl font-bold">94%</div>
                 <p className="text-xs text-muted-foreground">
-                  +3% from last week
+                  +2% from last week
                 </p>
               </CardContent>
             </Card>
@@ -239,7 +275,7 @@ export default function AgentsPage() {
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">4.2GB</div>
+                <div className="text-2xl font-bold">6.8GB</div>
                 <p className="text-xs text-muted-foreground">
                   Last 24 hours
                 </p>

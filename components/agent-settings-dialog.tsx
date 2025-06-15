@@ -38,7 +38,12 @@ import {
   Zap,
   AlertTriangle,
   Info,
-  X
+  X,
+  Key,
+  Link,
+  Plus,
+  Eye,
+  EyeOff
 } from "lucide-react"
 
 interface AgentSettingsDialogProps {
@@ -50,13 +55,14 @@ interface AgentSettingsDialogProps {
     description: string
     category: string
     status: string
+    defaultPrompt?: string
   }
 }
 
 export function AgentSettingsDialog({ open, onOpenChange, agent }: AgentSettingsDialogProps) {
   const [agentName, setAgentName] = React.useState(agent.name)
   const [agentDescription, setAgentDescription] = React.useState(agent.description)
-  const [systemPrompt, setSystemPrompt] = React.useState("")
+  const [systemPrompt, setSystemPrompt] = React.useState(agent.defaultPrompt || "")
   const [model, setModel] = React.useState("gpt-4")
   const [temperature, setTemperature] = React.useState(0.7)
   const [maxTokens, setMaxTokens] = React.useState(4000)
@@ -72,6 +78,17 @@ export function AgentSettingsDialog({ open, onOpenChange, agent }: AgentSettings
     { id: 3, name: "threat_database.json", size: "5.2 MB", uploadDate: "2024-01-15" }
   ])
 
+  // Integration settings
+  const [integrations, setIntegrations] = React.useState([
+    { id: 1, name: "LinkedIn API", type: "Social Media", status: "Connected", apiKey: "sk-linkedin-***", lastUsed: "2 hours ago" },
+    { id: 2, name: "Twitter API", type: "Social Media", status: "Connected", apiKey: "bearer-twitter-***", lastUsed: "1 hour ago" },
+    { id: 3, name: "Google Search API", type: "Search Engine", status: "Connected", apiKey: "AIza-google-***", lastUsed: "30 minutes ago" },
+    { id: 4, name: "Clearbit API", type: "Business Data", status: "Disconnected", apiKey: "", lastUsed: "Never" },
+    { id: 5, name: "Hunter.io API", type: "Email Verification", status: "Connected", apiKey: "hunter-***", lastUsed: "5 minutes ago" }
+  ])
+  const [newIntegration, setNewIntegration] = React.useState({ name: "", type: "", apiKey: "", endpoint: "" })
+  const [showApiKeys, setShowApiKeys] = React.useState<{[key: number]: boolean}>({})
+
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || [])
     setKnowledgeBase(prev => [...prev, ...files])
@@ -83,6 +100,32 @@ export function AgentSettingsDialog({ open, onOpenChange, agent }: AgentSettings
 
   const removeUploadedFile = (id: number) => {
     setUploadedFiles(prev => prev.filter(file => file.id !== id))
+  }
+
+  const toggleApiKeyVisibility = (integrationId: number) => {
+    setShowApiKeys(prev => ({
+      ...prev,
+      [integrationId]: !prev[integrationId]
+    }))
+  }
+
+  const addIntegration = () => {
+    if (newIntegration.name && newIntegration.type && newIntegration.apiKey) {
+      const integration = {
+        id: integrations.length + 1,
+        name: newIntegration.name,
+        type: newIntegration.type,
+        status: "Connected" as const,
+        apiKey: newIntegration.apiKey,
+        lastUsed: "Just now"
+      }
+      setIntegrations(prev => [...prev, integration])
+      setNewIntegration({ name: "", type: "", apiKey: "", endpoint: "" })
+    }
+  }
+
+  const removeIntegration = (id: number) => {
+    setIntegrations(prev => prev.filter(integration => integration.id !== id))
   }
 
   const handleSave = () => {
@@ -100,9 +143,18 @@ export function AgentSettingsDialog({ open, onOpenChange, agent }: AgentSettings
       rateLimitRequests,
       rateLimitWindow,
       knowledgeBase,
+      integrations,
     })
     onOpenChange(false)
   }
+
+  // Update system prompt when agent changes
+  React.useEffect(() => {
+    setSystemPrompt(agent.defaultPrompt || "")
+    setAgentName(agent.name)
+    setAgentDescription(agent.description)
+    setIsEnabled(agent.status === "Active")
+  }, [agent])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -113,15 +165,16 @@ export function AgentSettingsDialog({ open, onOpenChange, agent }: AgentSettings
             Agent Settings - {agent.name}
           </DialogTitle>
           <DialogDescription>
-            Configure your AI agent's behavior, knowledge base, and operational parameters
+            Configure your AI agent's behavior, knowledge base, integrations, and operational parameters
           </DialogDescription>
         </DialogHeader>
 
         <Tabs defaultValue="general" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="general">General</TabsTrigger>
             <TabsTrigger value="prompt">Instructions</TabsTrigger>
             <TabsTrigger value="knowledge">Knowledge Base</TabsTrigger>
+            <TabsTrigger value="integrations">Integrations</TabsTrigger>
             <TabsTrigger value="advanced">Advanced</TabsTrigger>
           </TabsList>
 
@@ -200,6 +253,9 @@ export function AgentSettingsDialog({ open, onOpenChange, agent }: AgentSettings
                         <SelectItem value="corporate-intelligence">Corporate Intelligence</SelectItem>
                         <SelectItem value="asset-intelligence">Asset Intelligence</SelectItem>
                         <SelectItem value="legal-intelligence">Legal Intelligence</SelectItem>
+                        <SelectItem value="analysis-reporting">Analysis & Reporting</SelectItem>
+                        <SelectItem value="quality-assurance">Quality Assurance</SelectItem>
+                        <SelectItem value="data-processing">Data Processing</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -227,7 +283,7 @@ export function AgentSettingsDialog({ open, onOpenChange, agent }: AgentSettings
                     value={systemPrompt}
                     onChange={(e) => setSystemPrompt(e.target.value)}
                     placeholder="You are an AI assistant specialized in threat intelligence and security analysis. Your role is to..."
-                    rows={12}
+                    rows={15}
                     className="font-mono text-sm"
                   />
                   <div className="text-xs text-muted-foreground">
@@ -361,6 +417,122 @@ export function AgentSettingsDialog({ open, onOpenChange, agent }: AgentSettings
                       </div>
                     ))}
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="integrations" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Link className="h-4 w-4" />
+                  API Integrations
+                </CardTitle>
+                <CardDescription>
+                  Connect external APIs and services to enhance agent capabilities
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-4">
+                  {integrations.map((integration) => (
+                    <div key={integration.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <Key className="h-5 w-5 text-muted-foreground" />
+                        <div>
+                          <div className="font-medium">{integration.name}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {integration.type} • Last used: {integration.lastUsed}
+                          </div>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <span className="text-xs">API Key:</span>
+                            <code className="text-xs bg-muted px-1 py-0.5 rounded">
+                              {showApiKeys[integration.id] ? integration.apiKey : integration.apiKey.replace(/./g, '*')}
+                            </code>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => toggleApiKeyVisibility(integration.id)}
+                            >
+                              {showApiKeys[integration.id] ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Badge variant={integration.status === "Connected" ? "default" : "secondary"}>
+                          {integration.status}
+                        </Badge>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeIntegration(integration.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <Separator />
+
+                <div className="space-y-4">
+                  <Label>Add New Integration</Label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="integration-name">Service Name</Label>
+                      <Input
+                        id="integration-name"
+                        value={newIntegration.name}
+                        onChange={(e) => setNewIntegration(prev => ({ ...prev, name: e.target.value }))}
+                        placeholder="e.g., Facebook API"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="integration-type">Type</Label>
+                      <Select value={newIntegration.type} onValueChange={(value) => setNewIntegration(prev => ({ ...prev, type: value }))}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Social Media">Social Media</SelectItem>
+                          <SelectItem value="Search Engine">Search Engine</SelectItem>
+                          <SelectItem value="Business Data">Business Data</SelectItem>
+                          <SelectItem value="Email Verification">Email Verification</SelectItem>
+                          <SelectItem value="Financial Data">Financial Data</SelectItem>
+                          <SelectItem value="Legal Database">Legal Database</SelectItem>
+                          <SelectItem value="Property Records">Property Records</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="integration-api-key">API Key</Label>
+                      <Input
+                        id="integration-api-key"
+                        type="password"
+                        value={newIntegration.apiKey}
+                        onChange={(e) => setNewIntegration(prev => ({ ...prev, apiKey: e.target.value }))}
+                        placeholder="Enter API key"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="integration-endpoint">Endpoint (Optional)</Label>
+                      <Input
+                        id="integration-endpoint"
+                        value={newIntegration.endpoint}
+                        onChange={(e) => setNewIntegration(prev => ({ ...prev, endpoint: e.target.value }))}
+                        placeholder="https://api.example.com"
+                      />
+                    </div>
+                  </div>
+                  <Button onClick={addIntegration} className="w-full">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Integration
+                  </Button>
                 </div>
               </CardContent>
             </Card>
