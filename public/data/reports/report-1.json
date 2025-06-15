@@ -1,0 +1,392 @@
+{
+  "id": "1",
+  "caseNumber": "TGI-2024-001",
+  "classification": "CONFIDENTIAL",
+  "targetName": "Alexander Mercer",
+  "targetEmail": "alexander.mercer@example.com",
+  "targetLinkedIn": "linkedin.com/in/alexander-mercer",
+  "dateGenerated": "2024-01-25T14:30:00Z",
+  "lastUpdated": "2024-01-25T16:45:00Z",
+  "status": "in-progress",
+  "overallProgress": 65,
+  "agentsCompleted": 7,
+  "agentsTotal": 11,
+  
+  "personalInformation": {
+    "dob": "March 15, 1978",
+    "nationality": "United States (Dual citizenship with UK)",
+    "aliases": ["Alex Grey", "Alexander James", "A.J. Morris"],
+    "currentLocation": "New York, NY / London, UK (frequent travel)",
+    "education": "MBA, Harvard Business School (2004); BSc Computer Science, MIT (2000)",
+    "languages": ["English (native)", "German (fluent)", "Mandarin (conversational)", "Russian (basic)"]
+  },
+  
+  "socialMediaProfiles": [
+    {
+      "platform": "Twitter/X",
+      "handle": "@alexmercer_nyc",
+      "url": "https://twitter.com/alexmercer_nyc",
+      "followers": "12.4K",
+      "lastActive": "2 hours ago",
+      "verified": true,
+      "profileImage": null
+    },
+    {
+      "platform": "LinkedIn",
+      "handle": "alexander-mercer-consulting",
+      "url": "https://linkedin.com/in/alexander-mercer-consulting",
+      "followers": "8.9K",
+      "lastActive": "1 day ago",
+      "verified": true,
+      "profileImage": null
+    },
+    {
+      "platform": "Facebook",
+      "handle": "Alexander.J.Mercer",
+      "url": "https://facebook.com/Alexander.J.Mercer",
+      "followers": "3.2K",
+      "lastActive": "5 days ago",
+      "verified": false,
+      "profileImage": null
+    },
+    {
+      "platform": "Instagram",
+      "handle": "@amercer_global",
+      "url": "https://instagram.com/amercer_global",
+      "followers": "5.7K",
+      "lastActive": "3 hours ago",
+      "verified": false,
+      "profileImage": null
+    }
+  ],
+  
+  "financialAssets": {
+    "netWorth": "$45-65 million (estimated)",
+    "bankAccounts": "Multiple accounts across US, UK, and Switzerland",
+    "investments": "Diversified portfolio including tech stocks, real estate, and private equity",
+    "cryptoHoldings": "Significant Bitcoin and Ethereum holdings (estimated $2-5M)",
+    "offshoreAccounts": "Cayman Islands trust structure identified",
+    "annualIncome": "$8-12 million (multiple income streams)"
+  },
+  
+  "businessInterests": [
+    {
+      "name": "Mercer Global Consulting",
+      "role": "Founder & CEO",
+      "location": "New York, NY",
+      "revenue": "$25-40 million annually",
+      "ownership": "100% ownership",
+      "founded": "2008"
+    },
+    {
+      "name": "TechVenture Partners",
+      "role": "Managing Partner",
+      "location": "London, UK",
+      "revenue": "$15-25 million AUM",
+      "ownership": "45% stake",
+      "founded": "2015"
+    },
+    {
+      "name": "Digital Innovation Labs",
+      "role": "Board Member",
+      "location": "San Francisco, CA",
+      "revenue": "$5-8 million annually",
+      "ownership": "15% equity",
+      "founded": "2018"
+    }
+  ],
+  
+  "propertyHoldings": [
+    {
+      "address": "432 Park Avenue, Penthouse, New York, NY",
+      "type": "Residential - Luxury Condominium",
+      "value": "$18.5 million",
+      "ownership": "Direct ownership",
+      "purchaseDate": "2019",
+      "mortgageInfo": "No mortgage - cash purchase"
+    },
+    {
+      "address": "Belgravia Square, London, UK",
+      "type": "Residential - Townhouse",
+      "value": "£12.8 million",
+      "ownership": "Through UK family trust",
+      "purchaseDate": "2017",
+      "mortgageInfo": "£4.2M mortgage with Coutts Bank"
+    },
+    {
+      "address": "Hamptons Estate, East Hampton, NY",
+      "type": "Residential - Summer Estate",
+      "value": "$8.2 million",
+      "ownership": "Joint ownership with spouse",
+      "purchaseDate": "2020",
+      "mortgageInfo": "No mortgage"
+    }
+  ],
+  
+  "legalRecords": {
+    "criminalRecord": "No criminal convictions found",
+    "activeLawsuits": "One ongoing commercial dispute with former business partner (estimated $2.3M claim)",
+    "regulatoryViolations": "SEC inquiry in 2021 regarding insider trading allegations - no charges filed",
+    "civilCases": "Two resolved contract disputes (2018, 2020) - settlements confidential",
+    "bankruptcies": "No bankruptcy filings",
+    "judgments": "No outstanding judgments"
+  },
+  
+  "onlinePresence": {
+    "socialMedia": "Active across major platforms with professional focus",
+    "emailAccounts": "Multiple verified email addresses across business and personal domains",
+    "digitalFootprint": "Extensive online presence with consistent professional branding",
+    "communicationMethods": "Encrypted messaging apps, professional email, video conferencing",
+    "websites": "Personal website, company websites, speaking engagement profiles",
+    "domains": "Owns 12 domains related to business ventures and personal branding"
+  },
+  
+  "sections": {
+    "personalInformation": {
+      "id": "personal",
+      "title": "Personal Information",
+      "hasData": true,
+      "lastUpdated": "2024-01-25T14:30:00Z",
+      "agentStatus": "completed",
+      "bibliography": [
+        {
+          "id": "linkedin-profile",
+          "source": "LinkedIn Profile",
+          "url": "https://linkedin.com/in/alexander-mercer",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        },
+        {
+          "id": "passport-records",
+          "source": "US Passport Records Database",
+          "type": "database",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        },
+        {
+          "id": "university-records",
+          "source": "Harvard Business School Alumni Directory",
+          "url": "https://hbs.edu/alumni",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        },
+        {
+          "id": "mit-records",
+          "source": "MIT Alumni Database",
+          "type": "database",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        }
+      ]
+    },
+    "socialMedia": {
+      "id": "social",
+      "title": "Social Media Intelligence",
+      "hasData": true,
+      "lastUpdated": "2024-01-25T16:15:00Z",
+      "agentStatus": "running",
+      "bibliography": [
+        {
+          "id": "twitter-api",
+          "source": "Twitter API Data",
+          "url": "https://twitter.com/alexmercer_nyc",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        },
+        {
+          "id": "linkedin-scrape",
+          "source": "LinkedIn",
+          "url": "https://linkedin.com/in/alexander-mercer-consulting",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        },
+        {
+          "id": "facebook-osint",
+          "source": "Facebook",
+          "url": "https://facebook.com/Alexander.J.Mercer",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "medium"
+        },
+        {
+          "id": "instagram-posts",
+          "source": "Instagram",
+          "url": "https://instagram.com/amercer_global",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "medium"
+        }
+      ]
+    },
+    "financial": {
+      "id": "financial",
+      "title": "Financial Assets",
+      "hasData": true,
+      "lastUpdated": "2024-01-25T15:45:00Z",
+      "agentStatus": "completed",
+      "bibliography": [
+        {
+          "id": "sec-filings",
+          "source": "SEC Filing 10-K Forms",
+          "url": "https://sec.gov/edgar",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        },
+        {
+          "id": "bank-statements",
+          "source": "Financial Institution Reports",
+          "type": "document",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        },
+        {
+          "id": "crypto-wallets",
+          "source": "Blockchain Analysis Report",
+          "type": "document",
+          "accessDate": "2024-01-25",
+          "reliability": "medium"
+        },
+        {
+          "id": "offshore-leaks",
+          "source": "Panama Papers Database",
+          "url": "https://offshoreleaks.icij.org",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        }
+      ]
+    },
+    "business": {
+      "id": "business",
+      "title": "Business Interests",
+      "hasData": true,
+      "lastUpdated": "2024-01-25T14:20:00Z",
+      "agentStatus": "completed",
+      "bibliography": [
+        {
+          "id": "corp-filings",
+          "source": "Delaware Corporate Registry",
+          "url": "https://corp.delaware.gov",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        },
+        {
+          "id": "uk-companies",
+          "source": "UK Companies House",
+          "url": "https://companieshouse.gov.uk",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        },
+        {
+          "id": "annual-reports",
+          "source": "Company Annual Reports",
+          "type": "document",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        }
+      ]
+    },
+    "property": {
+      "id": "property",
+      "title": "Property Holdings",
+      "hasData": true,
+      "lastUpdated": "2024-01-25T13:30:00Z",
+      "agentStatus": "completed",
+      "bibliography": [
+        {
+          "id": "nyc-records",
+          "source": "NYC Property Records",
+          "url": "https://nyc.gov/property",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        },
+        {
+          "id": "uk-land-registry",
+          "source": "UK Land Registry",
+          "url": "https://landregistry.gov.uk",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        },
+        {
+          "id": "trust-documents",
+          "source": "Family Trust Documentation",
+          "type": "document",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        }
+      ]
+    },
+    "legal": {
+      "id": "legal",
+      "title": "Legal & Litigation",
+      "hasData": true,
+      "lastUpdated": "2024-01-25T16:00:00Z",
+      "agentStatus": "running",
+      "bibliography": [
+        {
+          "id": "court-records",
+          "source": "Federal Court Records",
+          "url": "https://pacer.gov",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        },
+        {
+          "id": "sec-enforcement",
+          "source": "SEC Enforcement Actions",
+          "url": "https://sec.gov/enforce",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        },
+        {
+          "id": "civil-suits",
+          "source": "State Court Filings",
+          "type": "database",
+          "accessDate": "2024-01-25",
+          "reliability": "medium"
+        }
+      ]
+    },
+    "online": {
+      "id": "online",
+      "title": "Online Presence",
+      "hasData": true,
+      "lastUpdated": "2024-01-25T15:15:00Z",
+      "agentStatus": "completed",
+      "bibliography": [
+        {
+          "id": "domain-records",
+          "source": "WHOIS Database",
+          "url": "https://whois.net",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        },
+        {
+          "id": "email-headers",
+          "source": "Email Metadata Analysis",
+          "type": "document",
+          "accessDate": "2024-01-25",
+          "reliability": "medium"
+        },
+        {
+          "id": "digital-forensics",
+          "source": "Digital Forensics Report",
+          "type": "document",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        }
+      ]
+    }
+  }
+}

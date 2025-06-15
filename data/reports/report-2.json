@@ -1,0 +1,175 @@
+{
+  "id": "2",
+  "caseNumber": "TGI-2024-002",
+  "classification": "CONFIDENTIAL",
+  "targetName": "Sarah Johnson",
+  "targetEmail": "sarah.j@globaldynamics.com",
+  "targetLinkedIn": "linkedin.com/in/sarahjohnson",
+  "dateGenerated": "2024-01-25T10:15:00Z",
+  "lastUpdated": "2024-01-25T12:30:00Z",
+  "status": "in-progress",
+  "overallProgress": 35,
+  "agentsCompleted": 3,
+  "agentsTotal": 11,
+  
+  "personalInformation": {
+    "dob": "June 22, 1985",
+    "nationality": "United States",
+    "aliases": ["S. Johnson", "Sarah J."],
+    "currentLocation": "Chicago, IL",
+    "education": "MBA Finance, Northwestern Kellogg (2010); BA Economics, University of Chicago (2007)",
+    "languages": ["English (native)", "Spanish (fluent)"]
+  },
+  
+  "socialMediaProfiles": [
+    {
+      "platform": "LinkedIn",
+      "handle": "sarah-johnson-finance",
+      "url": "https://linkedin.com/in/sarah-johnson-finance",
+      "followers": "2.1K",
+      "lastActive": "3 hours ago",
+      "verified": false,
+      "profileImage": null
+    },
+    {
+      "platform": "Twitter/X",
+      "handle": "@sarahj_finance",
+      "url": "https://twitter.com/sarahj_finance",
+      "followers": "892",
+      "lastActive": "1 day ago",
+      "verified": false,
+      "profileImage": null
+    }
+  ],
+  
+  "financialAssets": {
+    "netWorth": null,
+    "bankAccounts": null,
+    "investments": null,
+    "cryptoHoldings": null,
+    "offshoreAccounts": null,
+    "annualIncome": null
+  },
+  
+  "businessInterests": [],
+  
+  "propertyHoldings": [],
+  
+  "legalRecords": {
+    "criminalRecord": null,
+    "activeLawsuits": null,
+    "regulatoryViolations": null,
+    "civilCases": null,
+    "bankruptcies": null,
+    "judgments": null
+  },
+  
+  "onlinePresence": {
+    "socialMedia": "Limited presence on LinkedIn and Twitter, professional focus",
+    "emailAccounts": null,
+    "digitalFootprint": null,
+    "communicationMethods": null,
+    "websites": null,
+    "domains": null
+  },
+  
+  "sections": {
+    "personalInformation": {
+      "id": "personal",
+      "title": "Personal Information",
+      "hasData": true,
+      "lastUpdated": "2024-01-25T10:30:00Z",
+      "agentStatus": "completed",
+      "bibliography": [
+        {
+          "id": "linkedin-profile-2",
+          "source": "LinkedIn Profile",
+          "url": "https://linkedin.com/in/sarah-johnson-finance",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        },
+        {
+          "id": "university-records-2",
+          "source": "Northwestern Alumni Directory",
+          "type": "database",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        }
+      ]
+    },
+    "socialMedia": {
+      "id": "social",
+      "title": "Social Media Intelligence",
+      "hasData": true,
+      "lastUpdated": "2024-01-25T11:15:00Z",
+      "agentStatus": "completed",
+      "bibliography": [
+        {
+          "id": "linkedin-data-2",
+          "source": "LinkedIn",
+          "url": "https://linkedin.com/in/sarah-johnson-finance",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "high"
+        },
+        {
+          "id": "twitter-data-2",
+          "source": "Twitter",
+          "url": "https://twitter.com/sarahj_finance",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "medium"
+        }
+      ]
+    },
+    "financial": {
+      "id": "financial",
+      "title": "Financial Assets",
+      "hasData": false,
+      "lastUpdated": null,
+      "agentStatus": "idle",
+      "bibliography": []
+    },
+    "business": {
+      "id": "business",
+      "title": "Business Interests",
+      "hasData": false,
+      "lastUpdated": null,
+      "agentStatus": "idle",
+      "bibliography": []
+    },
+    "property": {
+      "id": "property",
+      "title": "Property Holdings",
+      "hasData": false,
+      "lastUpdated": null,
+      "agentStatus": "idle",
+      "bibliography": []
+    },
+    "legal": {
+      "id": "legal",
+      "title": "Legal & Litigation",
+      "hasData": false,
+      "lastUpdated": null,
+      "agentStatus": "running",
+      "bibliography": []
+    },
+    "online": {
+      "id": "online",
+      "title": "Online Presence",
+      "hasData": true,
+      "lastUpdated": "2024-01-25T12:00:00Z",
+      "agentStatus": "completed",
+      "bibliography": [
+        {
+          "id": "web-search-2",
+          "source": "Web Search Results",
+          "type": "url",
+          "accessDate": "2024-01-25",
+          "reliability": "medium"
+        }
+      ]
+    }
+  }
+}
