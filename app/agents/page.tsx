@@ -16,69 +16,94 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Bot, Play, Pause, Settings, Activity, Clock, CheckCircle, AlertCircle } from "lucide-react"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Bot, Play, Pause, Settings, Activity, Clock, CheckCircle, AlertCircle, User, Building2, DollarSign, Briefcase, Home, Scale, Globe } from "lucide-react"
 
 export default function AgentsPage() {
   const agents = [
     {
       id: 1,
-      name: "Web Scraper Agent",
-      description: "Scrapes public web data and social media profiles",
+      name: "Personal Information Agent",
+      description: "Gathers basic personal details, demographics, and background information",
       status: "Active",
       lastRun: "2 minutes ago",
-      successRate: 94,
-      tasksCompleted: 1247,
-      capabilities: ["Web Scraping", "Data Extraction", "Content Analysis"]
+      successRate: 96,
+      tasksCompleted: 1847,
+      icon: User,
+      category: "Personal Intelligence"
     },
     {
       id: 2,
-      name: "LinkedIn Intelligence",
-      description: "Analyzes LinkedIn profiles and professional networks",
-      status: "Active",
-      lastRun: "5 minutes ago",
-      successRate: 89,
-      tasksCompleted: 892,
-      capabilities: ["LinkedIn API", "Profile Analysis", "Network Mapping"]
-    },
-    {
-      id: 3,
-      name: "Social Media Analyzer",
-      description: "Monitors and analyzes social media activity across platforms",
+      name: "Social Media Intelligence",
+      description: "Analyzes social media profiles, posts, connections, and digital footprint",
       status: "Active",
       lastRun: "1 minute ago",
       successRate: 91,
       tasksCompleted: 2156,
-      capabilities: ["Twitter API", "Facebook Graph", "Instagram Analysis"]
+      icon: Globe,
+      category: "Digital Intelligence"
+    },
+    {
+      id: 3,
+      name: "Financial Assets Analyzer",
+      description: "Investigates financial records, assets, investments, and economic indicators",
+      status: "Active",
+      lastRun: "5 minutes ago",
+      successRate: 88,
+      tasksCompleted: 743,
+      icon: DollarSign,
+      category: "Financial Intelligence"
     },
     {
       id: 4,
-      name: "Email Validator",
-      description: "Validates email addresses and checks for data breaches",
-      status: "Idle",
-      lastRun: "2 hours ago",
-      successRate: 97,
-      tasksCompleted: 543,
-      capabilities: ["Email Validation", "Breach Detection", "Domain Analysis"]
+      name: "Business Interests Agent",
+      description: "Researches corporate affiliations, business ventures, and professional networks",
+      status: "Active",
+      lastRun: "3 minutes ago",
+      successRate: 93,
+      tasksCompleted: 1205,
+      icon: Briefcase,
+      category: "Corporate Intelligence"
     },
     {
       id: 5,
-      name: "Risk Assessment Engine",
-      description: "Analyzes collected data to generate risk scores and insights",
-      status: "Active",
-      lastRun: "30 seconds ago",
-      successRate: 88,
-      tasksCompleted: 678,
-      capabilities: ["Risk Scoring", "Pattern Recognition", "Threat Analysis"]
+      name: "Property Holdings Scanner",
+      description: "Identifies real estate ownership, property records, and asset holdings",
+      status: "Idle",
+      lastRun: "1 hour ago",
+      successRate: 89,
+      tasksCompleted: 567,
+      icon: Home,
+      category: "Asset Intelligence"
     },
     {
       id: 6,
-      name: "Report Generator",
-      description: "Compiles intelligence data into comprehensive reports",
-      status: "Idle",
-      lastRun: "1 hour ago",
-      successRate: 95,
-      tasksCompleted: 234,
-      capabilities: ["Report Generation", "Data Visualization", "PDF Export"]
+      name: "Legal & Litigation Monitor",
+      description: "Tracks legal proceedings, court records, and litigation history",
+      status: "Active",
+      lastRun: "10 minutes ago",
+      successRate: 94,
+      tasksCompleted: 892,
+      icon: Scale,
+      category: "Legal Intelligence"
+    },
+    {
+      id: 7,
+      name: "Online Presence Tracker",
+      description: "Maps digital footprint, web presence, and online activity patterns",
+      status: "Active",
+      lastRun: "30 seconds ago",
+      successRate: 92,
+      tasksCompleted: 1634,
+      icon: Globe,
+      category: "Digital Intelligence"
     }
   ]
 
@@ -143,9 +168,9 @@ export default function AgentsPage() {
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">4</div>
+                <div className="text-2xl font-bold">6</div>
                 <p className="text-xs text-muted-foreground">
-                  2 idle agents
+                  1 idle agent
                 </p>
               </CardContent>
             </Card>
@@ -155,9 +180,9 @@ export default function AgentsPage() {
                 <CheckCircle className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">127</div>
+                <div className="text-2xl font-bold">247</div>
                 <p className="text-xs text-muted-foreground">
-                  +23 from yesterday
+                  +45 from yesterday
                 </p>
               </CardContent>
             </Card>
@@ -169,7 +194,7 @@ export default function AgentsPage() {
               <CardContent>
                 <div className="text-2xl font-bold">92%</div>
                 <p className="text-xs text-muted-foreground">
-                  +2% from last week
+                  +3% from last week
                 </p>
               </CardContent>
             </Card>
@@ -179,7 +204,7 @@ export default function AgentsPage() {
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">2.4GB</div>
+                <div className="text-2xl font-bold">4.2GB</div>
                 <p className="text-xs text-muted-foreground">
                   Last 24 hours
                 </p>
@@ -187,71 +212,93 @@ export default function AgentsPage() {
             </Card>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            {agents.map((agent) => (
-              <Card key={agent.id} className="hover:shadow-md transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-2">
-                      <Bot className="h-5 w-5 text-muted-foreground" />
-                      <CardTitle className="text-lg">{agent.name}</CardTitle>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {agent.status === 'Active' ? (
-                        <Button variant="outline" size="sm">
-                          <Pause className="h-3 w-3 mr-1" />
-                          Pause
-                        </Button>
-                      ) : (
-                        <Button variant="outline" size="sm">
-                          <Play className="h-3 w-3 mr-1" />
-                          Start
-                        </Button>
-                      )}
-                      <Button variant="ghost" size="sm">
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                  <CardDescription>{agent.description}</CardDescription>
-                  <div className="flex items-center space-x-2">
-                    <div className="flex items-center space-x-1">
-                      {getStatusIcon(agent.status)}
-                      <Badge variant={getStatusColor(agent.status)} className="text-xs">
-                        {agent.status}
-                      </Badge>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Last Run:</span>
-                      <div className="font-medium">{agent.lastRun}</div>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Success Rate:</span>
-                      <div className="font-medium">{agent.successRate}%</div>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Tasks Completed:</span>
-                      <div className="font-medium">{agent.tasksCompleted.toLocaleString()}</div>
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground text-sm">Capabilities:</span>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {agent.capabilities.map((capability, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {capability}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Intelligence Agents</CardTitle>
+              <CardDescription>
+                Specialized AI agents for comprehensive threat analysis and intelligence gathering
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Agent</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Last Run</TableHead>
+                    <TableHead>Success Rate</TableHead>
+                    <TableHead>Tasks</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {agents.map((agent) => {
+                    const IconComponent = agent.icon
+                    return (
+                      <TableRow key={agent.id}>
+                        <TableCell>
+                          <div className="flex items-center space-x-3">
+                            <IconComponent className="h-5 w-5 text-muted-foreground" />
+                            <div>
+                              <div className="font-medium">{agent.name}</div>
+                              <div className="text-sm text-muted-foreground">{agent.description}</div>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="text-xs">
+                            {agent.category}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            {getStatusIcon(agent.status)}
+                            <Badge variant={getStatusColor(agent.status)} className="text-xs">
+                              {agent.status}
+                            </Badge>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-sm">{agent.lastRun}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm font-medium">{agent.successRate}%</span>
+                            <div className="w-16 h-2 bg-muted rounded-full">
+                              <div 
+                                className="h-2 bg-green-500 rounded-full" 
+                                style={{ width: `${agent.successRate}%` }}
+                              />
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-sm font-medium">
+                          {agent.tasksCompleted.toLocaleString()}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end space-x-2">
+                            {agent.status === 'Active' ? (
+                              <Button variant="outline" size="sm">
+                                <Pause className="h-3 w-3 mr-1" />
+                                Pause
+                              </Button>
+                            ) : (
+                              <Button variant="outline" size="sm">
+                                <Play className="h-3 w-3 mr-1" />
+                                Start
+                              </Button>
+                            )}
+                            <Button variant="ghost" size="sm">
+                              <Settings className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
 
           <Card>
             <CardHeader>
