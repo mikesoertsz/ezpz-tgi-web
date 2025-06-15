@@ -26,7 +26,9 @@ import {
   Scale,
   Image,
   CheckCircle2,
-  Loader2
+  Loader2,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
@@ -58,6 +60,7 @@ export function ReportChat() {
   ])
   const [inputValue, setInputValue] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
+  const [agentStatusCollapsed, setAgentStatusCollapsed] = useState(false)
 
   const agents: Agent[] = [
     // Data Gathering Agents
@@ -204,25 +207,14 @@ export function ReportChat() {
     }
   }
 
-  const AgentCard = ({ agent }: { agent: Agent }) => {
-    const IconComponent = agent.icon
-    return (
-      <div className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors bg-white">
-        <div className="flex-shrink-0">
-          {getStatusIndicator(agent.status)}
-        </div>
-        <IconComponent className="h-4 w-4 text-gray-600 flex-shrink-0" />
-        <div className="flex-1 min-w-0">
-          <div className={`text-sm font-medium ${getStatusColor(agent.status)} truncate`}>
-            {agent.name}
-          </div>
-          <div className="text-xs text-gray-500 truncate">
-            {agent.description}
-          </div>
-        </div>
-      </div>
-    )
-  }
+  const AgentItem = ({ agent }: { agent: Agent }) => (
+    <div className="flex items-center space-x-2 p-2 rounded hover:bg-gray-50 transition-colors">
+      {getStatusIndicator(agent.status)}
+      <span className={`text-xs font-medium truncate ${getStatusColor(agent.status)}`}>
+        {agent.name}
+      </span>
+    </div>
+  )
 
   return (
     <div className="flex flex-col h-full bg-gray-50">
@@ -239,31 +231,48 @@ export function ReportChat() {
         </div>
       </div>
 
-      {/* Agent Status */}
-      <div className="p-4 border-b border-border bg-white">
-        <div className="space-y-4">
-          {/* Data Gathering Agents */}
-          <div>
-            <h3 className="text-sm font-semibold mb-3 text-gray-900">Data Gathering Agents</h3>
-            <div className="space-y-2">
-              {dataGatheringAgents.map((agent) => (
-                <AgentCard key={agent.id} agent={agent} />
-              ))}
+      {/* Agent Status - Collapsible */}
+      <div className="border-b border-border bg-white">
+        <button
+          onClick={() => setAgentStatusCollapsed(!agentStatusCollapsed)}
+          className="w-full p-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex items-center space-x-2">
+            <h3 className="text-sm font-semibold text-gray-900">Agent Status</h3>
+            <Badge variant="secondary" className="text-xs">
+              {agents.length} agents
+            </Badge>
+          </div>
+          {agentStatusCollapsed ? (
+            <ChevronDown className="h-4 w-4 text-gray-500" />
+          ) : (
+            <ChevronUp className="h-4 w-4 text-gray-500" />
+          )}
+        </button>
+        
+        {!agentStatusCollapsed && (
+          <div className="px-3 pb-3 space-y-3">
+            {/* Data Gathering Agents */}
+            <div>
+              <h4 className="text-xs font-medium text-gray-700 mb-2">Data Gathering Agents</h4>
+              <div className="grid grid-cols-3 gap-1">
+                {dataGatheringAgents.map((agent) => (
+                  <AgentItem key={agent.id} agent={agent} />
+                ))}
+              </div>
+            </div>
+
+            {/* Processing & Verification */}
+            <div>
+              <h4 className="text-xs font-medium text-gray-700 mb-2">Processing & Verification</h4>
+              <div className="grid grid-cols-3 gap-1">
+                {processingAgents.map((agent) => (
+                  <AgentItem key={agent.id} agent={agent} />
+                ))}
+              </div>
             </div>
           </div>
-
-          <Separator />
-
-          {/* Processing Agents */}
-          <div>
-            <h3 className="text-sm font-semibold mb-3 text-gray-900">Processing & Verification</h3>
-            <div className="space-y-2">
-              {processingAgents.map((agent) => (
-                <AgentCard key={agent.id} agent={agent} />
-              ))}
-            </div>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Chat Messages */}
