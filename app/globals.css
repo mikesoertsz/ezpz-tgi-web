@@ -45,6 +45,17 @@
 
 :root {
   --radius: 0.625rem;
+  --color-brand-fg: #4450DC;
+  --color-brand-fg1: #F75463;
+  --color-brand-fg2: #9454DF;
+  --color-brand-fg3: #FF8C3C;
+  --color-brand-fg4: #4393A7;
+  --color-brand-bg1: #1F2123;
+  --brand-bgdark: #010101;
+  --brand-bglight: #FDF6EE;
+  --brand-bglight1: #F7F0E8;
+  --brand-bglight3: #F5ECE4;
+  --brand-p5: #000000;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
