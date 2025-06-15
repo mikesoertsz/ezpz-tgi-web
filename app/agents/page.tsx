@@ -1,5 +1,3 @@
-"use client"
-
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -26,7 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Bot, Play, Pause, Settings, Activity, Clock, CheckCircle, AlertCircle, User, Building2, DollarSign, Briefcase, Home, Scale, Globe, FileText, Shield, Database, Zap } from "lucide-react"
+import { Bot, Play, Pause, Settings, Activity, Clock, CheckCircle, AlertCircle, User, Building2, DollarSign, Briefcase, Home, Scale, Globe, FileText, Shield, Database, Zap, Image } from "lucide-react"
 import { AgentSettingsDialog } from "@/components/agent-settings-dialog"
 import { useState } from "react"
 
@@ -154,6 +152,18 @@ export default function AgentsPage() {
       icon: Database,
       category: "Data Processing",
       defaultPrompt: "You are a data structuring specialist focused on optimizing intelligence data quality and organization. Your key responsibilities are:\n\n1. Clean and normalize data from multiple intelligence sources\n2. Remove duplicate entries and false positive matches\n3. Standardize data formats and classification schemas\n4. Implement data quality controls and validation rules\n5. Structure data for optimal searchability and analysis\n6. Identify and resolve data conflicts and inconsistencies\n\nApply rigorous data quality standards and maintain detailed logs of all data processing activities. Ensure data integrity while maximizing usability for intelligence analysis."
+    },
+    {
+      id: 11,
+      name: "Image Collection Agent",
+      description: "Finds, downloads, and catalogs images related to targets and investigations",
+      status: "Active",
+      lastRun: "3 minutes ago",
+      successRate: 91,
+      tasksCompleted: 1247,
+      icon: Image,
+      category: "Digital Intelligence",
+      defaultPrompt: "You are a specialized image intelligence agent focused on visual data collection and analysis. Your primary responsibilities include:\n\n1. Search and identify relevant images across social media platforms, websites, and public databases\n2. Download and securely store images while maintaining metadata and source attribution\n3. Perform reverse image searches to find additional sources and contexts\n4. Analyze image metadata (EXIF data) for location, device, and timestamp information\n5. Catalog images by subject, location, date, and relevance to investigation\n6. Identify faces, objects, and locations within images using computer vision\n7. Cross-reference images with known databases and facial recognition systems\n\nEnsure all image collection complies with legal requirements and privacy regulations. Maintain detailed provenance records for all collected visual evidence. Focus on publicly available images and respect copyright restrictions."
     }
   ]
 
@@ -239,7 +249,7 @@ export default function AgentsPage() {
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">9</div>
+                <div className="text-2xl font-bold">10</div>
                 <p className="text-xs text-muted-foreground">
                   1 idle agent
                 </p>
@@ -251,9 +261,9 @@ export default function AgentsPage() {
                 <CheckCircle className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">347</div>
+                <div className="text-2xl font-bold">387</div>
                 <p className="text-xs text-muted-foreground">
-                  +65 from yesterday
+                  +85 from yesterday
                 </p>
               </CardContent>
             </Card>
@@ -263,9 +273,9 @@ export default function AgentsPage() {
                 <Bot className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">94%</div>
+                <div className="text-2xl font-bold">93%</div>
                 <p className="text-xs text-muted-foreground">
-                  +2% from last week
+                  +1% from last week
                 </p>
               </CardContent>
             </Card>
@@ -275,7 +285,7 @@ export default function AgentsPage() {
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">6.8GB</div>
+                <div className="text-2xl font-bold">8.4GB</div>
                 <p className="text-xs text-muted-foreground">
                   Last 24 hours
                 </p>
