@@ -36,6 +36,7 @@ import {
   Mail
 } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { generateReportPDF, sampleReportData } from "@/lib/pdf-generator"
 
 interface AccordionSectionProps {
   title: string
@@ -170,6 +171,20 @@ export function ReportDocument() {
     }, 3000)
   }
 
+  const handleDownloadPDF = () => {
+    // In a real application, you would gather the actual report data
+    // For now, we'll use the sample data structure
+    const reportData = {
+      ...sampleReportData,
+      targetName: 'Investigation Target', // This would come from the actual form/data
+      targetEmail: 'target@example.com', // This would come from the actual form/data
+      targetLinkedIn: 'linkedin.com/in/target', // This would come from the actual form/data
+      dateGenerated: new Date().toLocaleDateString(),
+    }
+    
+    generateReportPDF(reportData)
+  }
+
   const socialIcons = [
     { Icon: Twitter, active: true },
     { Icon: Linkedin, active: true },
@@ -224,7 +239,11 @@ export function ReportDocument() {
                   <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
                     <Lock size={16} className="text-gray-600" />
                   </button>
-                  <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+                  <button 
+                    onClick={handleDownloadPDF}
+                    className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                    title="Download PDF Report"
+                  >
                     <Download size={16} className="text-gray-600" />
                   </button>
                   <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
