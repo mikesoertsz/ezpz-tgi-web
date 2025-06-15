@@ -1,3 +1,5 @@
+"use client"
+
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -131,7 +133,15 @@ export default function AgentsPage() {
   }
 
   const handleSettingsClick = (agent: any) => {
-    setSelectedAgent(agent)
+    // Only pass the properties that AgentSettingsDialog expects
+    const filteredAgent = {
+      id: agent.id,
+      name: agent.name,
+      description: agent.description,
+      category: agent.category,
+      status: agent.status
+    }
+    setSelectedAgent(filteredAgent)
     setSettingsOpen(true)
   }
 
