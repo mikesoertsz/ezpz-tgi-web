@@ -1,20 +1,32 @@
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/breadcrumb";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Activity, FileText, FolderOpen, Users, Bot, Shield, TrendingUp } from "lucide-react"
+} from "@/components/ui/sidebar";
+import {
+  Activity,
+  Bot,
+  FileText,
+  FolderOpen,
+  Shield,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 
 export default function DashboardPage() {
   return (
@@ -41,7 +53,9 @@ export default function DashboardPage() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Reports</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Active Reports
+                </CardTitle>
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -53,7 +67,9 @@ export default function DashboardPage() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Total Projects
+                </CardTitle>
                 <FolderOpen className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -65,7 +81,9 @@ export default function DashboardPage() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Clients</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Active Clients
+                </CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -88,7 +106,7 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
           </div>
-          
+
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
             <Card className="col-span-4">
               <CardHeader>
@@ -108,7 +126,9 @@ export default function DashboardPage() {
                       High-risk indicators found in social media analysis
                     </p>
                   </div>
-                  <div className="text-xs text-muted-foreground">2 hours ago</div>
+                  <div className="text-xs text-muted-foreground">
+                    2 hours ago
+                  </div>
                 </div>
                 <div className="flex items-center space-x-4 rounded-md border p-4">
                   <Activity className="h-6 w-6 text-yellow-500" />
@@ -120,7 +140,9 @@ export default function DashboardPage() {
                       Medium-risk vulnerabilities identified
                     </p>
                   </div>
-                  <div className="text-xs text-muted-foreground">4 hours ago</div>
+                  <div className="text-xs text-muted-foreground">
+                    4 hours ago
+                  </div>
                 </div>
                 <div className="flex items-center space-x-4 rounded-md border p-4">
                   <TrendingUp className="h-6 w-6 text-green-500" />
@@ -132,11 +154,13 @@ export default function DashboardPage() {
                       Low-risk profile with positive indicators
                     </p>
                   </div>
-                  <div className="text-xs text-muted-foreground">6 hours ago</div>
+                  <div className="text-xs text-muted-foreground">
+                    6 hours ago
+                  </div>
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card className="col-span-3">
               <CardHeader>
                 <CardTitle>Agent Activity</CardTitle>
@@ -193,5 +217,5 @@ export default function DashboardPage() {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

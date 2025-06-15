@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "TGI Intelligence Platform",
-  description: "AI-powered threat intelligence and security assessment platform",
+  description:
+    "AI-powered threat intelligence and security assessment platform",
 };
 
 export default function RootLayout({
@@ -25,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased dark bg-brand-bgdark`}
       >
         {children}
       </body>

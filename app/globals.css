@@ -45,18 +45,18 @@
 
 :root {
   --radius: 0.625rem;
-  --color-brand-fg: #4450DC;
-  --color-brand-fg1: #F75463;
-  --color-brand-fg2: #9454DF;
-  --color-brand-fg3: #FF8C3C;
-  --color-brand-fg4: #4393A7;
-  --color-brand-bg1: #1F2123;
-  --brand-bgdark: #010101;
-  --brand-bglight: #FDF6EE;
-  --brand-bglight1: #F7F0E8;
-  --brand-bglight3: #F5ECE4;
+  --color-brand-fg: #4450dc;
+  --color-brand-fg1: #f75463;
+  --color-brand-fg2: #9454df;
+  --color-brand-fg3: #ff8c3c;
+  --color-brand-fg4: #4393a7;
+  --color-brand-bg1: #1f2123;
+  --color-brand-bgdark: #010101;
+  --brand-bglight: #fdf6ee;
+  --brand-bglight1: #f7f0e8;
+  --brand-bglight3: #f5ece4;
   --brand-p5: #000000;
-  
+
   /* Light mode for main content */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -81,7 +81,7 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  
+
   /* Dark sidebar */
   --sidebar: oklch(0.145 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
@@ -100,7 +100,7 @@
   body {
     @apply bg-background text-foreground;
   }
-  
+
   /* Force light mode for main content area */
   [data-slot="sidebar-inset"] {
     --background: oklch(1 0 0);
