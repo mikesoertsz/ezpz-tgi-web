@@ -2,16 +2,17 @@
 
 import * as React from "react";
 import {
-  BookOpen,
+  Shield,
+  Users,
+  FolderOpen,
+  FileText,
   Bot,
-  Command,
-  Frame,
-  LifeBuoy,
-  Map,
-  PieChart,
-  Send,
   Settings2,
-  SquareTerminal,
+  LifeBuoy,
+  Send,
+  Activity,
+  Search,
+  Building2,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -30,93 +31,113 @@ import {
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "TGI Analyst",
+    email: "analyst@tgi.com",
+    avatar: "/tgi-logo.jpg",
   },
   navMain: [
     {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: Activity,
       isActive: true,
+    },
+    {
+      title: "Reports",
+      url: "/reports",
+      icon: FileText,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "All Reports",
+          url: "/reports",
         },
         {
-          title: "Starred",
-          url: "#",
+          title: "Recent",
+          url: "/reports/recent",
         },
         {
-          title: "Settings",
-          url: "#",
+          title: "In Progress",
+          url: "/reports/in-progress",
+        },
+        {
+          title: "Archived",
+          url: "/reports/archived",
         },
       ],
     },
     {
-      title: "Models",
-      url: "#",
+      title: "Projects",
+      url: "/projects",
+      icon: FolderOpen,
+      items: [
+        {
+          title: "All Projects",
+          url: "/projects",
+        },
+        {
+          title: "Active",
+          url: "/projects/active",
+        },
+        {
+          title: "Completed",
+          url: "/projects/completed",
+        },
+      ],
+    },
+    {
+      title: "Clients",
+      url: "/clients",
+      icon: Building2,
+      items: [
+        {
+          title: "All Clients",
+          url: "/clients",
+        },
+        {
+          title: "Add Client",
+          url: "/clients/new",
+        },
+      ],
+    },
+    {
+      title: "AI Agents",
+      url: "/agents",
       icon: Bot,
       items: [
         {
-          title: "Genesis",
-          url: "#",
+          title: "Active Agents",
+          url: "/agents",
         },
         {
-          title: "Explorer",
-          url: "#",
+          title: "Agent Config",
+          url: "/agents/config",
         },
         {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
+          title: "Search History",
+          url: "/agents/history",
         },
       ],
     },
     {
       title: "Settings",
-      url: "#",
+      url: "/settings",
       icon: Settings2,
       items: [
         {
           title: "General",
-          url: "#",
+          url: "/settings",
         },
         {
-          title: "Team",
-          url: "#",
+          title: "Security",
+          url: "/settings/security",
         },
         {
-          title: "Billing",
-          url: "#",
+          title: "API Keys",
+          url: "/settings/api",
         },
         {
-          title: "Limits",
-          url: "#",
+          title: "Notifications",
+          url: "/settings/notifications",
         },
       ],
     },
@@ -124,30 +145,30 @@ const data = {
   navSecondary: [
     {
       title: "Support",
-      url: "#",
+      url: "/support",
       icon: LifeBuoy,
     },
     {
       title: "Feedback",
-      url: "#",
+      url: "/feedback",
       icon: Send,
     },
   ],
   projects: [
     {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
+      name: "Corporate Security Assessment",
+      url: "/projects/1",
+      icon: Shield,
     },
     {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
+      name: "Executive Background Check",
+      url: "/projects/2",
+      icon: Users,
     },
     {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      name: "Competitive Intelligence",
+      url: "/projects/3",
+      icon: Search,
     },
   ],
 };
@@ -159,13 +180,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#">
+              <a href="/dashboard">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Command className="size-4" />
+                  <Shield className="size-4" />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">TGI</span>
-                  <span className="truncate text-xs">AI Intelligence</span>
+                <div className="grid flex-1 text-left text-xs leading-tight">
+                  <span className="truncate font-semibold text-sm">TGI</span>
+                  <span className="truncate text-xs opacity-80">Intelligence Platform</span>
                 </div>
               </a>
             </SidebarMenuButton>
