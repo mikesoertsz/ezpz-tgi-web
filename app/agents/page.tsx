@@ -24,7 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Bot, Play, Pause, Settings, Activity, Clock, CheckCircle, AlertCircle, User, Building2, DollarSign, Briefcase, Home, Scale, Globe } from "lucide-react"
+import { Bot, Play, Pause, Settings, Activity, Clock, CheckCircle, AlertCircle, User, Building2, DollarSign, Briefcase, Home, Scale, Globe, FileText } from "lucide-react"
 
 export default function AgentsPage() {
   const agents = [
@@ -148,6 +148,25 @@ export default function AgentsPage() {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
+          <div className="ml-auto flex items-center gap-2 px-4">
+            <Button variant="outline" size="sm" title="Start All Agents">
+              <Play className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="sm" title="Pause All Agents">
+              <Pause className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="sm" title="Global Configuration">
+              <Settings className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="sm" title="View Logs">
+              <FileText className="h-4 w-4" />
+            </Button>
+            <Separator orientation="vertical" className="h-6" />
+            <Button>
+              <Settings className="h-4 w-4 mr-2" />
+              Agent Settings
+            </Button>
+          </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="flex items-center justify-between">
@@ -155,10 +174,6 @@ export default function AgentsPage() {
               <h1 className="text-2xl font-bold">AI Agent Management</h1>
               <p className="text-muted-foreground">Monitor and control your intelligence gathering agents</p>
             </div>
-            <Button>
-              <Settings className="h-4 w-4 mr-2" />
-              Agent Settings
-            </Button>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -297,31 +312,6 @@ export default function AgentsPage() {
                   })}
                 </TableBody>
               </Table>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Agent Controls</CardTitle>
-              <CardDescription>Manage all agents and system operations</CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-2 md:grid-cols-4">
-              <Button variant="outline" className="justify-start">
-                <Play className="h-4 w-4 mr-2" />
-                Start All
-              </Button>
-              <Button variant="outline" className="justify-start">
-                <Pause className="h-4 w-4 mr-2" />
-                Pause All
-              </Button>
-              <Button variant="outline" className="justify-start">
-                <Settings className="h-4 w-4 mr-2" />
-                Global Config
-              </Button>
-              <Button variant="outline" className="justify-start">
-                <Activity className="h-4 w-4 mr-2" />
-                View Logs
-              </Button>
             </CardContent>
           </Card>
         </div>
