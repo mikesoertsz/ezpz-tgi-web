@@ -54,27 +54,29 @@ export function NavMain({
                   <span className="text-sm">{item.title}</span>
                 </a>
               </SidebarMenuButton>
-              <div className="flex items-center">
-                {itemsWithCreateAction.includes(item.title) && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 w-6 p-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
-                    onClick={() => handleCreateNew(item.title)}
-                    title={`Create new ${item.title.slice(0, -1)}`}
-                  >
-                    <Plus className="h-3 w-3" />
-                  </Button>
-                )}
-                {item.items?.length ? (
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuAction className="data-[state=open]:rotate-90">
-                      <ChevronRight className="size-3" />
-                      <span className="sr-only">Toggle</span>
-                    </SidebarMenuAction>
-                  </CollapsibleTrigger>
-                ) : null}
-              </div>
+              {(itemsWithCreateAction.includes(item.title) || item.items?.length) && (
+                <div className="flex items-center">
+                  {itemsWithCreateAction.includes(item.title) && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+                      onClick={() => handleCreateNew(item.title)}
+                      title={`Create new ${item.title.slice(0, -1)}`}
+                    >
+                      <Plus className="h-3 w-3" />
+                    </Button>
+                  )}
+                  {item.items?.length ? (
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuAction className="data-[state=open]:rotate-90">
+                        <ChevronRight className="size-3" />
+                        <span className="sr-only">Toggle</span>
+                      </SidebarMenuAction>
+                    </CollapsibleTrigger>
+                  ) : null}
+                </div>
+              )}
               {item.items?.length ? (
                 <CollapsibleContent>
                   <SidebarMenuSub>
