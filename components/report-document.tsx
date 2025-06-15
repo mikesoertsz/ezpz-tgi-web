@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -49,6 +49,7 @@ interface AccordionSectionProps {
   onRefresh?: () => void
   isRefreshing?: boolean
   creditCost?: number
+  hasData?: boolean
 }
 
 function AccordionSection({ 
@@ -61,7 +62,8 @@ function AccordionSection({
   onApprovalToggle,
   onRefresh,
   isRefreshing = false,
-  creditCost = 2.5
+  creditCost = 2.5,
+  hasData = false
 }: AccordionSectionProps) {
   return (
     <div className="mb-3 bg-white border border-gray-200 rounded-lg">
@@ -72,6 +74,11 @@ function AccordionSection({
         <div className="flex items-center space-x-2">
           <Icon className="h-4 w-4 text-muted-foreground" />
           <h3 className="text-sm font-medium text-gray-900">{title}</h3>
+          {hasData && (
+            <Badge variant="secondary" className="text-xs">
+              Data Available
+            </Badge>
+          )}
         </div>
         {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
       </button>
@@ -138,7 +145,11 @@ function AccordionSection({
   )
 }
 
-export function ReportDocument() {
+interface ReportDocumentProps {
+  reportId?: string
+}
+
+export function ReportDocument({ reportId }: ReportDocumentProps) {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     personal: true,
     socialMedia: false,
@@ -151,6 +162,59 @@ export function ReportDocument() {
   
   const [approvedSections, setApprovedSections] = useState<Record<string, boolean>>({})
   const [refreshingSections, setRefreshingSections] = useState<Record<string, boolean>>({})
+
+  // Sample data for existing reports
+  const [reportData, setReportData] = useState<any>(null)
+
+  useEffect(() => {
+    if (reportId) {
+      // Simulate loading report data
+      const sampleData = {
+        1: {
+          targetName: "John Smith",
+          targetEmail: "john.smith@example.com",
+          targetLinkedIn: "linkedin.com/in/johnsmith",
+          caseNumber: "TGI-2024-001",
+          personal: {
+            hasData: true,
+            content: "John Smith, 45, Senior Executive at Acme Corporation. Born in New York, educated at Harvard Business School (MBA, 2003). Previously worked at Goldman Sachs and McKinsey & Company. Married to Sarah Smith, two children."
+          },
+          socialMedia: {
+            hasData: true,
+            content: "Active on LinkedIn (12.4K connections), Twitter (@johnsmith_exec, 8.2K followers). Posts frequently about business strategy and leadership. Recent activity shows increased engagement with cryptocurrency and fintech topics."
+          },
+          financial: {
+            hasData: true,
+            content: "Estimated net worth: $2.8M. Primary residence valued at $1.2M. Investment portfolio includes tech stocks, real estate, and cryptocurrency holdings. Annual salary approximately $350K plus bonuses."
+          },
+          property: {
+            hasData: true,
+            content: "Primary residence: 123 Oak Street, Manhattan, NY (valued at $1.2M). Vacation home in Hamptons (valued at $800K). Commercial property investment in Brooklyn."
+          },
+          online: {
+            hasData: true,
+            content: "Strong digital presence across professional networks. Maintains personal website and blog. Email communications show regular contact with industry leaders and potential business partners."
+          }
+        },
+        2: {
+          targetName: "Sarah Johnson",
+          targetEmail: "sarah.j@globaldynamics.com",
+          targetLinkedIn: "linkedin.com/in/sarahjohnson",
+          caseNumber: "TGI-2024-002",
+          personal: {
+            hasData: false,
+            content: null
+          },
+          socialMedia: {
+            hasData: true,
+            content: "Active social media presence with focus on professional networking. LinkedIn shows 5+ years at Global Dynamics with progressive career advancement."
+          }
+        }
+      }
+      
+      setReportData(sampleData[reportId as keyof typeof sampleData] || null)
+    }
+  }, [reportId])
 
   const toggleSection = (id: string) => {
     setOpenSections(prev => ({ ...prev, [id]: !prev[id] }))
@@ -172,17 +236,16 @@ export function ReportDocument() {
   }
 
   const handleDownloadPDF = () => {
-    // In a real application, you would gather the actual report data
-    // For now, we'll use the sample data structure
-    const reportData = {
+    const pdfData = {
       ...sampleReportData,
-      targetName: 'Investigation Target', // This would come from the actual form/data
-      targetEmail: 'target@example.com', // This would come from the actual form/data
-      targetLinkedIn: 'linkedin.com/in/target', // This would come from the actual form/data
+      targetName: reportData?.targetName || 'Investigation Target',
+      targetEmail: reportData?.targetEmail || 'target@example.com',
+      targetLinkedIn: reportData?.targetLinkedIn || 'linkedin.com/in/target',
+      caseNumber: reportData?.caseNumber || 'TGI-2024-001',
       dateGenerated: new Date().toLocaleDateString(),
     }
     
-    generateReportPDF(reportData)
+    generateReportPDF(pdfData)
   }
 
   const socialIcons = [
@@ -193,6 +256,10 @@ export function ReportDocument() {
     { Icon: Instagram, active: true },
     { Icon: Mail, active: true }
   ]
+
+  const targetName = reportData?.targetName || (reportId ? `Report Subject #${reportId}` : 'Investigation Target')
+  const targetEmail = reportData?.targetEmail || ''
+  const caseNumber = reportData?.caseNumber || `TGI-2024-${reportId?.padStart(3, '0') || '001'}`
 
   return (
     <div className="h-full">
@@ -212,7 +279,7 @@ export function ReportDocument() {
                 <Shield size={20} className="text-gray-400" />
                 <div>
                   <h1 className="text-sm font-medium text-gray-900">INTELLIGENCE BRIEFING</h1>
-                  <p className="text-xs text-gray-500">Case: TGI-2024-001</p>
+                  <p className="text-xs text-gray-500">Case: {caseNumber}</p>
                 </div>
               </div>
 
@@ -265,8 +332,15 @@ export function ReportDocument() {
           <div className="mb-6">
             <div className="flex gap-6 mb-6">
               <div className="flex-grow">
-                <h2 className="mb-2 text-lg font-medium text-gray-900">Investigation Target</h2>
-                <p className="text-sm text-gray-600 mb-2">Enter target information to begin intelligence gathering</p>
+                <h2 className="mb-2 text-lg font-medium text-gray-900">{targetName}</h2>
+                {targetEmail && (
+                  <p className="text-sm text-gray-600 mb-2">{targetEmail}</p>
+                )}
+                {reportId ? (
+                  <p className="text-sm text-gray-600 mb-2">Investigation in progress - {reportId ? '65%' : '0%'} complete</p>
+                ) : (
+                  <p className="text-sm text-gray-600 mb-2">Enter target information to begin intelligence gathering</p>
+                )}
                 <div className="flex gap-3 mb-2">
                   {socialIcons.map(({ Icon, active }, index) => (
                     <Icon 
@@ -278,7 +352,11 @@ export function ReportDocument() {
                 </div>
               </div>
               <div className="w-28 h-36 bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-center">
-                <User className="h-12 w-12 text-gray-400" />
+                {reportData?.targetImage ? (
+                  <img src={reportData.targetImage} alt="Subject" className="w-full h-full object-cover rounded-lg" />
+                ) : (
+                  <User className="h-12 w-12 text-gray-400" />
+                )}
               </div>
             </div>
 
@@ -293,10 +371,19 @@ export function ReportDocument() {
                 onRefresh={() => handleRefresh('personal')}
                 isRefreshing={refreshingSections.personal}
                 creditCost={2.1}
+                hasData={reportData?.personal?.hasData}
               >
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>Waiting for target information to begin analysis...</p>
-                  <p className="text-xs">This section will contain basic demographic information, education, and background details.</p>
+                <div className="space-y-2 text-sm">
+                  {reportData?.personal?.hasData ? (
+                    <p className="text-gray-900">{reportData.personal.content}</p>
+                  ) : (
+                    <>
+                      <p className="text-gray-600">
+                        {reportId ? 'Personal information analysis in progress...' : 'Waiting for target information to begin analysis...'}
+                      </p>
+                      <p className="text-xs text-gray-500">This section will contain basic demographic information, education, and background details.</p>
+                    </>
+                  )}
                 </div>
               </AccordionSection>
 
@@ -310,10 +397,19 @@ export function ReportDocument() {
                 onRefresh={() => handleRefresh('socialMedia')}
                 isRefreshing={refreshingSections.socialMedia}
                 creditCost={3.2}
+                hasData={reportData?.socialMedia?.hasData}
               >
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>Social media analysis will appear here...</p>
-                  <p className="text-xs">This section will analyze social media profiles, posts, connections, and digital behavior patterns.</p>
+                <div className="space-y-2 text-sm">
+                  {reportData?.socialMedia?.hasData ? (
+                    <p className="text-gray-900">{reportData.socialMedia.content}</p>
+                  ) : (
+                    <>
+                      <p className="text-gray-600">
+                        {reportId ? 'Social media analysis in progress...' : 'Social media analysis will appear here...'}
+                      </p>
+                      <p className="text-xs text-gray-500">This section will analyze social media profiles, posts, connections, and digital behavior patterns.</p>
+                    </>
+                  )}
                 </div>
               </AccordionSection>
 
@@ -327,10 +423,19 @@ export function ReportDocument() {
                 onRefresh={() => handleRefresh('financial')}
                 isRefreshing={refreshingSections.financial}
                 creditCost={4.1}
+                hasData={reportData?.financial?.hasData}
               >
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>Financial analysis pending...</p>
-                  <p className="text-xs">This section will contain information about assets, investments, income, and financial indicators.</p>
+                <div className="space-y-2 text-sm">
+                  {reportData?.financial?.hasData ? (
+                    <p className="text-gray-900">{reportData.financial.content}</p>
+                  ) : (
+                    <>
+                      <p className="text-gray-600">
+                        {reportId ? 'Financial analysis in progress...' : 'Financial analysis pending...'}
+                      </p>
+                      <p className="text-xs text-gray-500">This section will contain information about assets, investments, income, and financial indicators.</p>
+                    </>
+                  )}
                 </div>
               </AccordionSection>
 
@@ -344,10 +449,19 @@ export function ReportDocument() {
                 onRefresh={() => handleRefresh('business')}
                 isRefreshing={refreshingSections.business}
                 creditCost={2.8}
+                hasData={reportData?.business?.hasData}
               >
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>Business intelligence gathering...</p>
-                  <p className="text-xs">This section will detail corporate affiliations, business ventures, and professional networks.</p>
+                <div className="space-y-2 text-sm">
+                  {reportData?.business?.hasData ? (
+                    <p className="text-gray-900">{reportData.business.content}</p>
+                  ) : (
+                    <>
+                      <p className="text-gray-600">
+                        {reportId ? 'Business intelligence gathering...' : 'Business intelligence gathering...'}
+                      </p>
+                      <p className="text-xs text-gray-500">This section will detail corporate affiliations, business ventures, and professional networks.</p>
+                    </>
+                  )}
                 </div>
               </AccordionSection>
 
@@ -361,10 +475,19 @@ export function ReportDocument() {
                 onRefresh={() => handleRefresh('property')}
                 isRefreshing={refreshingSections.property}
                 creditCost={3.5}
+                hasData={reportData?.property?.hasData}
               >
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>Property research in progress...</p>
-                  <p className="text-xs">This section will show real estate ownership, property values, and asset holdings.</p>
+                <div className="space-y-2 text-sm">
+                  {reportData?.property?.hasData ? (
+                    <p className="text-gray-900">{reportData.property.content}</p>
+                  ) : (
+                    <>
+                      <p className="text-gray-600">
+                        {reportId ? 'Property research in progress...' : 'Property research in progress...'}
+                      </p>
+                      <p className="text-xs text-gray-500">This section will show real estate ownership, property values, and asset holdings.</p>
+                    </>
+                  )}
                 </div>
               </AccordionSection>
 
@@ -378,10 +501,19 @@ export function ReportDocument() {
                 onRefresh={() => handleRefresh('legal')}
                 isRefreshing={refreshingSections.legal}
                 creditCost={2.9}
+                hasData={reportData?.legal?.hasData}
               >
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>Legal records analysis...</p>
-                  <p className="text-xs">This section will contain court records, litigation history, and legal proceedings.</p>
+                <div className="space-y-2 text-sm">
+                  {reportData?.legal?.hasData ? (
+                    <p className="text-gray-900">{reportData.legal.content}</p>
+                  ) : (
+                    <>
+                      <p className="text-gray-600">
+                        {reportId ? 'Legal records analysis...' : 'Legal records analysis...'}
+                      </p>
+                      <p className="text-xs text-gray-500">This section will contain court records, litigation history, and legal proceedings.</p>
+                    </>
+                  )}
                 </div>
               </AccordionSection>
 
@@ -395,10 +527,19 @@ export function ReportDocument() {
                 onRefresh={() => handleRefresh('online')}
                 isRefreshing={refreshingSections.online}
                 creditCost={1.8}
+                hasData={reportData?.online?.hasData}
               >
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>Digital footprint mapping...</p>
-                  <p className="text-xs">This section will track online presence, digital activities, and web-based information.</p>
+                <div className="space-y-2 text-sm">
+                  {reportData?.online?.hasData ? (
+                    <p className="text-gray-900">{reportData.online.content}</p>
+                  ) : (
+                    <>
+                      <p className="text-gray-600">
+                        {reportId ? 'Digital footprint mapping...' : 'Digital footprint mapping...'}
+                      </p>
+                      <p className="text-xs text-gray-500">This section will track online presence, digital activities, and web-based information.</p>
+                    </>
+                  )}
                 </div>
               </AccordionSection>
             </div>

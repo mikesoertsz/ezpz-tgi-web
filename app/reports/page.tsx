@@ -52,8 +52,10 @@ import {
 } from "lucide-react"
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 export default function ReportsPage() {
+  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
   const [clientFilter, setClientFilter] = useState("all")
   const [projectFilter, setProjectFilter] = useState("all")
@@ -203,6 +205,28 @@ export default function ReportsPage() {
     return matchesSearch && matchesClient && matchesProject && matchesStatus && matchesRisk
   })
 
+  const handleRowClick = (reportId: number) => {
+    router.push(`/reports/${reportId}`)
+  }
+
+  const handleActionClick = (e: React.MouseEvent, action: string, reportId: number) => {
+    e.stopPropagation() // Prevent row click when clicking action buttons
+    
+    switch (action) {
+      case 'view':
+        router.push(`/reports/${reportId}`)
+        break
+      case 'download':
+        // Handle download logic
+        console.log(`Downloading report ${reportId}`)
+        break
+      case 'more':
+        // Handle more options
+        console.log(`More options for report ${reportId}`)
+        break
+    }
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -332,7 +356,11 @@ export default function ReportsPage() {
                 </TableHeader>
                 <TableBody>
                   {filteredReports.map((report) => (
-                    <TableRow key={report.id} className="hover:bg-muted/50">
+                    <TableRow 
+                      key={report.id} 
+                      className="hover:bg-muted/50 cursor-pointer transition-colors"
+                      onClick={() => handleRowClick(report.id)}
+                    >
                       <TableCell>
                         <div className="flex items-center space-x-2">
                           <FileText className="h-4 w-4 text-muted-foreground" />
@@ -392,13 +420,28 @@ export default function ReportsPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end space-x-1">
-                          <Button variant="ghost" size="sm">
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={(e) => handleActionClick(e, 'view', report.id)}
+                            title="View Report"
+                          >
                             <Eye className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="sm">
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={(e) => handleActionClick(e, 'download', report.id)}
+                            title="Download Report"
+                          >
                             <Download className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="sm">
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={(e) => handleActionClick(e, 'more', report.id)}
+                            title="More Options"
+                          >
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </div>
