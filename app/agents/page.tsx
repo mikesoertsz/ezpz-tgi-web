@@ -25,8 +25,13 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Bot, Play, Pause, Settings, Activity, Clock, CheckCircle, AlertCircle, User, Building2, DollarSign, Briefcase, Home, Scale, Globe, FileText } from "lucide-react"
+import { AgentSettingsDialog } from "@/components/agent-settings-dialog"
+import { useState } from "react"
 
 export default function AgentsPage() {
+  const [selectedAgent, setSelectedAgent] = useState<any>(null)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+
   const agents = [
     {
       id: 1,
@@ -123,6 +128,11 @@ export default function AgentsPage() {
       case 'Error': return 'destructive'
       default: return 'outline'
     }
+  }
+
+  const handleSettingsClick = (agent: any) => {
+    setSelectedAgent(agent)
+    setSettingsOpen(true)
   }
 
   return (
@@ -302,7 +312,11 @@ export default function AgentsPage() {
                                 Start
                               </Button>
                             )}
-                            <Button variant="ghost" size="sm">
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => handleSettingsClick(agent)}
+                            >
                               <Settings className="h-4 w-4" />
                             </Button>
                           </div>
@@ -315,6 +329,14 @@ export default function AgentsPage() {
             </CardContent>
           </Card>
         </div>
+
+        {selectedAgent && (
+          <AgentSettingsDialog
+            open={settingsOpen}
+            onOpenChange={setSettingsOpen}
+            agent={selectedAgent}
+          />
+        )}
       </SidebarInset>
     </SidebarProvider>
   )
