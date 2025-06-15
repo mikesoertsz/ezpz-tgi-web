@@ -1,3 +1,5 @@
+'use client'
+
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -17,9 +19,47 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { FileText, Plus, Search, MoreHorizontal, Shield, AlertTriangle, CheckCircle, Clock, User, Building2 } from "lucide-react"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { 
+  FileText, 
+  Plus, 
+  Search, 
+  Filter, 
+  Shield, 
+  AlertTriangle, 
+  CheckCircle, 
+  Clock, 
+  User, 
+  Building2,
+  Calendar,
+  Eye,
+  Download,
+  MoreHorizontal
+} from "lucide-react"
+import { useState } from "react"
+import Link from "next/link"
 
 export default function ReportsPage() {
+  const [searchTerm, setSearchTerm] = useState("")
+  const [clientFilter, setClientFilter] = useState("all")
+  const [projectFilter, setProjectFilter] = useState("all")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [riskFilter, setRiskFilter] = useState("all")
+
   const reports = [
     {
       id: 1,
@@ -32,7 +72,8 @@ export default function ReportsPage() {
       status: "Completed",
       riskLevel: "High",
       generated: "2024-01-25 14:30",
-      findings: 12
+      findings: 12,
+      type: "Background Check"
     },
     {
       id: 2,
@@ -45,7 +86,8 @@ export default function ReportsPage() {
       status: "In Progress",
       riskLevel: "Medium",
       generated: "2024-01-25 10:15",
-      findings: 8
+      findings: 8,
+      type: "Social Media Analysis"
     },
     {
       id: 3,
@@ -58,7 +100,8 @@ export default function ReportsPage() {
       status: "Completed",
       riskLevel: "Low",
       generated: "2024-01-24 16:45",
-      findings: 5
+      findings: 5,
+      type: "Corporate Intelligence"
     },
     {
       id: 4,
@@ -71,7 +114,36 @@ export default function ReportsPage() {
       status: "Processing",
       riskLevel: "Unknown",
       generated: "2024-01-25 09:00",
-      findings: 0
+      findings: 0,
+      type: "Threat Assessment"
+    },
+    {
+      id: 5,
+      title: "Financial Assets Analysis - Jennifer Davis",
+      project: "Due Diligence Review",
+      client: "Investment Partners LLC",
+      target: "Jennifer Davis",
+      targetEmail: "j.davis@example.com",
+      targetLinkedIn: "linkedin.com/in/jenniferdavis",
+      status: "Completed",
+      riskLevel: "Medium",
+      generated: "2024-01-23 11:20",
+      findings: 15,
+      type: "Financial Analysis"
+    },
+    {
+      id: 6,
+      title: "Property Holdings Investigation - Robert Wilson",
+      project: "Asset Verification",
+      client: "Legal Associates",
+      target: "Robert Wilson",
+      targetEmail: "r.wilson@example.com",
+      targetLinkedIn: "linkedin.com/in/robertwilson",
+      status: "In Progress",
+      riskLevel: "High",
+      generated: "2024-01-24 08:45",
+      findings: 7,
+      type: "Property Investigation"
     }
   ]
 
@@ -101,6 +173,35 @@ export default function ReportsPage() {
       default: return 'outline'
     }
   }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Completed': return 'default'
+      case 'In Progress': return 'secondary'
+      case 'Processing': return 'outline'
+      default: return 'secondary'
+    }
+  }
+
+  // Get unique values for filters
+  const uniqueClients = [...new Set(reports.map(r => r.client).filter(Boolean))]
+  const uniqueProjects = [...new Set(reports.map(r => r.project))]
+  const uniqueStatuses = [...new Set(reports.map(r => r.status))]
+  const uniqueRiskLevels = [...new Set(reports.map(r => r.riskLevel).filter(r => r !== 'Unknown'))]
+
+  // Filter reports based on search and filters
+  const filteredReports = reports.filter(report => {
+    const matchesSearch = report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         report.target.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         report.targetEmail.toLowerCase().includes(searchTerm.toLowerCase())
+    
+    const matchesClient = clientFilter === "all" || report.client === clientFilter
+    const matchesProject = projectFilter === "all" || report.project === projectFilter
+    const matchesStatus = statusFilter === "all" || report.status === statusFilter
+    const matchesRisk = riskFilter === "all" || report.riskLevel === riskFilter
+
+    return matchesSearch && matchesClient && matchesProject && matchesStatus && matchesRisk
+  })
 
   return (
     <SidebarProvider>
@@ -132,110 +233,208 @@ export default function ReportsPage() {
               <h1 className="text-2xl font-bold">Intelligence Reports</h1>
               <p className="text-muted-foreground">AI-generated threat analysis and security assessments</p>
             </div>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Generate Report
-            </Button>
+            <Link href="/reports/new">
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Generate Report
+              </Button>
+            </Link>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search reports..." className="pl-8" />
-            </div>
-          </div>
+          {/* Filters and Search */}
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center">
+                <div className="relative flex-1 max-w-sm">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input 
+                    placeholder="Search reports..." 
+                    className="pl-8"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  <Select value={clientFilter} onValueChange={setClientFilter}>
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue placeholder="Client" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Clients</SelectItem>
+                      {uniqueClients.map(client => (
+                        <SelectItem key={client} value={client}>{client}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  
+                  <Select value={projectFilter} onValueChange={setProjectFilter}>
+                    <SelectTrigger className="w-[160px]">
+                      <SelectValue placeholder="Project" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Projects</SelectItem>
+                      {uniqueProjects.map(project => (
+                        <SelectItem key={project} value={project}>{project}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-          <div className="grid gap-4">
-            {reports.map((report) => (
-              <Card key={report.id} className="hover:shadow-md transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-2">
-                      <FileText className="h-5 w-5 text-muted-foreground" />
-                      <CardTitle className="text-lg">{report.title}</CardTitle>
-                    </div>
-                    <Button variant="ghost" size="sm">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <div className="flex items-center space-x-2 flex-wrap">
-                    <Badge variant="outline" className="text-xs">
-                      {report.project}
-                    </Badge>
-                    {report.client && (
-                      <Badge variant="outline" className="text-xs">
-                        <Building2 className="h-3 w-3 mr-1" />
-                        {report.client}
-                      </Badge>
-                    )}
-                    <div className="flex items-center space-x-1">
-                      {getStatusIcon(report.status)}
-                      <span className="text-xs">{report.status}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      {getRiskIcon(report.riskLevel)}
-                      <Badge variant={getRiskColor(report.riskLevel)} className="text-xs">
-                        {report.riskLevel} Risk
-                      </Badge>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="bg-muted/50 p-3 rounded-md">
-                    <div className="text-sm font-medium mb-2">Target Information:</div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
-                      <div>
-                        <span className="text-muted-foreground">Name:</span>
-                        <div className="font-medium">{report.target}</div>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Email:</span>
-                        <div className="font-medium">{report.targetEmail}</div>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">LinkedIn:</span>
-                        <div className="font-medium truncate">{report.targetLinkedIn}</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center space-x-4">
-                      <div>
-                        <span className="text-muted-foreground">Generated:</span>
-                        <span className="font-medium ml-1">{report.generated}</span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Findings:</span>
-                        <span className="font-medium ml-1">{report.findings}</span>
-                      </div>
-                    </div>
-                    <Button variant="outline" size="sm">
-                      View Report
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-[120px]">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      {uniqueStatuses.map(status => (
+                        <SelectItem key={status} value={status}>{status}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
+                  <Select value={riskFilter} onValueChange={setRiskFilter}>
+                    <SelectTrigger className="w-[120px]">
+                      <SelectValue placeholder="Risk" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Risk</SelectItem>
+                      {uniqueRiskLevels.map(risk => (
+                        <SelectItem key={risk} value={risk}>{risk}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Reports Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Reports ({filteredReports.length})</CardTitle>
+              <CardDescription>
+                Comprehensive intelligence reports and security assessments
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Report</TableHead>
+                    <TableHead>Target</TableHead>
+                    <TableHead>Project</TableHead>
+                    <TableHead>Client</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Risk</TableHead>
+                    <TableHead>Generated</TableHead>
+                    <TableHead>Findings</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredReports.map((report) => (
+                    <TableRow key={report.id} className="hover:bg-muted/50">
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <FileText className="h-4 w-4 text-muted-foreground" />
+                          <div>
+                            <div className="font-medium">{report.title}</div>
+                            <div className="text-sm text-muted-foreground">{report.type}</div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{report.target}</div>
+                          <div className="text-sm text-muted-foreground">{report.targetEmail}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="text-xs">
+                          {report.project}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {report.client ? (
+                          <div className="flex items-center space-x-1">
+                            <Building2 className="h-3 w-3" />
+                            <span className="text-sm">{report.client}</span>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">Independent</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          {getStatusIcon(report.status)}
+                          <Badge variant={getStatusColor(report.status)} className="text-xs">
+                            {report.status}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          {getRiskIcon(report.riskLevel)}
+                          <Badge variant={getRiskColor(report.riskLevel)} className="text-xs">
+                            {report.riskLevel}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-1">
+                          <Calendar className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-sm">{report.generated}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="secondary" className="text-xs">
+                          {report.findings} findings
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end space-x-1">
+                          <Button variant="ghost" size="sm">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm">
+                            <Download className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          {/* Quick Actions */}
           <Card>
             <CardHeader>
               <CardTitle>Report Generation</CardTitle>
               <CardDescription>Create new intelligence reports using AI agents</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-2 md:grid-cols-3">
-              <Button variant="outline" className="justify-start">
-                <User className="h-4 w-4 mr-2" />
-                Person Analysis
-              </Button>
-              <Button variant="outline" className="justify-start">
-                <Building2 className="h-4 w-4 mr-2" />
-                Company Research
-              </Button>
-              <Button variant="outline" className="justify-start">
-                <Shield className="h-4 w-4 mr-2" />
-                Threat Assessment
-              </Button>
+              <Link href="/reports/new?type=person">
+                <Button variant="outline" className="justify-start w-full">
+                  <User className="h-4 w-4 mr-2" />
+                  Person Analysis
+                </Button>
+              </Link>
+              <Link href="/reports/new?type=company">
+                <Button variant="outline" className="justify-start w-full">
+                  <Building2 className="h-4 w-4 mr-2" />
+                  Company Research
+                </Button>
+              </Link>
+              <Link href="/reports/new?type=threat">
+                <Button variant="outline" className="justify-start w-full">
+                  <Shield className="h-4 w-4 mr-2" />
+                  Threat Assessment
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </div>
