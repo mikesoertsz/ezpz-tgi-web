@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -24,7 +24,9 @@ import {
   DollarSign,
   Home,
   Scale,
-  Image
+  Image,
+  CheckCircle2,
+  Loader2
 } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
@@ -39,9 +41,10 @@ interface Message {
 interface Agent {
   id: string
   name: string
-  status: 'active' | 'idle' | 'working'
+  status: 'idle' | 'running' | 'completed' | 'error'
   icon: any
   description: string
+  category: 'data-gathering' | 'processing'
 }
 
 export function ReportChat() {
@@ -57,63 +60,100 @@ export function ReportChat() {
   const [isGenerating, setIsGenerating] = useState(false)
 
   const agents: Agent[] = [
+    // Data Gathering Agents
     {
       id: 'personal',
-      name: 'Personal Info',
+      name: 'Personal Information',
       status: 'idle',
       icon: User,
-      description: 'Basic demographics and background'
+      description: 'Basic demographics and background',
+      category: 'data-gathering'
     },
     {
       id: 'social',
-      name: 'Social Media',
+      name: 'Social Media Intelligence',
       status: 'idle',
       icon: Globe,
-      description: 'Social media profiles and activity'
+      description: 'Social media profiles and activity',
+      category: 'data-gathering'
     },
     {
       id: 'financial',
-      name: 'Financial',
+      name: 'Financial Assets',
       status: 'idle',
       icon: DollarSign,
-      description: 'Financial records and assets'
+      description: 'Financial records and assets',
+      category: 'data-gathering'
     },
     {
       id: 'business',
-      name: 'Business',
+      name: 'Business Interests',
       status: 'idle',
       icon: Building2,
-      description: 'Corporate affiliations and ventures'
+      description: 'Corporate affiliations and ventures',
+      category: 'data-gathering'
     },
     {
       id: 'property',
-      name: 'Property',
+      name: 'Property Holdings',
       status: 'idle',
       icon: Home,
-      description: 'Real estate and property holdings'
+      description: 'Real estate and property holdings',
+      category: 'data-gathering'
     },
     {
       id: 'legal',
-      name: 'Legal',
+      name: 'Legal & Litigation',
       status: 'idle',
       icon: Scale,
-      description: 'Legal proceedings and litigation'
+      description: 'Legal proceedings and litigation',
+      category: 'data-gathering'
     },
     {
       id: 'online',
       name: 'Online Presence',
       status: 'idle',
       icon: Search,
-      description: 'Digital footprint and web presence'
+      description: 'Digital footprint and web presence',
+      category: 'data-gathering'
     },
+    // Processing Agents
     {
       id: 'images',
       name: 'Image Collection',
       status: 'idle',
       icon: Image,
-      description: 'Photos and visual evidence'
+      description: 'Photos and visual evidence gathering',
+      category: 'processing'
+    },
+    {
+      id: 'verifier',
+      name: 'Source Verifier',
+      status: 'idle',
+      icon: Shield,
+      description: 'Validates sources and prevents hallucination',
+      category: 'processing'
+    },
+    {
+      id: 'structurer',
+      name: 'Data Structuring',
+      status: 'idle',
+      icon: Database,
+      description: 'Cleans and organizes collected data',
+      category: 'processing'
+    },
+    {
+      id: 'reporter',
+      name: 'Report Generator',
+      status: 'idle',
+      icon: FileText,
+      description: 'Compiles final intelligence reports',
+      category: 'processing'
     }
   ]
+
+  const dataGatheringAgents = agents.filter(agent => agent.category === 'data-gathering')
+  const processingAgents = agents.filter(agent => agent.category === 'processing')
 
   const handleSendMessage = () => {
     if (!inputValue.trim()) return
@@ -142,19 +182,52 @@ export function ReportChat() {
     }, 1000)
   }
 
-  const getStatusColor = (status: string) => {
+  const getStatusIndicator = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-500'
-      case 'working': return 'bg-blue-500'
-      case 'idle': return 'bg-gray-400'
-      default: return 'bg-gray-400'
+      case 'running':
+        return <Loader2 className="h-3 w-3 animate-spin text-blue-500" />
+      case 'completed':
+        return <CheckCircle2 className="h-3 w-3 text-green-500" />
+      case 'error':
+        return <div className="w-3 h-3 rounded-full bg-red-500" />
+      default:
+        return <div className="w-3 h-3 rounded-full bg-gray-300" />
     }
   }
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'running': return 'text-blue-600'
+      case 'completed': return 'text-green-600'
+      case 'error': return 'text-red-600'
+      default: return 'text-gray-500'
+    }
+  }
+
+  const AgentCard = ({ agent }: { agent: Agent }) => {
+    const IconComponent = agent.icon
+    return (
+      <div className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors bg-white">
+        <div className="flex-shrink-0">
+          {getStatusIndicator(agent.status)}
+        </div>
+        <IconComponent className="h-4 w-4 text-gray-600 flex-shrink-0" />
+        <div className="flex-1 min-w-0">
+          <div className={`text-sm font-medium ${getStatusColor(agent.status)} truncate`}>
+            {agent.name}
+          </div>
+          <div className="text-xs text-gray-500 truncate">
+            {agent.description}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-gray-50">
       {/* Header */}
-      <div className="p-4 border-b border-border">
+      <div className="p-4 border-b border-border bg-white">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold">AI Intelligence Assistant</h2>
@@ -167,19 +240,29 @@ export function ReportChat() {
       </div>
 
       {/* Agent Status */}
-      <div className="p-4 border-b border-border">
-        <h3 className="text-sm font-medium mb-3">Active Agents</h3>
-        <div className="grid grid-cols-2 gap-2">
-          {agents.map((agent) => {
-            const IconComponent = agent.icon
-            return (
-              <div key={agent.id} className="flex items-center space-x-2 p-2 rounded-md hover:bg-muted/50">
-                <div className={`w-2 h-2 rounded-full ${getStatusColor(agent.status)}`} />
-                <IconComponent className="h-3 w-3 text-muted-foreground" />
-                <span className="text-xs font-medium truncate">{agent.name}</span>
-              </div>
-            )
-          })}
+      <div className="p-4 border-b border-border bg-white">
+        <div className="space-y-4">
+          {/* Data Gathering Agents */}
+          <div>
+            <h3 className="text-sm font-semibold mb-3 text-gray-900">Data Gathering Agents</h3>
+            <div className="space-y-2">
+              {dataGatheringAgents.map((agent) => (
+                <AgentCard key={agent.id} agent={agent} />
+              ))}
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Processing Agents */}
+          <div>
+            <h3 className="text-sm font-semibold mb-3 text-gray-900">Processing & Verification</h3>
+            <div className="space-y-2">
+              {processingAgents.map((agent) => (
+                <AgentCard key={agent.id} agent={agent} />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -193,7 +276,7 @@ export function ReportChat() {
                   ? 'bg-primary text-primary-foreground' 
                   : message.type === 'system'
                   ? 'bg-muted text-muted-foreground'
-                  : 'bg-muted'
+                  : 'bg-white border border-gray-200'
               }`}>
                 <div className="flex items-center space-x-2 mb-1">
                   {message.type === 'user' ? (
@@ -221,11 +304,11 @@ export function ReportChat() {
           ))}
           {isGenerating && (
             <div className="flex justify-start">
-              <div className="bg-muted rounded-lg p-3 max-w-[80%]">
+              <div className="bg-white border border-gray-200 rounded-lg p-3 max-w-[80%]">
                 <div className="flex items-center space-x-2">
                   <Bot className="h-3 w-3" />
                   <span className="text-xs font-medium">AI Assistant</span>
-                  <RefreshCw className="h-3 w-3 animate-spin" />
+                  <Loader2 className="h-3 w-3 animate-spin" />
                 </div>
                 <p className="text-sm mt-1">Thinking...</p>
               </div>
@@ -235,7 +318,7 @@ export function ReportChat() {
       </ScrollArea>
 
       {/* Input Area */}
-      <div className="p-4 border-t border-border">
+      <div className="p-4 border-t border-border bg-white">
         <div className="flex space-x-2">
           <Input
             value={inputValue}
@@ -243,6 +326,7 @@ export function ReportChat() {
             placeholder="Enter target name, email, or company to investigate..."
             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
             disabled={isGenerating}
+            className="bg-white"
           />
           <Button 
             onClick={handleSendMessage} 
@@ -252,7 +336,7 @@ export function ReportChat() {
             <Send className="h-4 w-4" />
           </Button>
         </div>
-        <div className="flex items-center justify-between mt-2">
+        <div className="flex items-center justify-between mt-3">
           <div className="flex space-x-2">
             <Button variant="outline" size="sm">
               <Play className="h-3 w-3 mr-1" />
@@ -264,7 +348,7 @@ export function ReportChat() {
             </Button>
           </div>
           <span className="text-xs text-muted-foreground">
-            8 agents ready
+            {agents.length} agents ready
           </span>
         </div>
       </div>
