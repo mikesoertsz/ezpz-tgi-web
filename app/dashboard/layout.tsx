@@ -28,7 +28,6 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
-  ChevronRight as ChevronRightIcon,
   Building2,
   FolderOpen,
   FileText,
@@ -165,7 +164,7 @@ export default function DashboardLayout({
                           {expandedClients.includes(client.id) ? (
                             <ChevronDown className="w-4 h-4" />
                           ) : (
-                            <ChevronRightIcon className="w-4 h-4" />
+                            <ChevronRight className="w-4 h-4" />
                           )}
                           <Building2 className="w-4 h-4" />
                           <span className="truncate">{client.name}</span>
@@ -297,7 +296,7 @@ export default function DashboardLayout({
                             {expandedClients.includes(client.id) ? (
                               <ChevronDown className="w-4 h-4" />
                             ) : (
-                              <ChevronRightIcon className="w-4 h-4" />
+                              <ChevronRight className="w-4 h-4" />
                             )}
                             <Building2 className="w-4 h-4" />
                             <span className="truncate">{client.name}</span>
