@@ -295,599 +295,603 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
     const isBibliographyOpen = bibliographyOpen[sectionId]
 
     return (
-      <Card className="mb-3">
-        <CardHeader 
-          className="pb-3 cursor-pointer hover:bg-gray-50 transition-colors"
+      <div className="mb-3 bg-white border border-gray-200 rounded-lg">
+        <button
           onClick={() => toggleSection(sectionId)}
+          className="flex items-center justify-between w-full p-4 transition-colors hover:bg-gray-50"
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Icon className="h-4 w-4 text-muted-foreground" />
-              <CardTitle className="text-sm font-medium">{title}</CardTitle>
-              {section?.hasData && (
-                <Badge variant="secondary" className="text-xs">Data Available</Badge>
-              )}
-            </div>
-            {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          <div className="flex items-center space-x-2">
+            <Icon className="h-4 w-4 text-muted-foreground" />
+            <h3 className="text-sm font-medium text-gray-900">{title}</h3>
+            {section?.hasData && (
+              <Badge variant="secondary" className="text-xs">Data Available</Badge>
+            )}
           </div>
-        </CardHeader>
+          {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+        </button>
         
-        <Collapsible open={isOpen}>
-          <CollapsibleContent>
-            <CardContent className="pt-0">
+        {isOpen && (
+          <div className="px-4 pb-4">
+            <div className="mb-3">
               {children}
+            </div>
 
-              {/* Bibliography Section */}
-              {bibliography.length > 0 && (
-                <div className="border-t border-gray-100 pt-3 mt-3">
-                  <button
-                    onClick={() => setBibliographyOpen(prev => ({ ...prev, [sectionId]: !prev[sectionId] }))}
-                    className="flex items-center space-x-2 text-xs text-gray-600 hover:text-gray-800 transition-colors"
-                  >
-                    <span>Bibliography</span>
-                    {isBibliographyOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                  </button>
-                  
-                  {isBibliographyOpen && (
-                    <div className="mt-2 space-y-1">
-                      {bibliography.map((item) => (
-                        <div
-                          key={item.id}
-                          className="text-xs p-2 rounded bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
-                          onClick={() => item.url && window.open(item.url, '_blank')}
-                        >
-                          <span className="text-gray-700">{item.source}</span>
-                          {item.url && (
-                            <ExternalLink className="inline w-3 h-3 ml-1 text-blue-600" />
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Footer with action buttons */}
-              <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-                <div className="flex items-center space-x-2">
-                  <div className="flex items-center space-x-1">
-                    <button
-                      onClick={() => handleRefresh(sectionId)}
-                      disabled={isRefreshing}
-                      className={`p-1.5 rounded-md transition-all duration-300 ${
-                        isRefreshing 
-                          ? 'bg-green-100 text-green-600 cursor-not-allowed' 
-                          : 'hover:bg-gray-100 text-gray-600'
-                      }`}
-                      title="Refresh"
-                    >
-                      <RefreshCw 
-                        size={14} 
-                        className={`${isRefreshing ? 'animate-spin text-green-600' : 'text-gray-600'} transition-colors duration-300`} 
-                      />
-                    </button>
-                    <div className="flex items-center space-x-1 bg-gray-100 px-2 py-1 rounded-md">
-                      <Coins size={10} className="text-gray-500" />
-                      <span className="text-xs text-gray-600 font-medium">{creditCost}</span>
-                    </div>
+            {/* Bibliography Section */}
+            {bibliography.length > 0 && (
+              <div className="border-t border-gray-100 pt-3 mb-3">
+                <button
+                  onClick={() => setBibliographyOpen(prev => ({ ...prev, [sectionId]: !prev[sectionId] }))}
+                  className="flex items-center space-x-2 text-xs text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  <span>Bibliography</span>
+                  {isBibliographyOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                </button>
+                
+                {isBibliographyOpen && (
+                  <div className="mt-2 space-y-1">
+                    {bibliography.map((item) => (
+                      <div
+                        key={item.id}
+                        className="text-xs p-2 rounded bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                        onClick={() => item.url && window.open(item.url, '_blank')}
+                      >
+                        <span className="text-gray-700">{item.source}</span>
+                        {item.url && (
+                          <ExternalLink className="inline w-3 h-3 ml-1 text-blue-600" />
+                        )}
+                      </div>
+                    ))}
                   </div>
+                )}
+              </div>
+            )}
+
+            {/* Footer with action buttons */}
+            <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
                   <button
-                    onClick={() => {/* Copy functionality */}}
-                    className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
-                    title="Copy"
-                  >
-                    <Copy size={14} className="text-gray-600" />
-                  </button>
-                  <button
-                    onClick={() => {/* Clear functionality */}}
-                    className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
-                    title="Clear"
-                  >
-                    <Trash2 size={14} className="text-gray-600" />
-                  </button>
-                  <button
-                    onClick={() => handleEdit(sectionId)}
-                    className={`p-1.5 rounded-md transition-colors ${
-                      isEditing 
-                        ? 'bg-blue-100 text-blue-600' 
+                    onClick={() => handleRefresh(sectionId)}
+                    disabled={isRefreshing}
+                    className={`p-1.5 rounded-md transition-all duration-300 ${
+                      isRefreshing 
+                        ? 'bg-green-100 text-green-600 cursor-not-allowed' 
                         : 'hover:bg-gray-100 text-gray-600'
                     }`}
-                    title={isEditing ? "Exit Edit Mode" : "Edit"}
+                    title="Refresh"
                   >
-                    <Edit size={14} className={isEditing ? 'text-blue-600' : 'text-gray-600'} />
+                    <RefreshCw 
+                      size={14} 
+                      className={`${isRefreshing ? 'animate-spin text-green-600' : 'text-gray-600'} transition-colors duration-300`} 
+                    />
                   </button>
+                  <div className="flex items-center space-x-1 bg-gray-100 px-2 py-1 rounded-md">
+                    <Coins size={10} className="text-gray-500" />
+                    <span className="text-xs text-gray-600 font-medium">{creditCost}</span>
+                  </div>
                 </div>
-
                 <button
-                  onClick={() => handleApprovalToggle(sectionId)}
-                  className={`p-1.5 rounded-md transition-colors ${
-                    isApproved 
-                      ? 'hover:bg-green-50 text-green-600' 
-                      : 'hover:bg-gray-100 text-gray-400'
-                  }`}
-                  title={isApproved ? "Content Approved" : "Approve Content"}
+                  onClick={() => {/* Copy functionality */}}
+                  className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
+                  title="Copy"
                 >
-                  {isApproved ? (
-                    <CheckCircle size={14} className="text-green-600" />
-                  ) : (
-                    <Circle size={14} className="text-gray-400" />
-                  )}
+                  <Copy size={14} className="text-gray-600" />
+                </button>
+                <button
+                  onClick={() => {/* Clear functionality */}}
+                  className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
+                  title="Clear"
+                >
+                  <Trash2 size={14} className="text-gray-600" />
+                </button>
+                <button
+                  onClick={() => handleEdit(sectionId)}
+                  className={`p-1.5 rounded-md transition-colors ${
+                    isEditing 
+                      ? 'bg-blue-100 text-blue-600' 
+                      : 'hover:bg-gray-100 text-gray-600'
+                  }`}
+                  title={isEditing ? "Exit Edit Mode" : "Edit"}
+                >
+                  <Edit size={14} className={isEditing ? 'text-blue-600' : 'text-gray-600'} />
                 </button>
               </div>
-            </CardContent>
-          </CollapsibleContent>
-        </Collapsible>
-      </Card>
+
+              <button
+                onClick={() => handleApprovalToggle(sectionId)}
+                className={`p-1.5 rounded-md transition-colors ${
+                  isApproved 
+                    ? 'hover:bg-green-50 text-green-600' 
+                    : 'hover:bg-gray-100 text-gray-400'
+                }`}
+                title={isApproved ? "Content Approved" : "Approve Content"}
+              >
+                {isApproved ? (
+                  <CheckCircle size={14} className="text-green-600" />
+                ) : (
+                  <Circle size={14} className="text-gray-400" />
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     )
   }
 
   return (
     <ScrollArea className="h-full">
-      <div className="relative z-10 p-6">
+      <div className="bg-white rounded-lg shadow-sm">
         {/* Watermark */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] select-none z-0">
           <div className="transform rotate-45 text-black text-9xl font-bold">
             CLASSIFIED
           </div>
         </div>
+        
+        {/* Content */}
+        <div className="relative z-10 p-6">
+          {/* Header */}
+          <div className="mb-6 border-b border-gray-200 pb-4">
+            <div className="flex justify-between items-start">
+              <div className="flex items-center space-x-3">
+                <Shield size={20} className="text-gray-400" />
+                <div>
+                  <h1 className="text-sm font-medium text-gray-900">INTELLIGENCE BRIEFING</h1>
+                  <p className="text-xs text-gray-500">Case: {reportData.caseNumber}</p>
+                </div>
+              </div>
 
-        {/* Header */}
-        <div className="mb-6 border-b border-gray-200 pb-4">
-          <div className="flex justify-between items-start">
-            <div className="flex items-center space-x-3">
-              <Shield size={20} className="text-gray-400" />
-              <div>
-                <h1 className="text-sm font-medium text-gray-900">INTELLIGENCE BRIEFING</h1>
-                <p className="text-xs text-gray-500">Case: {reportData.caseNumber}</p>
+              <div className="flex items-center space-x-6">
+                {/* Collaborators */}
+                <div className="flex -space-x-2">
+                  <div className="w-6 h-6 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center">
+                    <span className="text-xs">A</span>
+                  </div>
+                  <div className="w-6 h-6 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center">
+                    <span className="text-xs">B</span>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center space-x-2">
+                  <Button variant="ghost" size="sm">
+                    <Share2 size={16} className="text-gray-600" />
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    <Lock size={16} className="text-gray-600" />
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={handleDownloadPDF}>
+                    <Download size={16} className="text-gray-600" />
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    <Settings size={16} className="text-gray-600" />
+                  </Button>
+                </div>
+
+                <div className="text-right">
+                  <div className="inline-block bg-red-50 text-red-700 px-2 py-0.5 text-xs font-medium rounded">
+                    {reportData.classification}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {new Date(reportData.dateGenerated).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
             </div>
+          </div>
 
-            <div className="flex items-center space-x-6">
-              {/* Collaborators */}
-              <div className="flex -space-x-2">
-                <div className="w-6 h-6 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center">
-                  <span className="text-xs">A</span>
+          {/* Subject Information */}
+          <div className="mb-6">
+            <div className="flex gap-6 mb-6">
+              <div className="flex-grow">
+                <h2 className="mb-2 text-lg font-medium text-gray-900">{reportData.targetName}</h2>
+                <div className="flex gap-3 mb-2">
+                  <Twitter size={16} className="text-gray-700" />
+                  <Linkedin size={16} className="text-gray-700" />
+                  <Facebook size={16} className="text-gray-300" />
+                  <Instagram size={16} className="text-gray-700" />
+                  <Globe size={16} className="text-gray-700" />
                 </div>
-                <div className="w-6 h-6 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center">
-                  <span className="text-xs">B</span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="sm">
-                  <Share2 size={16} className="text-gray-600" />
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <Lock size={16} className="text-gray-600" />
-                </Button>
-                <Button variant="ghost" size="sm" onClick={handleDownloadPDF}>
-                  <Download size={16} className="text-gray-600" />
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <Settings size={16} className="text-gray-600" />
-                </Button>
-              </div>
-
-              <div className="text-right">
-                <div className="inline-block bg-red-50 text-red-700 px-2 py-0.5 text-xs font-medium rounded">
-                  {reportData.classification}
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  {new Date(reportData.dateGenerated).toLocaleDateString()}
+                <p className="text-sm text-gray-600">
+                  Investigation in progress - {reportData.overallProgress}% complete
                 </p>
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Subject Information */}
-        <div className="mb-6">
-          <div className="flex gap-6 mb-6">
-            <div className="flex-grow">
-              <h2 className="mb-2 text-lg font-medium text-gray-900">{reportData.targetName}</h2>
-              <div className="flex gap-3 mb-2">
-                <Twitter size={16} className="text-gray-700" />
-                <Linkedin size={16} className="text-gray-700" />
-                <Facebook size={16} className="text-gray-300" />
-                <Instagram size={16} className="text-gray-700" />
-                <Globe size={16} className="text-gray-700" />
+              <div className="w-28 h-36 bg-gray-200 rounded-lg border border-gray-200 flex items-center justify-center">
+                <User className="h-12 w-12 text-gray-400" />
               </div>
-              <p className="text-sm text-gray-600">
-                Investigation in progress - {reportData.overallProgress}% complete
-              </p>
             </div>
-            <div className="w-28 h-36 bg-gray-200 rounded-lg border border-gray-200 flex items-center justify-center">
-              <User className="h-12 w-12 text-gray-400" />
-            </div>
-          </div>
 
-          {/* Report Sections */}
-          <div className="space-y-3">
-            {/* Personal Information */}
-            <AccordionSection sectionId="personal" title="Personal Information" icon={User} creditCost={2.1}>
-              <div className="space-y-2 text-sm">
-                <div className="grid grid-cols-2 gap-4">
+            {/* Report Sections */}
+            <div className="space-y-3">
+              {/* Personal Information */}
+              <AccordionSection sectionId="personal" title="Personal Information" icon={User} creditCost={2.1}>
+                <div className="space-y-2 text-sm">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-gray-600 flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        DOB:
+                      </span>
+                      <EditableText
+                        value={reportData.personalInformation.dob}
+                        isEditing={editingSections.personal}
+                        onSave={(value) => handleSaveField('personal', 'dob', value)}
+                        className="font-medium"
+                      />
+                    </div>
+                    <div>
+                      <span className="text-gray-600 flex items-center gap-1">
+                        <MapPin className="h-3 w-3" />
+                        Nationality:
+                      </span>
+                      <EditableText
+                        value={reportData.personalInformation.nationality}
+                        isEditing={editingSections.personal}
+                        onSave={(value) => handleSaveField('personal', 'nationality', value)}
+                        className="font-medium"
+                      />
+                    </div>
+                  </div>
                   <div>
                     <span className="text-gray-600 flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      DOB:
+                      <Users className="h-3 w-3" />
+                      Known Aliases:
                     </span>
                     <EditableText
-                      value={reportData.personalInformation.dob}
+                      value={reportData.personalInformation.aliases.join(", ")}
                       isEditing={editingSections.personal}
-                      onSave={(value) => handleSaveField('personal', 'dob', value)}
+                      onSave={(value) => handleSaveField('personal', 'aliases', value.split(", ").filter(Boolean))}
                       className="font-medium"
                     />
                   </div>
                   <div>
                     <span className="text-gray-600 flex items-center gap-1">
                       <MapPin className="h-3 w-3" />
-                      Nationality:
+                      Current Location:
                     </span>
                     <EditableText
-                      value={reportData.personalInformation.nationality}
+                      value={reportData.personalInformation.currentLocation}
                       isEditing={editingSections.personal}
-                      onSave={(value) => handleSaveField('personal', 'nationality', value)}
+                      onSave={(value) => handleSaveField('personal', 'currentLocation', value)}
+                      className="font-medium"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-gray-600 flex items-center gap-1">
+                      <GraduationCap className="h-3 w-3" />
+                      Education:
+                    </span>
+                    <EditableText
+                      value={reportData.personalInformation.education}
+                      isEditing={editingSections.personal}
+                      onSave={(value) => handleSaveField('personal', 'education', value)}
+                      className="font-medium"
+                      multiline
+                    />
+                  </div>
+                  <div>
+                    <span className="text-gray-600 flex items-center gap-1">
+                      <Languages className="h-3 w-3" />
+                      Languages:
+                    </span>
+                    <EditableText
+                      value={reportData.personalInformation.languages.join(", ")}
+                      isEditing={editingSections.personal}
+                      onSave={(value) => handleSaveField('personal', 'languages', value.split(", ").filter(Boolean))}
                       className="font-medium"
                     />
                   </div>
                 </div>
-                <div>
-                  <span className="text-gray-600 flex items-center gap-1">
-                    <Users className="h-3 w-3" />
-                    Known Aliases:
-                  </span>
-                  <EditableText
-                    value={reportData.personalInformation.aliases.join(", ")}
-                    isEditing={editingSections.personal}
-                    onSave={(value) => handleSaveField('personal', 'aliases', value.split(", ").filter(Boolean))}
-                    className="font-medium"
-                  />
-                </div>
-                <div>
-                  <span className="text-gray-600 flex items-center gap-1">
-                    <MapPin className="h-3 w-3" />
-                    Current Location:
-                  </span>
-                  <EditableText
-                    value={reportData.personalInformation.currentLocation}
-                    isEditing={editingSections.personal}
-                    onSave={(value) => handleSaveField('personal', 'currentLocation', value)}
-                    className="font-medium"
-                  />
-                </div>
-                <div>
-                  <span className="text-gray-600 flex items-center gap-1">
-                    <GraduationCap className="h-3 w-3" />
-                    Education:
-                  </span>
-                  <EditableText
-                    value={reportData.personalInformation.education}
-                    isEditing={editingSections.personal}
-                    onSave={(value) => handleSaveField('personal', 'education', value)}
-                    className="font-medium"
-                    multiline
-                  />
-                </div>
-                <div>
-                  <span className="text-gray-600 flex items-center gap-1">
-                    <Languages className="h-3 w-3" />
-                    Languages:
-                  </span>
-                  <EditableText
-                    value={reportData.personalInformation.languages.join(", ")}
-                    isEditing={editingSections.personal}
-                    onSave={(value) => handleSaveField('personal', 'languages', value.split(", ").filter(Boolean))}
-                    className="font-medium"
-                  />
-                </div>
-              </div>
-            </AccordionSection>
+              </AccordionSection>
 
-            {/* Social Media Intelligence */}
-            <AccordionSection sectionId="social" title="Social Media Intelligence" icon={Globe} creditCost={3.2}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {reportData.socialMediaProfiles.length > 0 ? (
-                  reportData.socialMediaProfiles.map((profile, index) => {
-                    const IconComponent = getSocialIcon(profile.platform)
-                    return (
-                      <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center space-x-2">
-                            <IconComponent size={20} className="text-gray-700" />
-                            <span className="font-medium text-gray-900">{profile.platform}</span>
-                          </div>
-                          {profile.verified && (
-                            <div className="w-2 h-2 bg-blue-500 rounded-full" title="Verified Account" />
-                          )}
-                        </div>
-                        
-                        <div className="space-y-2 text-sm">
-                          <div className="flex items-center justify-between">
-                            <span className="text-gray-600">Handle:</span>
-                            <a 
-                              href={profile.url || '#'}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-800 flex items-center space-x-1 transition-colors"
-                            >
-                              <span>{formatDisplayValue(profile.handle)}</span>
-                              {profile.url && <ExternalLink size={12} />}
-                            </a>
-                          </div>
-                          
-                          <div className="flex items-center justify-between">
-                            <span className="text-gray-600">Followers:</span>
-                            <span className="font-medium text-gray-900">{formatDisplayValue(profile.followers)}</span>
-                          </div>
-                          
-                          <div className="flex items-center justify-between">
-                            <span className="text-gray-600">Last Active:</span>
-                            <span className="text-gray-700">{formatDisplayValue(profile.lastActive)}</span>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })
-                ) : (
-                  <div className="col-span-2 text-center py-8 text-gray-500">
-                    No social media profiles found
-                  </div>
-                )}
-              </div>
-            </AccordionSection>
-
-            {/* Financial Assets */}
-            <AccordionSection sectionId="financial" title="Financial Assets" icon={DollarSign} creditCost={4.1}>
-              <div className="space-y-3 text-sm">
+              {/* Social Media Intelligence */}
+              <AccordionSection sectionId="social" title="Social Media Intelligence" icon={Globe} creditCost={3.2}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {reportData.socialMediaProfiles.length > 0 ? (
+                    reportData.socialMediaProfiles.map((profile, index) => {
+                      const IconComponent = getSocialIcon(profile.platform)
+                      return (
+                        <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center space-x-2">
+                              <IconComponent size={20} className="text-gray-700" />
+                              <span className="font-medium text-gray-900">{profile.platform}</span>
+                            </div>
+                            {profile.verified && (
+                              <div className="w-2 h-2 bg-blue-500 rounded-full" title="Verified Account" />
+                            )}
+                          </div>
+                          
+                          <div className="space-y-2 text-sm">
+                            <div className="flex items-center justify-between">
+                              <span className="text-gray-600">Handle:</span>
+                              <a 
+                                href={profile.url || '#'}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 flex items-center space-x-1 transition-colors"
+                              >
+                                <span>{formatDisplayValue(profile.handle)}</span>
+                                {profile.url && <ExternalLink size={12} />}
+                              </a>
+                            </div>
+                            
+                            <div className="flex items-center justify-between">
+                              <span className="text-gray-600">Followers:</span>
+                              <span className="font-medium text-gray-900">{formatDisplayValue(profile.followers)}</span>
+                            </div>
+                            
+                            <div className="flex items-center justify-between">
+                              <span className="text-gray-600">Last Active:</span>
+                              <span className="text-gray-700">{formatDisplayValue(profile.lastActive)}</span>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })
+                  ) : (
+                    <div className="col-span-2 text-center py-8 text-gray-500">
+                      No social media profiles found
+                    </div>
+                  )}
+                </div>
+              </AccordionSection>
+
+              {/* Financial Assets */}
+              <AccordionSection sectionId="financial" title="Financial Assets" icon={DollarSign} creditCost={4.1}>
+                <div className="space-y-3 text-sm">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-gray-600">Net Worth:</span>
+                      <div className="font-medium">
+                        <EditableText
+                          value={reportData.financialAssets.netWorth}
+                          isEditing={editingSections.financial}
+                          onSave={(value) => handleSaveField('financial', 'netWorth', value)}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Annual Income:</span>
+                      <div className="font-medium">
+                        <EditableText
+                          value={reportData.financialAssets.annualIncome}
+                          isEditing={editingSections.financial}
+                          onSave={(value) => handleSaveField('financial', 'annualIncome', value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
                   <div>
-                    <span className="text-gray-600">Net Worth:</span>
+                    <span className="text-gray-600">Bank Accounts:</span>
                     <div className="font-medium">
                       <EditableText
-                        value={reportData.financialAssets.netWorth}
+                        value={reportData.financialAssets.bankAccounts}
                         isEditing={editingSections.financial}
-                        onSave={(value) => handleSaveField('financial', 'netWorth', value)}
+                        onSave={(value) => handleSaveField('financial', 'bankAccounts', value)}
+                        multiline
                       />
                     </div>
                   </div>
                   <div>
-                    <span className="text-gray-600">Annual Income:</span>
+                    <span className="text-gray-600">Investments:</span>
                     <div className="font-medium">
                       <EditableText
-                        value={reportData.financialAssets.annualIncome}
+                        value={reportData.financialAssets.investments}
                         isEditing={editingSections.financial}
-                        onSave={(value) => handleSaveField('financial', 'annualIncome', value)}
+                        onSave={(value) => handleSaveField('financial', 'investments', value)}
+                        multiline
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Crypto Holdings:</span>
+                    <div className="font-medium">
+                      <EditableText
+                        value={reportData.financialAssets.cryptoHoldings}
+                        isEditing={editingSections.financial}
+                        onSave={(value) => handleSaveField('financial', 'cryptoHoldings', value)}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Offshore Accounts:</span>
+                    <div className="font-medium">
+                      <EditableText
+                        value={reportData.financialAssets.offshoreAccounts}
+                        isEditing={editingSections.financial}
+                        onSave={(value) => handleSaveField('financial', 'offshoreAccounts', value)}
                       />
                     </div>
                   </div>
                 </div>
-                <div>
-                  <span className="text-gray-600">Bank Accounts:</span>
-                  <div className="font-medium">
-                    <EditableText
-                      value={reportData.financialAssets.bankAccounts}
-                      isEditing={editingSections.financial}
-                      onSave={(value) => handleSaveField('financial', 'bankAccounts', value)}
-                      multiline
-                    />
-                  </div>
-                </div>
-                <div>
-                  <span className="text-gray-600">Investments:</span>
-                  <div className="font-medium">
-                    <EditableText
-                      value={reportData.financialAssets.investments}
-                      isEditing={editingSections.financial}
-                      onSave={(value) => handleSaveField('financial', 'investments', value)}
-                      multiline
-                    />
-                  </div>
-                </div>
-                <div>
-                  <span className="text-gray-600">Crypto Holdings:</span>
-                  <div className="font-medium">
-                    <EditableText
-                      value={reportData.financialAssets.cryptoHoldings}
-                      isEditing={editingSections.financial}
-                      onSave={(value) => handleSaveField('financial', 'cryptoHoldings', value)}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <span className="text-gray-600">Offshore Accounts:</span>
-                  <div className="font-medium">
-                    <EditableText
-                      value={reportData.financialAssets.offshoreAccounts}
-                      isEditing={editingSections.financial}
-                      onSave={(value) => handleSaveField('financial', 'offshoreAccounts', value)}
-                    />
-                  </div>
-                </div>
-              </div>
-            </AccordionSection>
+              </AccordionSection>
 
-            {/* Business Interests */}
-            <AccordionSection sectionId="business" title="Business Interests" icon={Building2} creditCost={3.8}>
-              <div className="space-y-4 text-sm">
-                {reportData.businessInterests.length > 0 ? (
-                  reportData.businessInterests.map((business, index) => (
-                    <div key={index} className="pb-3 border-b border-gray-100 last:border-0 last:pb-0">
-                      <div className="font-medium text-gray-900 mb-2">
-                        {formatDisplayValue(business.name)}
+              {/* Business Interests */}
+              <AccordionSection sectionId="business" title="Business Interests" icon={Building2} creditCost={3.8}>
+                <div className="space-y-4 text-sm">
+                  {reportData.businessInterests.length > 0 ? (
+                    reportData.businessInterests.map((business, index) => (
+                      <div key={index} className="pb-3 border-b border-gray-100 last:border-0 last:pb-0">
+                        <div className="font-medium text-gray-900 mb-2">
+                          {formatDisplayValue(business.name)}
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <span className="text-gray-600">Role:</span>
+                            <div className="font-medium">{formatDisplayValue(business.role)}</div>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Location:</span>
+                            <div className="font-medium">{formatDisplayValue(business.location)}</div>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Revenue:</span>
+                            <div className="font-medium">{formatDisplayValue(business.revenue)}</div>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Ownership:</span>
+                            <div className="font-medium">{formatDisplayValue(business.ownership)}</div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <span className="text-gray-600">Role:</span>
-                          <div className="font-medium">{formatDisplayValue(business.role)}</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Location:</span>
-                          <div className="font-medium">{formatDisplayValue(business.location)}</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Revenue:</span>
-                          <div className="font-medium">{formatDisplayValue(business.revenue)}</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Ownership:</span>
-                          <div className="font-medium">{formatDisplayValue(business.ownership)}</div>
-                        </div>
-                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      No business interests found
                     </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    No business interests found
-                  </div>
-                )}
-              </div>
-            </AccordionSection>
+                  )}
+                </div>
+              </AccordionSection>
 
-            {/* Property Holdings */}
-            <AccordionSection sectionId="property" title="Property Holdings" icon={Home} creditCost={3.5}>
-              <div className="space-y-4 text-sm">
-                {reportData.propertyHoldings.length > 0 ? (
-                  reportData.propertyHoldings.map((property, index) => (
-                    <div key={index} className="pb-3 border-b border-gray-100 last:border-0 last:pb-0">
-                      <div className="font-medium text-gray-900 mb-2">
-                        {formatDisplayValue(property.address)}
+              {/* Property Holdings */}
+              <AccordionSection sectionId="property" title="Property Holdings" icon={Home} creditCost={3.5}>
+                <div className="space-y-4 text-sm">
+                  {reportData.propertyHoldings.length > 0 ? (
+                    reportData.propertyHoldings.map((property, index) => (
+                      <div key={index} className="pb-3 border-b border-gray-100 last:border-0 last:pb-0">
+                        <div className="font-medium text-gray-900 mb-2">
+                          {formatDisplayValue(property.address)}
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <span className="text-gray-600">Type:</span>
+                            <div className="font-medium">{formatDisplayValue(property.type)}</div>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Value:</span>
+                            <div className="font-medium">{formatDisplayValue(property.value)}</div>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Ownership:</span>
+                            <div className="font-medium">{formatDisplayValue(property.ownership)}</div>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Purchase Date:</span>
+                            <div className="font-medium">{formatDisplayValue(property.purchaseDate)}</div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <span className="text-gray-600">Type:</span>
-                          <div className="font-medium">{formatDisplayValue(property.type)}</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Value:</span>
-                          <div className="font-medium">{formatDisplayValue(property.value)}</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Ownership:</span>
-                          <div className="font-medium">{formatDisplayValue(property.ownership)}</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Purchase Date:</span>
-                          <div className="font-medium">{formatDisplayValue(property.purchaseDate)}</div>
-                        </div>
-                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      No property holdings found
                     </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    No property holdings found
-                  </div>
-                )}
-              </div>
-            </AccordionSection>
+                  )}
+                </div>
+              </AccordionSection>
 
-            {/* Legal & Litigation */}
-            <AccordionSection sectionId="legal" title="Legal & Litigation" icon={Scale} creditCost={2.9}>
-              <div className="space-y-3 text-sm">
-                <div>
-                  <span className="text-gray-600">Criminal Record:</span>
-                  <div className="font-medium">
-                    <EditableText
-                      value={reportData.legalRecords.criminalRecord}
-                      isEditing={editingSections.legal}
-                      onSave={(value) => handleSaveField('legal', 'criminalRecord', value)}
-                    />
+              {/* Legal & Litigation */}
+              <AccordionSection sectionId="legal" title="Legal & Litigation" icon={Scale} creditCost={2.9}>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <span className="text-gray-600">Criminal Record:</span>
+                    <div className="font-medium">
+                      <EditableText
+                        value={reportData.legalRecords.criminalRecord}
+                        isEditing={editingSections.legal}
+                        onSave={(value) => handleSaveField('legal', 'criminalRecord', value)}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Active Lawsuits:</span>
+                    <div className="font-medium">
+                      <EditableText
+                        value={reportData.legalRecords.activeLawsuits}
+                        isEditing={editingSections.legal}
+                        onSave={(value) => handleSaveField('legal', 'activeLawsuits', value)}
+                        multiline
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Regulatory Violations:</span>
+                    <div className="font-medium">
+                      <EditableText
+                        value={reportData.legalRecords.regulatoryViolations}
+                        isEditing={editingSections.legal}
+                        onSave={(value) => handleSaveField('legal', 'regulatoryViolations', value)}
+                        multiline
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Civil Cases:</span>
+                    <div className="font-medium">
+                      <EditableText
+                        value={reportData.legalRecords.civilCases}
+                        isEditing={editingSections.legal}
+                        onSave={(value) => handleSaveField('legal', 'civilCases', value)}
+                        multiline
+                      />
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <span className="text-gray-600">Active Lawsuits:</span>
-                  <div className="font-medium">
-                    <EditableText
-                      value={reportData.legalRecords.activeLawsuits}
-                      isEditing={editingSections.legal}
-                      onSave={(value) => handleSaveField('legal', 'activeLawsuits', value)}
-                      multiline
-                    />
-                  </div>
-                </div>
-                <div>
-                  <span className="text-gray-600">Regulatory Violations:</span>
-                  <div className="font-medium">
-                    <EditableText
-                      value={reportData.legalRecords.regulatoryViolations}
-                      isEditing={editingSections.legal}
-                      onSave={(value) => handleSaveField('legal', 'regulatoryViolations', value)}
-                      multiline
-                    />
-                  </div>
-                </div>
-                <div>
-                  <span className="text-gray-600">Civil Cases:</span>
-                  <div className="font-medium">
-                    <EditableText
-                      value={reportData.legalRecords.civilCases}
-                      isEditing={editingSections.legal}
-                      onSave={(value) => handleSaveField('legal', 'civilCases', value)}
-                      multiline
-                    />
-                  </div>
-                </div>
-              </div>
-            </AccordionSection>
+              </AccordionSection>
 
-            {/* Online Presence */}
-            <AccordionSection sectionId="online" title="Online Presence" icon={Search} creditCost={2.7}>
-              <div className="space-y-3 text-sm">
-                <div>
-                  <span className="text-gray-600">Social Media:</span>
-                  <div className="font-medium">
-                    <EditableText
-                      value={reportData.onlinePresence.socialMedia}
-                      isEditing={editingSections.online}
-                      onSave={(value) => handleSaveField('online', 'socialMedia', value)}
-                    />
+              {/* Online Presence */}
+              <AccordionSection sectionId="online" title="Online Presence" icon={Search} creditCost={2.7}>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <span className="text-gray-600">Social Media:</span>
+                    <div className="font-medium">
+                      <EditableText
+                        value={reportData.onlinePresence.socialMedia}
+                        isEditing={editingSections.online}
+                        onSave={(value) => handleSaveField('online', 'socialMedia', value)}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Email Accounts:</span>
+                    <div className="font-medium">
+                      <EditableText
+                        value={reportData.onlinePresence.emailAccounts}
+                        isEditing={editingSections.online}
+                        onSave={(value) => handleSaveField('online', 'emailAccounts', value)}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Digital Footprint:</span>
+                    <div className="font-medium">
+                      <EditableText
+                        value={reportData.onlinePresence.digitalFootprint}
+                        isEditing={editingSections.online}
+                        onSave={(value) => handleSaveField('online', 'digitalFootprint', value)}
+                        multiline
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Communication Methods:</span>
+                    <div className="font-medium">
+                      <EditableText
+                        value={reportData.onlinePresence.communicationMethods}
+                        isEditing={editingSections.online}
+                        onSave={(value) => handleSaveField('online', 'communicationMethods', value)}
+                      />
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <span className="text-gray-600">Email Accounts:</span>
-                  <div className="font-medium">
-                    <EditableText
-                      value={reportData.onlinePresence.emailAccounts}
-                      isEditing={editingSections.online}
-                      onSave={(value) => handleSaveField('online', 'emailAccounts', value)}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <span className="text-gray-600">Digital Footprint:</span>
-                  <div className="font-medium">
-                    <EditableText
-                      value={reportData.onlinePresence.digitalFootprint}
-                      isEditing={editingSections.online}
-                      onSave={(value) => handleSaveField('online', 'digitalFootprint', value)}
-                      multiline
-                    />
-                  </div>
-                </div>
-                <div>
-                  <span className="text-gray-600">Communication Methods:</span>
-                  <div className="font-medium">
-                    <EditableText
-                      value={reportData.onlinePresence.communicationMethods}
-                      isEditing={editingSections.online}
-                      onSave={(value) => handleSaveField('online', 'communicationMethods', value)}
-                    />
-                  </div>
-                </div>
-              </div>
-            </AccordionSection>
+              </AccordionSection>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="pt-4 mt-6 border-t border-gray-200">
+            <p className="text-xs text-gray-500">This document contains sensitive information and is intended for authorized personnel only.</p>
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-xs font-medium text-gray-900">{reportData.classification}</p>
+              <p className="text-xs text-gray-500">Page 1 of 1</p>
+            </div>
           </div>
         </div>
-
-        {/* Footer */}
-        <div className="pt-4 mt-6 border-t border-gray-200">
-          <p className="text-xs text-gray-500">This document contains sensitive information and is intended for authorized personnel only.</p>
-          <div className="flex items-center justify-between mt-2">
-            <p className="text-xs font-medium text-gray-900">{reportData.classification}</p>
-            <p className="text-xs text-gray-500">Page 1 of 1</p>
-          </div>
-        </div>
+        
+        {/* Classification marks */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-red-600"></div>
       </div>
     </ScrollArea>
   )
