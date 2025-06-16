@@ -56,6 +56,48 @@ interface ReportDocumentProps {
   reportId?: string
 }
 
+// Terminal-like text animation component
+const TerminalText: React.FC<{ 
+  text: string; 
+  isAnimating: boolean; 
+  delay?: number;
+  className?: string;
+}> = ({ text, isAnimating, delay = 0, className = "" }) => {
+  const [displayText, setDisplayText] = useState(text)
+  const [isTyping, setIsTyping] = useState(false)
+
+  useEffect(() => {
+    if (isAnimating) {
+      const timer = setTimeout(() => {
+        setIsTyping(true)
+        setDisplayText('')
+        
+        let currentIndex = 0
+        const typeInterval = setInterval(() => {
+          if (currentIndex < text.length) {
+            setDisplayText(text.substring(0, currentIndex + 1))
+            currentIndex++
+          } else {
+            clearInterval(typeInterval)
+            setIsTyping(false)
+          }
+        }, 50)
+
+        return () => clearInterval(typeInterval)
+      }, delay)
+
+      return () => clearTimeout(timer)
+    }
+  }, [isAnimating, text, delay])
+
+  return (
+    <span className={`${isTyping ? 'bg-blue-50' : ''} transition-colors duration-200 ${className}`}>
+      {displayText}
+      {isTyping && <span className="animate-pulse">|</span>}
+    </span>
+  )
+}
+
 export function ReportDocument({ reportId }: ReportDocumentProps) {
   const [reportData, setReportData] = useState<ReportData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -507,80 +549,132 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
               {/* Personal Information */}
               <AccordionSection sectionId="personal" title="Personal Information" icon={User} creditCost={2.1}>
                 <div className="space-y-2 text-sm">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <span className="text-gray-600 flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        DOB:
-                      </span>
-                      <EditableText
-                        value={reportData.personalInformation.dob}
-                        isEditing={editingSections.personal}
-                        onSave={(value) => handleSaveField('personal', 'dob', value)}
-                        className="font-medium"
-                      />
-                    </div>
-                    <div>
-                      <span className="text-gray-600 flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        Nationality:
-                      </span>
-                      <EditableText
-                        value={reportData.personalInformation.nationality}
-                        isEditing={editingSections.personal}
-                        onSave={(value) => handleSaveField('personal', 'nationality', value)}
-                        className="font-medium"
-                      />
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600 flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      DOB:
+                    </span>
+                    <span className="font-medium">
+                      {editingSections.personal ? (
+                        <EditableText
+                          value={reportData.personalInformation.dob}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('personal', 'dob', value)}
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.personalInformation.dob)} 
+                          isAnimating={refreshingSections.personal || false} 
+                          delay={200} 
+                        />
+                      )}
+                    </span>
                   </div>
-                  <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600 flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      Nationality:
+                    </span>
+                    <span className="font-medium">
+                      {editingSections.personal ? (
+                        <EditableText
+                          value={reportData.personalInformation.nationality}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('personal', 'nationality', value)}
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.personalInformation.nationality)} 
+                          isAnimating={refreshingSections.personal || false} 
+                          delay={400} 
+                        />
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex items-start justify-between">
                     <span className="text-gray-600 flex items-center gap-1">
                       <Users className="h-3 w-3" />
                       Known Aliases:
                     </span>
-                    <EditableText
-                      value={reportData.personalInformation.aliases.join(", ")}
-                      isEditing={editingSections.personal}
-                      onSave={(value) => handleSaveField('personal', 'aliases', value.split(", ").filter(Boolean))}
-                      className="font-medium"
-                    />
+                    <span className="font-medium text-right max-w-xs">
+                      {editingSections.personal ? (
+                        <EditableText
+                          value={reportData.personalInformation.aliases.join(", ")}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('personal', 'aliases', value.split(", ").filter(Boolean))}
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.personalInformation.aliases.join(", "))} 
+                          isAnimating={refreshingSections.personal || false} 
+                          delay={600} 
+                        />
+                      )}
+                    </span>
                   </div>
-                  <div>
+                  <div className="flex items-start justify-between">
                     <span className="text-gray-600 flex items-center gap-1">
                       <MapPin className="h-3 w-3" />
                       Current Location:
                     </span>
-                    <EditableText
-                      value={reportData.personalInformation.currentLocation}
-                      isEditing={editingSections.personal}
-                      onSave={(value) => handleSaveField('personal', 'currentLocation', value)}
-                      className="font-medium"
-                    />
+                    <span className="font-medium text-right max-w-xs">
+                      {editingSections.personal ? (
+                        <EditableText
+                          value={reportData.personalInformation.currentLocation}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('personal', 'currentLocation', value)}
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.personalInformation.currentLocation)} 
+                          isAnimating={refreshingSections.personal || false} 
+                          delay={800} 
+                        />
+                      )}
+                    </span>
                   </div>
-                  <div>
+                  <div className="flex items-start justify-between">
                     <span className="text-gray-600 flex items-center gap-1">
                       <GraduationCap className="h-3 w-3" />
                       Education:
                     </span>
-                    <EditableText
-                      value={reportData.personalInformation.education}
-                      isEditing={editingSections.personal}
-                      onSave={(value) => handleSaveField('personal', 'education', value)}
-                      className="font-medium"
-                      multiline
-                    />
+                    <span className="font-medium text-right max-w-xs">
+                      {editingSections.personal ? (
+                        <EditableText
+                          value={reportData.personalInformation.education}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('personal', 'education', value)}
+                          multiline
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.personalInformation.education)} 
+                          isAnimating={refreshingSections.personal || false} 
+                          delay={1000} 
+                        />
+                      )}
+                    </span>
                   </div>
-                  <div>
+                  <div className="flex items-start justify-between">
                     <span className="text-gray-600 flex items-center gap-1">
                       <Languages className="h-3 w-3" />
                       Languages:
                     </span>
-                    <EditableText
-                      value={reportData.personalInformation.languages.join(", ")}
-                      isEditing={editingSections.personal}
-                      onSave={(value) => handleSaveField('personal', 'languages', value.split(", ").filter(Boolean))}
-                      className="font-medium"
-                    />
+                    <span className="font-medium text-right max-w-xs">
+                      {editingSections.personal ? (
+                        <EditableText
+                          value={reportData.personalInformation.languages.join(", ")}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('personal', 'languages', value.split(", ").filter(Boolean))}
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.personalInformation.languages.join(", "))} 
+                          isAnimating={refreshingSections.personal || false} 
+                          delay={1200} 
+                        />
+                      )}
+                    </span>
                   </div>
                 </div>
               </AccordionSection>
@@ -612,19 +706,35 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                                 rel="noopener noreferrer"
                                 className="text-blue-600 hover:text-blue-800 flex items-center space-x-1 transition-colors"
                               >
-                                <span>{formatDisplayValue(profile.handle)}</span>
+                                <TerminalText 
+                                  text={formatDisplayValue(profile.handle)} 
+                                  isAnimating={refreshingSections.social || false} 
+                                  delay={200 + index * 100} 
+                                />
                                 {profile.url && <ExternalLink size={12} />}
                               </a>
                             </div>
                             
                             <div className="flex items-center justify-between">
                               <span className="text-gray-600">Followers:</span>
-                              <span className="font-medium text-gray-900">{formatDisplayValue(profile.followers)}</span>
+                              <span className="font-medium text-gray-900">
+                                <TerminalText 
+                                  text={formatDisplayValue(profile.followers)} 
+                                  isAnimating={refreshingSections.social || false} 
+                                  delay={300 + index * 100} 
+                                />
+                              </span>
                             </div>
                             
                             <div className="flex items-center justify-between">
                               <span className="text-gray-600">Last Active:</span>
-                              <span className="text-gray-700">{formatDisplayValue(profile.lastActive)}</span>
+                              <span className="text-gray-700">
+                                <TerminalText 
+                                  text={formatDisplayValue(profile.lastActive)} 
+                                  isAnimating={refreshingSections.social || false} 
+                                  delay={400 + index * 100} 
+                                />
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -641,69 +751,115 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
               {/* Financial Assets */}
               <AccordionSection sectionId="financial" title="Financial Assets" icon={DollarSign} creditCost={4.1}>
                 <div className="space-y-3 text-sm">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <span className="text-gray-600">Net Worth:</span>
-                      <div className="font-medium">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Net Worth:</span>
+                    <span className="font-medium">
+                      {editingSections.financial ? (
                         <EditableText
                           value={reportData.financialAssets.netWorth}
-                          isEditing={editingSections.financial}
+                          isEditing={true}
                           onSave={(value) => handleSaveField('financial', 'netWorth', value)}
                         />
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Annual Income:</span>
-                      <div className="font-medium">
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.financialAssets.netWorth)} 
+                          isAnimating={refreshingSections.financial || false} 
+                          delay={200} 
+                        />
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Annual Income:</span>
+                    <span className="font-medium">
+                      {editingSections.financial ? (
                         <EditableText
                           value={reportData.financialAssets.annualIncome}
-                          isEditing={editingSections.financial}
+                          isEditing={true}
                           onSave={(value) => handleSaveField('financial', 'annualIncome', value)}
                         />
-                      </div>
-                    </div>
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.financialAssets.annualIncome)} 
+                          isAnimating={refreshingSections.financial || false} 
+                          delay={400} 
+                        />
+                      )}
+                    </span>
                   </div>
-                  <div>
+                  <div className="flex items-start justify-between">
                     <span className="text-gray-600">Bank Accounts:</span>
-                    <div className="font-medium">
-                      <EditableText
-                        value={reportData.financialAssets.bankAccounts}
-                        isEditing={editingSections.financial}
-                        onSave={(value) => handleSaveField('financial', 'bankAccounts', value)}
-                        multiline
-                      />
-                    </div>
+                    <span className="font-medium text-right max-w-xs">
+                      {editingSections.financial ? (
+                        <EditableText
+                          value={reportData.financialAssets.bankAccounts}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('financial', 'bankAccounts', value)}
+                          multiline
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.financialAssets.bankAccounts)} 
+                          isAnimating={refreshingSections.financial || false} 
+                          delay={600} 
+                        />
+                      )}
+                    </span>
                   </div>
-                  <div>
+                  <div className="flex items-start justify-between">
                     <span className="text-gray-600">Investments:</span>
-                    <div className="font-medium">
-                      <EditableText
-                        value={reportData.financialAssets.investments}
-                        isEditing={editingSections.financial}
-                        onSave={(value) => handleSaveField('financial', 'investments', value)}
-                        multiline
-                      />
-                    </div>
+                    <span className="font-medium text-right max-w-xs">
+                      {editingSections.financial ? (
+                        <EditableText
+                          value={reportData.financialAssets.investments}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('financial', 'investments', value)}
+                          multiline
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.financialAssets.investments)} 
+                          isAnimating={refreshingSections.financial || false} 
+                          delay={800} 
+                        />
+                      )}
+                    </span>
                   </div>
-                  <div>
+                  <div className="flex items-center justify-between">
                     <span className="text-gray-600">Crypto Holdings:</span>
-                    <div className="font-medium">
-                      <EditableText
-                        value={reportData.financialAssets.cryptoHoldings}
-                        isEditing={editingSections.financial}
-                        onSave={(value) => handleSaveField('financial', 'cryptoHoldings', value)}
-                      />
-                    </div>
+                    <span className="font-medium">
+                      {editingSections.financial ? (
+                        <EditableText
+                          value={reportData.financialAssets.cryptoHoldings}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('financial', 'cryptoHoldings', value)}
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.financialAssets.cryptoHoldings)} 
+                          isAnimating={refreshingSections.financial || false} 
+                          delay={1000} 
+                        />
+                      )}
+                    </span>
                   </div>
-                  <div>
+                  <div className="flex items-center justify-between">
                     <span className="text-gray-600">Offshore Accounts:</span>
-                    <div className="font-medium">
-                      <EditableText
-                        value={reportData.financialAssets.offshoreAccounts}
-                        isEditing={editingSections.financial}
-                        onSave={(value) => handleSaveField('financial', 'offshoreAccounts', value)}
-                      />
-                    </div>
+                    <span className="font-medium">
+                      {editingSections.financial ? (
+                        <EditableText
+                          value={reportData.financialAssets.offshoreAccounts}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('financial', 'offshoreAccounts', value)}
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.financialAssets.offshoreAccounts)} 
+                          isAnimating={refreshingSections.financial || false} 
+                          delay={1200} 
+                        />
+                      )}
+                    </span>
                   </div>
                 </div>
               </AccordionSection>
@@ -715,24 +871,52 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                     reportData.businessInterests.map((business, index) => (
                       <div key={index} className="pb-3 border-b border-gray-100 last:border-0 last:pb-0">
                         <div className="font-medium text-gray-900 mb-2">
-                          {formatDisplayValue(business.name)}
+                          <TerminalText 
+                            text={formatDisplayValue(business.name)} 
+                            isAnimating={refreshingSections.business || false} 
+                            delay={200 + index * 400} 
+                          />
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
                             <span className="text-gray-600">Role:</span>
-                            <div className="font-medium">{formatDisplayValue(business.role)}</div>
+                            <span className="font-medium">
+                              <TerminalText 
+                                text={formatDisplayValue(business.role)} 
+                                isAnimating={refreshingSections.business || false} 
+                                delay={300 + index * 400} 
+                              />
+                            </span>
                           </div>
-                          <div>
+                          <div className="flex items-center justify-between">
                             <span className="text-gray-600">Location:</span>
-                            <div className="font-medium">{formatDisplayValue(business.location)}</div>
+                            <span className="font-medium">
+                              <TerminalText 
+                                text={formatDisplayValue(business.location)} 
+                                isAnimating={refreshingSections.business || false} 
+                                delay={400 + index * 400} 
+                              />
+                            </span>
                           </div>
-                          <div>
+                          <div className="flex items-center justify-between">
                             <span className="text-gray-600">Revenue:</span>
-                            <div className="font-medium">{formatDisplayValue(business.revenue)}</div>
+                            <span className="font-medium">
+                              <TerminalText 
+                                text={formatDisplayValue(business.revenue)} 
+                                isAnimating={refreshingSections.business || false} 
+                                delay={500 + index * 400} 
+                              />
+                            </span>
                           </div>
-                          <div>
+                          <div className="flex items-center justify-between">
                             <span className="text-gray-600">Ownership:</span>
-                            <div className="font-medium">{formatDisplayValue(business.ownership)}</div>
+                            <span className="font-medium">
+                              <TerminalText 
+                                text={formatDisplayValue(business.ownership)} 
+                                isAnimating={refreshingSections.business || false} 
+                                delay={600 + index * 400} 
+                              />
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -752,24 +936,52 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                     reportData.propertyHoldings.map((property, index) => (
                       <div key={index} className="pb-3 border-b border-gray-100 last:border-0 last:pb-0">
                         <div className="font-medium text-gray-900 mb-2">
-                          {formatDisplayValue(property.address)}
+                          <TerminalText 
+                            text={formatDisplayValue(property.address)} 
+                            isAnimating={refreshingSections.property || false} 
+                            delay={200 + index * 400} 
+                          />
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
                             <span className="text-gray-600">Type:</span>
-                            <div className="font-medium">{formatDisplayValue(property.type)}</div>
+                            <span className="font-medium">
+                              <TerminalText 
+                                text={formatDisplayValue(property.type)} 
+                                isAnimating={refreshingSections.property || false} 
+                                delay={300 + index * 400} 
+                              />
+                            </span>
                           </div>
-                          <div>
+                          <div className="flex items-center justify-between">
                             <span className="text-gray-600">Value:</span>
-                            <div className="font-medium">{formatDisplayValue(property.value)}</div>
+                            <span className="font-medium">
+                              <TerminalText 
+                                text={formatDisplayValue(property.value)} 
+                                isAnimating={refreshingSections.property || false} 
+                                delay={400 + index * 400} 
+                              />
+                            </span>
                           </div>
-                          <div>
+                          <div className="flex items-center justify-between">
                             <span className="text-gray-600">Ownership:</span>
-                            <div className="font-medium">{formatDisplayValue(property.ownership)}</div>
+                            <span className="font-medium">
+                              <TerminalText 
+                                text={formatDisplayValue(property.ownership)} 
+                                isAnimating={refreshingSections.property || false} 
+                                delay={500 + index * 400} 
+                              />
+                            </span>
                           </div>
-                          <div>
+                          <div className="flex items-center justify-between">
                             <span className="text-gray-600">Purchase Date:</span>
-                            <div className="font-medium">{formatDisplayValue(property.purchaseDate)}</div>
+                            <span className="font-medium">
+                              <TerminalText 
+                                text={formatDisplayValue(property.purchaseDate)} 
+                                isAnimating={refreshingSections.property || false} 
+                                delay={600 + index * 400} 
+                              />
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -785,48 +997,80 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
               {/* Legal & Litigation */}
               <AccordionSection sectionId="legal" title="Legal & Litigation" icon={Scale} creditCost={2.9}>
                 <div className="space-y-3 text-sm">
-                  <div>
+                  <div className="flex items-center justify-between">
                     <span className="text-gray-600">Criminal Record:</span>
-                    <div className="font-medium">
-                      <EditableText
-                        value={reportData.legalRecords.criminalRecord}
-                        isEditing={editingSections.legal}
-                        onSave={(value) => handleSaveField('legal', 'criminalRecord', value)}
-                      />
-                    </div>
+                    <span className="font-medium">
+                      {editingSections.legal ? (
+                        <EditableText
+                          value={reportData.legalRecords.criminalRecord}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('legal', 'criminalRecord', value)}
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.legalRecords.criminalRecord)} 
+                          isAnimating={refreshingSections.legal || false} 
+                          delay={200} 
+                        />
+                      )}
+                    </span>
                   </div>
-                  <div>
+                  <div className="flex items-start justify-between">
                     <span className="text-gray-600">Active Lawsuits:</span>
-                    <div className="font-medium">
-                      <EditableText
-                        value={reportData.legalRecords.activeLawsuits}
-                        isEditing={editingSections.legal}
-                        onSave={(value) => handleSaveField('legal', 'activeLawsuits', value)}
-                        multiline
-                      />
-                    </div>
+                    <span className="font-medium text-right max-w-xs">
+                      {editingSections.legal ? (
+                        <EditableText
+                          value={reportData.legalRecords.activeLawsuits}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('legal', 'activeLawsuits', value)}
+                          multiline
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.legalRecords.activeLawsuits)} 
+                          isAnimating={refreshingSections.legal || false} 
+                          delay={400} 
+                        />
+                      )}
+                    </span>
                   </div>
-                  <div>
+                  <div className="flex items-start justify-between">
                     <span className="text-gray-600">Regulatory Violations:</span>
-                    <div className="font-medium">
-                      <EditableText
-                        value={reportData.legalRecords.regulatoryViolations}
-                        isEditing={editingSections.legal}
-                        onSave={(value) => handleSaveField('legal', 'regulatoryViolations', value)}
-                        multiline
-                      />
-                    </div>
+                    <span className="font-medium text-right max-w-xs">
+                      {editingSections.legal ? (
+                        <EditableText
+                          value={reportData.legalRecords.regulatoryViolations}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('legal', 'regulatoryViolations', value)}
+                          multiline
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.legalRecords.regulatoryViolations)} 
+                          isAnimating={refreshingSections.legal || false} 
+                          delay={600} 
+                        />
+                      )}
+                    </span>
                   </div>
-                  <div>
+                  <div className="flex items-start justify-between">
                     <span className="text-gray-600">Civil Cases:</span>
-                    <div className="font-medium">
-                      <EditableText
-                        value={reportData.legalRecords.civilCases}
-                        isEditing={editingSections.legal}
-                        onSave={(value) => handleSaveField('legal', 'civilCases', value)}
-                        multiline
-                      />
-                    </div>
+                    <span className="font-medium text-right max-w-xs">
+                      {editingSections.legal ? (
+                        <EditableText
+                          value={reportData.legalRecords.civilCases}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('legal', 'civilCases', value)}
+                          multiline
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.legalRecords.civilCases)} 
+                          isAnimating={refreshingSections.legal || false} 
+                          delay={800} 
+                        />
+                      )}
+                    </span>
                   </div>
                 </div>
               </AccordionSection>
@@ -834,46 +1078,78 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
               {/* Online Presence */}
               <AccordionSection sectionId="online" title="Online Presence" icon={Search} creditCost={2.7}>
                 <div className="space-y-3 text-sm">
-                  <div>
+                  <div className="flex items-center justify-between">
                     <span className="text-gray-600">Social Media:</span>
-                    <div className="font-medium">
-                      <EditableText
-                        value={reportData.onlinePresence.socialMedia}
-                        isEditing={editingSections.online}
-                        onSave={(value) => handleSaveField('online', 'socialMedia', value)}
-                      />
-                    </div>
+                    <span className="font-medium">
+                      {editingSections.online ? (
+                        <EditableText
+                          value={reportData.onlinePresence.socialMedia}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('online', 'socialMedia', value)}
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.onlinePresence.socialMedia)} 
+                          isAnimating={refreshingSections.online || false} 
+                          delay={200} 
+                        />
+                      )}
+                    </span>
                   </div>
-                  <div>
+                  <div className="flex items-center justify-between">
                     <span className="text-gray-600">Email Accounts:</span>
-                    <div className="font-medium">
-                      <EditableText
-                        value={reportData.onlinePresence.emailAccounts}
-                        isEditing={editingSections.online}
-                        onSave={(value) => handleSaveField('online', 'emailAccounts', value)}
-                      />
-                    </div>
+                    <span className="font-medium">
+                      {editingSections.online ? (
+                        <EditableText
+                          value={reportData.onlinePresence.emailAccounts}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('online', 'emailAccounts', value)}
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.onlinePresence.emailAccounts)} 
+                          isAnimating={refreshingSections.online || false} 
+                          delay={400} 
+                        />
+                      )}
+                    </span>
                   </div>
-                  <div>
+                  <div className="flex items-start justify-between">
                     <span className="text-gray-600">Digital Footprint:</span>
-                    <div className="font-medium">
-                      <EditableText
-                        value={reportData.onlinePresence.digitalFootprint}
-                        isEditing={editingSections.online}
-                        onSave={(value) => handleSaveField('online', 'digitalFootprint', value)}
-                        multiline
-                      />
-                    </div>
+                    <span className="font-medium text-right max-w-xs">
+                      {editingSections.online ? (
+                        <EditableText
+                          value={reportData.onlinePresence.digitalFootprint}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('online', 'digitalFootprint', value)}
+                          multiline
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.onlinePresence.digitalFootprint)} 
+                          isAnimating={refreshingSections.online || false} 
+                          delay={600} 
+                        />
+                      )}
+                    </span>
                   </div>
-                  <div>
+                  <div className="flex items-center justify-between">
                     <span className="text-gray-600">Communication Methods:</span>
-                    <div className="font-medium">
-                      <EditableText
-                        value={reportData.onlinePresence.communicationMethods}
-                        isEditing={editingSections.online}
-                        onSave={(value) => handleSaveField('online', 'communicationMethods', value)}
-                      />
-                    </div>
+                    <span className="font-medium">
+                      {editingSections.online ? (
+                        <EditableText
+                          value={reportData.onlinePresence.communicationMethods}
+                          isEditing={true}
+                          onSave={(value) => handleSaveField('online', 'communicationMethods', value)}
+                        />
+                      ) : (
+                        <TerminalText 
+                          text={formatDisplayValue(reportData.onlinePresence.communicationMethods)} 
+                          isAnimating={refreshingSections.online || false} 
+                          delay={800} 
+                        />
+                      )}
+                    </span>
                   </div>
                 </div>
               </AccordionSection>
