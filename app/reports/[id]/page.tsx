@@ -51,14 +51,14 @@ export default function ReportPage() {
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 overflow-hidden">
-          {/* Left Column - AI Chat */}
-          <div className="w-1/3 border-r border-border">
+        <div className="flex flex-1 overflow-hidden h-[calc(100vh-4rem)]">
+          {/* Left Column - AI Chat - Fixed Height */}
+          <div className="w-1/3 border-r border-border h-full flex flex-col">
             <ReportChat reportId={reportId as string} />
           </div>
           
-          {/* Right Column - Report Document */}
-          <div className="flex-1 overflow-y-auto">
+          {/* Right Column - Report Document - Scrollable */}
+          <div className="flex-1 h-full overflow-y-auto">
             <ReportDocument reportId={reportId as string} />
           </div>
         </div>
