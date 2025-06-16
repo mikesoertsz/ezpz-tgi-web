@@ -38,7 +38,6 @@ import {
   FileText, 
   Plus, 
   Search, 
-  Filter, 
   Shield, 
   AlertTriangle, 
   CheckCircle, 
@@ -50,11 +49,11 @@ import {
   Download,
   MoreHorizontal
 } from "lucide-react"
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
-export default function ReportsPage() {
+function ReportsPageContent() {
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
   const [clientFilter, setClientFilter] = useState("all")
@@ -483,5 +482,20 @@ export default function ReportsPage() {
         </div>
       </SidebarInset>
     </SidebarProvider>
+  )
+}
+
+export default function ReportsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p>Loading reports...</p>
+        </div>
+      </div>
+    }>
+      <ReportsPageContent />
+    </Suspense>
   )
 }

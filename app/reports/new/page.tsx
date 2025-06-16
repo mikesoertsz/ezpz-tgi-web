@@ -17,8 +17,13 @@ import {
 } from "@/components/ui/sidebar"
 import { ReportChat } from "@/components/report-chat"
 import { ReportDocument } from "@/components/report-document"
+import { useSearchParams } from "next/navigation"
+import { Suspense } from "react"
 
-export default function NewReportPage() {
+function NewReportPageContent() {
+  const searchParams = useSearchParams()
+  const reportType = searchParams?.get('type') || 'person'
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -60,5 +65,20 @@ export default function NewReportPage() {
         </div>
       </SidebarInset>
     </SidebarProvider>
+  )
+}
+
+export default function NewReportPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    }>
+      <NewReportPageContent />
+    </Suspense>
   )
 }
