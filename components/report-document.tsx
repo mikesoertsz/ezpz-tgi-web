@@ -3,32 +3,15 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
 import {
   Shield,
   Share2,
   Lock,
   Download,
   Settings,
-  Circle,
   ChevronDown,
   ChevronUp,
-  RefreshCw,
-  Copy,
-  Trash2,
-  Edit,
-  CheckCircle,
-  Coins,
-  ExternalLink,
   User,
   Globe,
   DollarSign,
@@ -36,65 +19,27 @@ import {
   Home,
   Scale,
   Search,
-  Calendar,
-  MapPin,
-  GraduationCap,
-  Languages,
-  Users,
   Twitter,
   Linkedin,
   Facebook,
-  Instagram,
-  Youtube,
-  MessageCircle
+  Instagram
 } from "lucide-react"
 import { loadReportData, updateReportSection, saveReportData } from "@/lib/report-loader"
-import { ReportData, formatDisplayValue, sectionHasData } from "@/lib/report-data"
+import { ReportData } from "@/lib/report-data"
 import { generateReportPDF } from "@/lib/pdf-generator"
+
+// Import section components
+import { SectionFooter } from "./report/section-footer"
+import { PersonalInformationSection } from "./report/personal-information-section"
+import { SocialMediaSection } from "./report/social-media-section"
+import { FinancialAssetsSection } from "./report/financial-assets-section"
+import { BusinessInterestsSection } from "./report/business-interests-section"
+import { PropertyHoldingsSection } from "./report/property-holdings-section"
+import { LegalRecordsSection } from "./report/legal-records-section"
+import { OnlinePresenceSection } from "./report/online-presence-section"
 
 interface ReportDocumentProps {
   reportId?: string
-}
-
-// Terminal-like text animation component
-const TerminalText: React.FC<{ text: string; isAnimating: boolean; delay?: number }> = ({ 
-  text, 
-  isAnimating, 
-  delay = 0 
-}) => {
-  const [displayText, setDisplayText] = useState(text)
-  const [isTyping, setIsTyping] = useState(false)
-
-  useEffect(() => {
-    if (isAnimating) {
-      const timer = setTimeout(() => {
-        setIsTyping(true)
-        setDisplayText('')
-        
-        let currentIndex = 0
-        const typeInterval = setInterval(() => {
-          if (currentIndex < text.length) {
-            setDisplayText(text.substring(0, currentIndex + 1))
-            currentIndex++
-          } else {
-            clearInterval(typeInterval)
-            setIsTyping(false)
-          }
-        }, 50)
-
-        return () => clearInterval(typeInterval)
-      }, delay)
-
-      return () => clearTimeout(timer)
-    }
-  }, [isAnimating, text, delay])
-
-  return (
-    <span className={`${isTyping ? 'bg-blue-50' : ''} transition-colors duration-200`}>
-      {displayText}
-      {isTyping && <span className="animate-pulse">|</span>}
-    </span>
-  )
 }
 
 export function ReportDocument({ reportId }: ReportDocumentProps) {
@@ -112,7 +57,6 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
   const [editingSections, setEditingSections] = useState<Record<string, boolean>>({})
   const [refreshingSections, setRefreshingSections] = useState<Record<string, boolean>>({})
   const [approvedSections, setApprovedSections] = useState<Record<string, boolean>>({})
-  const [bibliographyOpen, setBibliographyOpen] = useState<Record<string, boolean>>({})
 
   // Load report data
   useEffect(() => {
@@ -130,7 +74,7 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
-          <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
           <p>Loading report...</p>
         </div>
       </div>
@@ -199,119 +143,42 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
         {
           title: 'Personal Information',
           content: generatePersonalInfoContent(reportData),
-          hasData: sectionHasData(reportData.personalInformation)
+          hasData: reportData.sections.personalInformation.hasData
         },
         {
           title: 'Social Media Intelligence',
           content: generateSocialMediaContent(reportData),
-          hasData: sectionHasData(reportData.socialMediaProfiles)
+          hasData: reportData.sections.socialMedia.hasData
         },
         {
           title: 'Financial Assets',
           content: generateFinancialContent(reportData),
-          hasData: sectionHasData(reportData.financialAssets)
+          hasData: reportData.sections.financial.hasData
         },
         {
           title: 'Business Interests',
           content: generateBusinessContent(reportData),
-          hasData: sectionHasData(reportData.businessInterests)
+          hasData: reportData.sections.business.hasData
         },
         {
           title: 'Property Holdings',
           content: generatePropertyContent(reportData),
-          hasData: sectionHasData(reportData.propertyHoldings)
+          hasData: reportData.sections.property.hasData
         },
         {
           title: 'Legal & Litigation',
           content: generateLegalContent(reportData),
-          hasData: sectionHasData(reportData.legalRecords)
+          hasData: reportData.sections.legal.hasData
         },
         {
           title: 'Online Presence',
           content: generateOnlinePresenceContent(reportData),
-          hasData: sectionHasData(reportData.onlinePresence)
+          hasData: reportData.sections.online.hasData
         }
       ]
     }
 
     generateReportPDF(pdfData)
-  }
-
-  const getSocialIcon = (platform: string) => {
-    switch (platform.toLowerCase()) {
-      case 'twitter':
-      case 'twitter/x':
-        return Twitter
-      case 'linkedin':
-        return Linkedin
-      case 'facebook':
-        return Facebook
-      case 'instagram':
-        return Instagram
-      case 'youtube':
-        return Youtube
-      case 'reddit':
-        return MessageCircle
-      default:
-        return Globe
-    }
-  }
-
-  const EditableText = ({ 
-    value, 
-    isEditing, 
-    onSave, 
-    className = "",
-    multiline = false 
-  }: {
-    value: string | null
-    isEditing: boolean
-    onSave: (newValue: string) => void
-    className?: string
-    multiline?: boolean
-  }) => {
-    const [editValue, setEditValue] = useState(value || '')
-
-    useEffect(() => {
-      setEditValue(value || '')
-    }, [value])
-
-    const handleKeyPress = (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter' && !multiline) {
-        onSave(editValue)
-      } else if (e.key === 'Escape') {
-        setEditValue(value || '')
-      }
-    }
-
-    const handleBlur = () => {
-      if (editValue !== value) {
-        onSave(editValue)
-      }
-    }
-
-    if (isEditing) {
-      return multiline ? (
-        <Textarea
-          value={editValue}
-          onChange={(e) => setEditValue(e.target.value)}
-          onBlur={handleBlur}
-          className={`bg-blue-50 border-blue-300 ${className}`}
-          rows={3}
-        />
-      ) : (
-        <Input
-          type="text"
-          value={editValue}
-          onChange={(e) => setEditValue(e.target.value)}
-          onKeyDown={handleKeyPress}
-          onBlur={handleBlur}
-          className={`bg-blue-50 border-blue-300 ${className}`}
-        />
-      )
-    }
-
-    return <span className={className}>{formatDisplayValue(value)}</span>
   }
 
   const AccordionSection = ({ 
@@ -333,7 +200,6 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
     const isApproved = approvedSections[sectionId]
     const section = reportData?.sections[sectionId as keyof typeof reportData.sections]
     const bibliography = section?.bibliography || []
-    const isBibliographyOpen = bibliographyOpen[sectionId]
 
     return (
       <div className="mb-3 bg-white border border-gray-200 rounded-lg">
@@ -357,103 +223,17 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
               {children}
             </div>
 
-            {/* Bibliography Section */}
-            {bibliography.length > 0 && (
-              <div className="border-t border-gray-100 pt-3 mb-3">
-                <button
-                  onClick={() => setBibliographyOpen(prev => ({ ...prev, [sectionId]: !prev[sectionId] }))}
-                  className="flex items-center space-x-2 text-xs text-gray-600 hover:text-gray-800 transition-colors"
-                >
-                  <span>Bibliography</span>
-                  {isBibliographyOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                </button>
-                
-                {isBibliographyOpen && (
-                  <div className="mt-2 space-y-1">
-                    {bibliography.map((item) => (
-                      <div
-                        key={item.id}
-                        className="text-xs p-2 rounded bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
-                        onClick={() => item.url && window.open(item.url, '_blank')}
-                      >
-                        <span className="text-gray-700">{item.source}</span>
-                        {item.url && (
-                          <ExternalLink className="inline w-3 h-3 ml-1 text-blue-600" />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Footer with action buttons */}
-            <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-              <div className="flex items-center space-x-2">
-                <div className="flex items-center space-x-1">
-                  <button
-                    onClick={() => handleRefresh(sectionId)}
-                    disabled={isRefreshing}
-                    className={`p-1.5 rounded-md transition-all duration-300 ${
-                      isRefreshing 
-                        ? 'bg-green-100 text-green-600 cursor-not-allowed' 
-                        : 'hover:bg-gray-100 text-gray-600'
-                    }`}
-                    title="Refresh"
-                  >
-                    <RefreshCw 
-                      size={14} 
-                      className={`${isRefreshing ? 'animate-spin text-green-600' : 'text-gray-600'} transition-colors duration-300`} 
-                    />
-                  </button>
-                  <div className="flex items-center space-x-1 bg-gray-100 px-2 py-1 rounded-md">
-                    <Coins size={10} className="text-gray-500" />
-                    <span className="text-xs text-gray-600 font-medium">{creditCost}</span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => {/* Copy functionality */}}
-                  className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
-                  title="Copy"
-                >
-                  <Copy size={14} className="text-gray-600" />
-                </button>
-                <button
-                  onClick={() => {/* Clear functionality */}}
-                  className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
-                  title="Clear"
-                >
-                  <Trash2 size={14} className="text-gray-600" />
-                </button>
-                <button
-                  onClick={() => handleEdit(sectionId)}
-                  className={`p-1.5 rounded-md transition-colors ${
-                    isEditing 
-                      ? 'bg-blue-100 text-blue-600' 
-                      : 'hover:bg-gray-100 text-gray-600'
-                  }`}
-                  title={isEditing ? "Exit Edit Mode" : "Edit"}
-                >
-                  <Edit size={14} className={isEditing ? 'text-blue-600' : 'text-gray-600'} />
-                </button>
-              </div>
-
-              <button
-                onClick={() => handleApprovalToggle(sectionId)}
-                className={`p-1.5 rounded-md transition-colors ${
-                  isApproved 
-                    ? 'hover:bg-green-50 text-green-600' 
-                    : 'hover:bg-gray-100 text-gray-400'
-                }`}
-                title={isApproved ? "Content Approved" : "Approve Content"}
-              >
-                {isApproved ? (
-                  <CheckCircle size={14} className="text-green-600" />
-                ) : (
-                  <Circle size={14} className="text-gray-400" />
-                )}
-              </button>
-            </div>
+            <SectionFooter
+              sectionId={sectionId}
+              creditCost={creditCost}
+              bibliography={bibliography}
+              isRefreshing={isRefreshing || false}
+              isEditing={isEditing || false}
+              isApproved={isApproved || false}
+              onRefresh={handleRefresh}
+              onEdit={handleEdit}
+              onApprovalToggle={handleApprovalToggle}
+            />
           </div>
         )}
       </div>
@@ -532,7 +312,6 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                   <Linkedin size={16} className="text-gray-700" />
                   <Facebook size={16} className="text-gray-300" />
                   <Instagram size={16} className="text-gray-700" />
-                  <Globe size={16} className="text-gray-700" />
                 </div>
                 <p className="text-sm text-gray-600">
                   Investigation in progress - {reportData.overallProgress}% complete
@@ -547,594 +326,57 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
             <div className="space-y-3">
               {/* Personal Information */}
               <AccordionSection sectionId="personal" title="Personal Information" icon={User} creditCost={2.1}>
-                <div className="space-y-2 text-sm">
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-3 w-3 text-gray-600" />
-                        <span className="text-gray-600 min-w-[60px]">DOB:</span>
-                        <div className="font-medium flex-1">
-                          {editingSections.personal ? (
-                            <EditableText
-                              value={reportData.personalInformation.dob}
-                              isEditing={true}
-                              onSave={(value) => handleSaveField('personal', 'dob', value)}
-                            />
-                          ) : (
-                            <TerminalText 
-                              text={formatDisplayValue(reportData.personalInformation.dob)} 
-                              isAnimating={refreshingSections.personal || false} 
-                              delay={200} 
-                            />
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Users className="h-3 w-3 text-gray-600" />
-                        <span className="text-gray-600 min-w-[60px]">Aliases:</span>
-                        <div className="font-medium flex-1">
-                          {editingSections.personal ? (
-                            <EditableText
-                              value={reportData.personalInformation.aliases.join(", ")}
-                              isEditing={true}
-                              onSave={(value) => handleSaveField('personal', 'aliases', value.split(", ").filter(Boolean))}
-                            />
-                          ) : (
-                            <TerminalText 
-                              text={formatDisplayValue(reportData.personalInformation.aliases.join(", "))} 
-                              isAnimating={refreshingSections.personal || false} 
-                              delay={600} 
-                            />
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <GraduationCap className="h-3 w-3 text-gray-600" />
-                        <span className="text-gray-600 min-w-[60px]">Education:</span>
-                        <div className="font-medium flex-1">
-                          {editingSections.personal ? (
-                            <EditableText
-                              value={reportData.personalInformation.education}
-                              isEditing={true}
-                              onSave={(value) => handleSaveField('personal', 'education', value)}
-                              multiline
-                            />
-                          ) : (
-                            <TerminalText 
-                              text={formatDisplayValue(reportData.personalInformation.education)} 
-                              isAnimating={refreshingSections.personal || false} 
-                              delay={1000} 
-                            />
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-3 w-3 text-gray-600" />
-                        <span className="text-gray-600 min-w-[80px]">Nationality:</span>
-                        <div className="font-medium flex-1">
-                          {editingSections.personal ? (
-                            <EditableText
-                              value={reportData.personalInformation.nationality}
-                              isEditing={true}
-                              onSave={(value) => handleSaveField('personal', 'nationality', value)}
-                            />
-                          ) : (
-                            <TerminalText 
-                              text={formatDisplayValue(reportData.personalInformation.nationality)} 
-                              isAnimating={refreshingSections.personal || false} 
-                              delay={400} 
-                            />
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-3 w-3 text-gray-600" />
-                        <span className="text-gray-600 min-w-[80px]">Location:</span>
-                        <div className="font-medium flex-1">
-                          {editingSections.personal ? (
-                            <EditableText
-                              value={reportData.personalInformation.currentLocation}
-                              isEditing={true}
-                              onSave={(value) => handleSaveField('personal', 'currentLocation', value)}
-                            />
-                          ) : (
-                            <TerminalText 
-                              text={formatDisplayValue(reportData.personalInformation.currentLocation)} 
-                              isAnimating={refreshingSections.personal || false} 
-                              delay={800} 
-                            />
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Languages className="h-3 w-3 text-gray-600" />
-                        <span className="text-gray-600 min-w-[80px]">Languages:</span>
-                        <div className="font-medium flex-1">
-                          {editingSections.personal ? (
-                            <EditableText
-                              value={reportData.personalInformation.languages.join(", ")}
-                              isEditing={true}
-                              onSave={(value) => handleSaveField('personal', 'languages', value.split(", ").filter(Boolean))}
-                            />
-                          ) : (
-                            <TerminalText 
-                              text={formatDisplayValue(reportData.personalInformation.languages.join(", "))} 
-                              isAnimating={refreshingSections.personal || false} 
-                              delay={1200} 
-                            />
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <PersonalInformationSection
+                  data={reportData.personalInformation}
+                  isEditing={editingSections.personal || false}
+                  isRefreshing={refreshingSections.personal || false}
+                  onSave={(field, value) => handleSaveField('personal', field, value)}
+                />
               </AccordionSection>
 
               {/* Social Media Intelligence */}
               <AccordionSection sectionId="social" title="Social Media Intelligence" icon={Globe} creditCost={3.2}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {reportData.socialMediaProfiles.length > 0 ? (
-                    reportData.socialMediaProfiles.map((profile, index) => {
-                      const IconComponent = getSocialIcon(profile.platform)
-                      return (
-                        <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center space-x-2">
-                              <IconComponent size={20} className="text-gray-700" />
-                              <span className="font-medium text-gray-900">{profile.platform}</span>
-                            </div>
-                            {profile.verified && (
-                              <div className="w-2 h-2 bg-blue-500 rounded-full" title="Verified Account" />
-                            )}
-                          </div>
-                          
-                          <div className="space-y-2 text-sm">
-                            <div className="flex items-center gap-2">
-                              <span className="text-gray-600 min-w-[60px]">Handle:</span>
-                              <a 
-                                href={profile.url || '#'}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 hover:text-blue-800 flex items-center space-x-1 transition-colors flex-1"
-                              >
-                                <span>{formatDisplayValue(profile.handle)}</span>
-                                {profile.url && <ExternalLink size={12} />}
-                              </a>
-                            </div>
-                            
-                            <div className="flex items-center gap-2">
-                              <span className="text-gray-600 min-w-[60px]">Followers:</span>
-                              <span className="font-medium text-gray-900 flex-1">{formatDisplayValue(profile.followers)}</span>
-                            </div>
-                            
-                            <div className="flex items-center gap-2">
-                              <span className="text-gray-600 min-w-[60px]">Last Active:</span>
-                              <span className="text-gray-700 flex-1">{formatDisplayValue(profile.lastActive)}</span>
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    })
-                  ) : (
-                    <div className="col-span-2 text-center py-8 text-gray-500">
-                      No social media profiles found
-                    </div>
-                  )}
-                </div>
+                <SocialMediaSection profiles={reportData.socialMediaProfiles} />
               </AccordionSection>
 
               {/* Financial Assets */}
               <AccordionSection sectionId="financial" title="Financial Assets" icon={DollarSign} creditCost={4.1}>
-                <div className="space-y-3 text-sm">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-gray-600 min-w-[80px]">Net Worth:</span>
-                        <div className="font-medium flex-1">
-                          {editingSections.financial ? (
-                            <EditableText
-                              value={reportData.financialAssets.netWorth}
-                              isEditing={true}
-                              onSave={(value) => handleSaveField('financial', 'netWorth', value)}
-                            />
-                          ) : (
-                            <TerminalText 
-                              text={formatDisplayValue(reportData.financialAssets.netWorth)} 
-                              isAnimating={refreshingSections.financial || false} 
-                              delay={200} 
-                            />
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-gray-600 min-w-[80px]">Investments:</span>
-                        <div className="font-medium flex-1">
-                          {editingSections.financial ? (
-                            <EditableText
-                              value={reportData.financialAssets.investments}
-                              isEditing={true}
-                              onSave={(value) => handleSaveField('financial', 'investments', value)}
-                              multiline
-                            />
-                          ) : (
-                            <TerminalText 
-                              text={formatDisplayValue(reportData.financialAssets.investments)} 
-                              isAnimating={refreshingSections.financial || false} 
-                              delay={600} 
-                            />
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-gray-600 min-w-[80px]">Offshore:</span>
-                        <div className="font-medium flex-1">
-                          {editingSections.financial ? (
-                            <EditableText
-                              value={reportData.financialAssets.offshoreAccounts}
-                              isEditing={true}
-                              onSave={(value) => handleSaveField('financial', 'offshoreAccounts', value)}
-                            />
-                          ) : (
-                            <TerminalText 
-                              text={formatDisplayValue(reportData.financialAssets.offshoreAccounts)} 
-                              isAnimating={refreshingSections.financial || false} 
-                              delay={1000} 
-                            />
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-gray-600 min-w-[80px]">Income:</span>
-                        <div className="font-medium flex-1">
-                          {editingSections.financial ? (
-                            <EditableText
-                              value={reportData.financialAssets.annualIncome}
-                              isEditing={true}
-                              onSave={(value) => handleSaveField('financial', 'annualIncome', value)}
-                            />
-                          ) : (
-                            <TerminalText 
-                              text={formatDisplayValue(reportData.financialAssets.annualIncome)} 
-                              isAnimating={refreshingSections.financial || false} 
-                              delay={400} 
-                            />
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-gray-600 min-w-[80px]">Crypto:</span>
-                        <div className="font-medium flex-1">
-                          {editingSections.financial ? (
-                            <EditableText
-                              value={reportData.financialAssets.cryptoHoldings}
-                              isEditing={true}
-                              onSave={(value) => handleSaveField('financial', 'cryptoHoldings', value)}
-                            />
-                          ) : (
-                            <TerminalText 
-                              text={formatDisplayValue(reportData.financialAssets.cryptoHoldings)} 
-                              isAnimating={refreshingSections.financial || false} 
-                              delay={800} 
-                            />
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-600 min-w-[80px]">Bank Accounts:</span>
-                    <div className="font-medium flex-1">
-                      {editingSections.financial ? (
-                        <EditableText
-                          value={reportData.financialAssets.bankAccounts}
-                          isEditing={true}
-                          onSave={(value) => handleSaveField('financial', 'bankAccounts', value)}
-                          multiline
-                        />
-                      ) : (
-                        <TerminalText 
-                          text={formatDisplayValue(reportData.financialAssets.bankAccounts)} 
-                          isAnimating={refreshingSections.financial || false} 
-                          delay={1200} 
-                        />
-                      )}
-                    </div>
-                  </div>
-                </div>
+                <FinancialAssetsSection
+                  data={reportData.financialAssets}
+                  isEditing={editingSections.financial || false}
+                  isRefreshing={refreshingSections.financial || false}
+                  onSave={(field, value) => handleSaveField('financial', field, value)}
+                />
               </AccordionSection>
 
               {/* Business Interests */}
               <AccordionSection sectionId="business" title="Business Interests" icon={Building2} creditCost={3.8}>
-                <div className="space-y-4 text-sm">
-                  {reportData.businessInterests.length > 0 ? (
-                    reportData.businessInterests.map((business, index) => (
-                      <div key={index} className="pb-3 border-b border-gray-100 last:border-0 last:pb-0">
-                        <div className="font-medium text-gray-900 mb-2">
-                          <TerminalText 
-                            text={formatDisplayValue(business.name)} 
-                            isAnimating={refreshingSections.business || false} 
-                            delay={200 + index * 400} 
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-600 min-w-[60px]">Role:</span>
-                            <div className="font-medium flex-1">
-                              <TerminalText 
-                                text={formatDisplayValue(business.role)} 
-                                isAnimating={refreshingSections.business || false} 
-                                delay={300 + index * 400} 
-                              />
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-600 min-w-[60px]">Location:</span>
-                            <div className="font-medium flex-1">
-                              <TerminalText 
-                                text={formatDisplayValue(business.location)} 
-                                isAnimating={refreshingSections.business || false} 
-                                delay={400 + index * 400} 
-                              />
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-600 min-w-[60px]">Revenue:</span>
-                            <div className="font-medium flex-1">
-                              <TerminalText 
-                                text={formatDisplayValue(business.revenue)} 
-                                isAnimating={refreshingSections.business || false} 
-                                delay={500 + index * 400} 
-                              />
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-600 min-w-[60px]">Ownership:</span>
-                            <div className="font-medium flex-1">
-                              <TerminalText 
-                                text={formatDisplayValue(business.ownership)} 
-                                isAnimating={refreshingSections.business || false} 
-                                delay={600 + index * 400} 
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-8 text-gray-500">
-                      No business interests found
-                    </div>
-                  )}
-                </div>
+                <BusinessInterestsSection businesses={reportData.businessInterests} />
               </AccordionSection>
 
               {/* Property Holdings */}
               <AccordionSection sectionId="property" title="Property Holdings" icon={Home} creditCost={3.5}>
-                <div className="space-y-4 text-sm">
-                  {reportData.propertyHoldings.length > 0 ? (
-                    reportData.propertyHoldings.map((property, index) => (
-                      <div key={index} className="pb-3 border-b border-gray-100 last:border-0 last:pb-0">
-                        <div className="font-medium text-gray-900 mb-2">
-                          <TerminalText 
-                            text={formatDisplayValue(property.address)} 
-                            isAnimating={refreshingSections.property || false} 
-                            delay={200 + index * 400} 
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-600 min-w-[60px]">Type:</span>
-                            <div className="font-medium flex-1">
-                              <TerminalText 
-                                text={formatDisplayValue(property.type)} 
-                                isAnimating={refreshingSections.property || false} 
-                                delay={300 + index * 400} 
-                              />
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-600 min-w-[60px]">Value:</span>
-                            <div className="font-medium flex-1">
-                              <TerminalText 
-                                text={formatDisplayValue(property.value)} 
-                                isAnimating={refreshingSections.property || false} 
-                                delay={400 + index * 400} 
-                              />
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-600 min-w-[60px]">Ownership:</span>
-                            <div className="font-medium flex-1">
-                              <TerminalText 
-                                text={formatDisplayValue(property.ownership)} 
-                                isAnimating={refreshingSections.property || false} 
-                                delay={500 + index * 400} 
-                              />
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-600 min-w-[60px]">Purchase:</span>
-                            <div className="font-medium flex-1">
-                              <TerminalText 
-                                text={formatDisplayValue(property.purchaseDate)} 
-                                isAnimating={refreshingSections.property || false} 
-                                delay={600 + index * 400} 
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-8 text-gray-500">
-                      No property holdings found
-                    </div>
-                  )}
-                </div>
+                <PropertyHoldingsSection properties={reportData.propertyHoldings} />
               </AccordionSection>
 
               {/* Legal & Litigation */}
               <AccordionSection sectionId="legal" title="Legal & Litigation" icon={Scale} creditCost={2.9}>
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-600 min-w-[120px]">Criminal Record:</span>
-                    <div className="font-medium flex-1">
-                      {editingSections.legal ? (
-                        <EditableText
-                          value={reportData.legalRecords.criminalRecord}
-                          isEditing={true}
-                          onSave={(value) => handleSaveField('legal', 'criminalRecord', value)}
-                        />
-                      ) : (
-                        <TerminalText 
-                          text={formatDisplayValue(reportData.legalRecords.criminalRecord)} 
-                          isAnimating={refreshingSections.legal || false} 
-                          delay={200} 
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-gray-600 min-w-[120px] mt-0.5">Active Lawsuits:</span>
-                    <div className="font-medium flex-1">
-                      {editingSections.legal ? (
-                        <EditableText
-                          value={reportData.legalRecords.activeLawsuits}
-                          isEditing={true}
-                          onSave={(value) => handleSaveField('legal', 'activeLawsuits', value)}
-                          multiline
-                        />
-                      ) : (
-                        <TerminalText 
-                          text={formatDisplayValue(reportData.legalRecords.activeLawsuits)} 
-                          isAnimating={refreshingSections.legal || false} 
-                          delay={400} 
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-gray-600 min-w-[120px] mt-0.5">Regulatory:</span>
-                    <div className="font-medium flex-1">
-                      {editingSections.legal ? (
-                        <EditableText
-                          value={reportData.legalRecords.regulatoryViolations}
-                          isEditing={true}
-                          onSave={(value) => handleSaveField('legal', 'regulatoryViolations', value)}
-                          multiline
-                        />
-                      ) : (
-                        <TerminalText 
-                          text={formatDisplayValue(reportData.legalRecords.regulatoryViolations)} 
-                          isAnimating={refreshingSections.legal || false} 
-                          delay={600} 
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-gray-600 min-w-[120px] mt-0.5">Civil Cases:</span>
-                    <div className="font-medium flex-1">
-                      {editingSections.legal ? (
-                        <EditableText
-                          value={reportData.legalRecords.civilCases}
-                          isEditing={true}
-                          onSave={(value) => handleSaveField('legal', 'civilCases', value)}
-                          multiline
-                        />
-                      ) : (
-                        <TerminalText 
-                          text={formatDisplayValue(reportData.legalRecords.civilCases)} 
-                          isAnimating={refreshingSections.legal || false} 
-                          delay={800} 
-                        />
-                      )}
-                    </div>
-                  </div>
-                </div>
+                <LegalRecordsSection
+                  data={reportData.legalRecords}
+                  isEditing={editingSections.legal || false}
+                  isRefreshing={refreshingSections.legal || false}
+                  onSave={(field, value) => handleSaveField('legal', field, value)}
+                />
               </AccordionSection>
 
               {/* Online Presence */}
               <AccordionSection sectionId="online" title="Online Presence" icon={Search} creditCost={2.7}>
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-600 min-w-[120px]">Social Media:</span>
-                    <div className="font-medium flex-1">
-                      {editingSections.online ? (
-                        <EditableText
-                          value={reportData.onlinePresence.socialMedia}
-                          isEditing={true}
-                          onSave={(value) => handleSaveField('online', 'socialMedia', value)}
-                        />
-                      ) : (
-                        <TerminalText 
-                          text={formatDisplayValue(reportData.onlinePresence.socialMedia)} 
-                          isAnimating={refreshingSections.online || false} 
-                          delay={200} 
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-600 min-w-[120px]">Email Accounts:</span>
-                    <div className="font-medium flex-1">
-                      {editingSections.online ? (
-                        <EditableText
-                          value={reportData.onlinePresence.emailAccounts}
-                          isEditing={true}
-                          onSave={(value) => handleSaveField('online', 'emailAccounts', value)}
-                        />
-                      ) : (
-                        <TerminalText 
-                          text={formatDisplayValue(reportData.onlinePresence.emailAccounts)} 
-                          isAnimating={refreshingSections.online || false} 
-                          delay={400} 
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-gray-600 min-w-[120px] mt-0.5">Digital Footprint:</span>
-                    <div className="font-medium flex-1">
-                      {editingSections.online ? (
-                        <EditableText
-                          value={reportData.onlinePresence.digitalFootprint}
-                          isEditing={true}
-                          onSave={(value) => handleSaveField('online', 'digitalFootprint', value)}
-                          multiline
-                        />
-                      ) : (
-                        <TerminalText 
-                          text={formatDisplayValue(reportData.onlinePresence.digitalFootprint)} 
-                          isAnimating={refreshingSections.online || false} 
-                          delay={600} 
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-600 min-w-[120px]">Communication:</span>
-                    <div className="font-medium flex-1">
-                      {editingSections.online ? (
-                        <EditableText
-                          value={reportData.onlinePresence.communicationMethods}
-                          isEditing={true}
-                          onSave={(value) => handleSaveField('online', 'communicationMethods', value)}
-                        />
-                      ) : (
-                        <TerminalText 
-                          text={formatDisplayValue(reportData.onlinePresence.communicationMethods)} 
-                          isAnimating={refreshingSections.online || false} 
-                          delay={800} 
-                        />
-                      )}
-                    </div>
-                  </div>
-                </div>
+                <OnlinePresenceSection
+                  data={reportData.onlinePresence}
+                  isEditing={editingSections.online || false}
+                  isRefreshing={refreshingSections.online || false}
+                  onSave={(field, value) => handleSaveField('online', field, value)}
+                />
               </AccordionSection>
             </div>
           </div>
@@ -1159,37 +401,37 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
 // Helper functions for PDF generation
 function generatePersonalInfoContent(reportData: ReportData): string {
   const info = reportData.personalInformation
-  return `DOB: ${formatDisplayValue(info.dob)}
-Nationality: ${formatDisplayValue(info.nationality)}
-Known Aliases: ${formatDisplayValue(info.aliases.join(", "))}
-Current Location: ${formatDisplayValue(info.currentLocation)}
-Education: ${formatDisplayValue(info.education)}
-Languages: ${formatDisplayValue(info.languages.join(", "))}`
+  return `DOB: ${info.dob || 'Not available'}
+Nationality: ${info.nationality || 'Not available'}
+Known Aliases: ${info.aliases.join(", ") || 'Not available'}
+Current Location: ${info.currentLocation || 'Not available'}
+Education: ${info.education || 'Not available'}
+Languages: ${info.languages.join(", ") || 'Not available'}`
 }
 
 function generateSocialMediaContent(reportData: ReportData): string {
   if (reportData.socialMediaProfiles.length === 0) return "No social media profiles found"
   
   return reportData.socialMediaProfiles.map(profile => 
-    `${profile.platform}: ${formatDisplayValue(profile.handle)} (${formatDisplayValue(profile.followers)} followers)`
+    `${profile.platform}: ${profile.handle || 'Not available'} (${profile.followers || 'Unknown'} followers)`
   ).join("\n")
 }
 
 function generateFinancialContent(reportData: ReportData): string {
   const assets = reportData.financialAssets
-  return `Net Worth: ${formatDisplayValue(assets.netWorth)}
-Bank Accounts: ${formatDisplayValue(assets.bankAccounts)}
-Investments: ${formatDisplayValue(assets.investments)}
-Crypto Holdings: ${formatDisplayValue(assets.cryptoHoldings)}
-Offshore Accounts: ${formatDisplayValue(assets.offshoreAccounts)}
-Annual Income: ${formatDisplayValue(assets.annualIncome)}`
+  return `Net Worth: ${assets.netWorth || 'Not available'}
+Bank Accounts: ${assets.bankAccounts || 'Not available'}
+Investments: ${assets.investments || 'Not available'}
+Crypto Holdings: ${assets.cryptoHoldings || 'Not available'}
+Offshore Accounts: ${assets.offshoreAccounts || 'Not available'}
+Annual Income: ${assets.annualIncome || 'Not available'}`
 }
 
 function generateBusinessContent(reportData: ReportData): string {
   if (reportData.businessInterests.length === 0) return "No business interests found"
   
   return reportData.businessInterests.map(business => 
-    `${formatDisplayValue(business.name)} - ${formatDisplayValue(business.role)} (${formatDisplayValue(business.revenue)})`
+    `${business.name || 'Unknown'} - ${business.role || 'Unknown'} (${business.revenue || 'Unknown'})`
   ).join("\n")
 }
 
@@ -1197,22 +439,22 @@ function generatePropertyContent(reportData: ReportData): string {
   if (reportData.propertyHoldings.length === 0) return "No property holdings found"
   
   return reportData.propertyHoldings.map(property => 
-    `${formatDisplayValue(property.address)} - ${formatDisplayValue(property.type)} (${formatDisplayValue(property.value)})`
+    `${property.address || 'Unknown'} - ${property.type || 'Unknown'} (${property.value || 'Unknown'})`
   ).join("\n")
 }
 
 function generateLegalContent(reportData: ReportData): string {
   const legal = reportData.legalRecords
-  return `Criminal Record: ${formatDisplayValue(legal.criminalRecord)}
-Active Lawsuits: ${formatDisplayValue(legal.activeLawsuits)}
-Regulatory Violations: ${formatDisplayValue(legal.regulatoryViolations)}
-Civil Cases: ${formatDisplayValue(legal.civilCases)}`
+  return `Criminal Record: ${legal.criminalRecord || 'Not available'}
+Active Lawsuits: ${legal.activeLawsuits || 'Not available'}
+Regulatory Violations: ${legal.regulatoryViolations || 'Not available'}
+Civil Cases: ${legal.civilCases || 'Not available'}`
 }
 
 function generateOnlinePresenceContent(reportData: ReportData): string {
   const online = reportData.onlinePresence
-  return `Social Media: ${formatDisplayValue(online.socialMedia)}
-Email Accounts: ${formatDisplayValue(online.emailAccounts)}
-Digital Footprint: ${formatDisplayValue(online.digitalFootprint)}
-Communication Methods: ${formatDisplayValue(online.communicationMethods)}`
+  return `Social Media: ${online.socialMedia || 'Not available'}
+Email Accounts: ${online.emailAccounts || 'Not available'}
+Digital Footprint: ${online.digitalFootprint || 'Not available'}
+Communication Methods: ${online.communicationMethods || 'Not available'}`
 }
