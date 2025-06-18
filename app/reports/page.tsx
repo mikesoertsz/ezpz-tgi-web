@@ -1,6 +1,7 @@
-'use client'
+"use client";
 
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/app-sidebar";
+import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,17 +9,29 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
+} from "@/components/ui/sidebar";
 import {
   Table,
   TableBody,
@@ -26,42 +39,54 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { 
-  FileText, 
-  Plus, 
-  Search, 
-  Shield, 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock, 
-  User, 
+  AlertTriangle,
   Building2,
   Calendar,
-  Eye,
-  Download,
-  MoreHorizontal
-} from "lucide-react"
-import { useState, Suspense } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+  CheckCircle,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  FileText,
+  MoreHorizontal,
+  Plus,
+  Search,
+  Shield,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
 
 function ReportsPageContent() {
-  const router = useRouter()
-  const [searchTerm, setSearchTerm] = useState("")
-  const [clientFilter, setClientFilter] = useState("all")
-  const [projectFilter, setProjectFilter] = useState("all")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [riskFilter, setRiskFilter] = useState("all")
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [clientFilter, setClientFilter] = useState("all");
+  const [projectFilter, setProjectFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [riskFilter, setRiskFilter] = useState("all");
 
-  const reports = [
+  type Report = {
+    id: number;
+    title: string;
+    project: string;
+    client: string | null;
+    target: string;
+    targetEmail: string;
+    targetLinkedIn: string;
+    status: string;
+    riskLevel: string;
+    generated: string;
+    findings: number;
+    type: string;
+  };
+
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof Report;
+    direction: string;
+  } | null>(null);
+
+  const reports: Report[] = [
     {
       id: 1,
       title: "Executive Background Check - John Smith",
@@ -74,7 +99,7 @@ function ReportsPageContent() {
       riskLevel: "High",
       generated: "2024-01-25 14:30",
       findings: 12,
-      type: "Background Check"
+      type: "Background Check",
     },
     {
       id: 2,
@@ -88,7 +113,7 @@ function ReportsPageContent() {
       riskLevel: "Medium",
       generated: "2024-01-25 10:15",
       findings: 8,
-      type: "Social Media Analysis"
+      type: "Social Media Analysis",
     },
     {
       id: 3,
@@ -102,7 +127,7 @@ function ReportsPageContent() {
       riskLevel: "Low",
       generated: "2024-01-24 16:45",
       findings: 5,
-      type: "Corporate Intelligence"
+      type: "Corporate Intelligence",
     },
     {
       id: 4,
@@ -116,7 +141,7 @@ function ReportsPageContent() {
       riskLevel: "Unknown",
       generated: "2024-01-25 09:00",
       findings: 0,
-      type: "Threat Assessment"
+      type: "Threat Assessment",
     },
     {
       id: 5,
@@ -130,7 +155,7 @@ function ReportsPageContent() {
       riskLevel: "Medium",
       generated: "2024-01-23 11:20",
       findings: 15,
-      type: "Financial Analysis"
+      type: "Financial Analysis",
     },
     {
       id: 6,
@@ -144,87 +169,126 @@ function ReportsPageContent() {
       riskLevel: "High",
       generated: "2024-01-24 08:45",
       findings: 7,
-      type: "Property Investigation"
-    }
-  ]
+      type: "Property Investigation",
+    },
+  ];
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'Completed': return <CheckCircle className="h-4 w-4 text-green-500" />
-      case 'In Progress': return <Clock className="h-4 w-4 text-blue-500" />
-      case 'Processing': return <Clock className="h-4 w-4 text-yellow-500" />
-      default: return <FileText className="h-4 w-4" />
+      case "Completed":
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case "In Progress":
+        return <Clock className="h-4 w-4 text-blue-500" />;
+      case "Processing":
+        return <Clock className="h-4 w-4 text-yellow-500" />;
+      default:
+        return <FileText className="h-4 w-4" />;
     }
-  }
+  };
 
   const getRiskIcon = (risk: string) => {
     switch (risk) {
-      case 'High': return <Shield className="h-4 w-4 text-red-500" />
-      case 'Medium': return <AlertTriangle className="h-4 w-4 text-yellow-500" />
-      case 'Low': return <CheckCircle className="h-4 w-4 text-green-500" />
-      default: return <Clock className="h-4 w-4 text-gray-500" />
+      case "High":
+        return <Shield className="h-4 w-4 text-red-500" />;
+      case "Medium":
+        return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+      case "Low":
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      default:
+        return <Clock className="h-4 w-4 text-gray-500" />;
     }
-  }
-
-  const getRiskColor = (risk: string) => {
-    switch (risk) {
-      case 'High': return 'destructive'
-      case 'Medium': return 'secondary'
-      case 'Low': return 'default'
-      default: return 'outline'
-    }
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Completed': return 'default'
-      case 'In Progress': return 'secondary'
-      case 'Processing': return 'outline'
-      default: return 'secondary'
-    }
-  }
+  };
 
   // Get unique values for filters
-  const uniqueClients = [...new Set(reports.map(r => r.client).filter(Boolean))]
-  const uniqueProjects = [...new Set(reports.map(r => r.project))]
-  const uniqueStatuses = [...new Set(reports.map(r => r.status))]
-  const uniqueRiskLevels = [...new Set(reports.map(r => r.riskLevel).filter(r => r !== 'Unknown'))]
+  const uniqueClients = [
+    ...new Set(reports.map((r) => r.client).filter((c): c is string => !!c)),
+  ];
+  const uniqueProjects = [...new Set(reports.map((r) => r.project))];
+  const uniqueStatuses = [...new Set(reports.map((r) => r.status))];
+  const uniqueRiskLevels = [
+    ...new Set(reports.map((r) => r.riskLevel).filter((r) => r !== "Unknown")),
+  ];
 
   // Filter reports based on search and filters
-  const filteredReports = reports.filter(report => {
-    const matchesSearch = report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         report.target.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         report.targetEmail.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    const matchesClient = clientFilter === "all" || report.client === clientFilter
-    const matchesProject = projectFilter === "all" || report.project === projectFilter
-    const matchesStatus = statusFilter === "all" || report.status === statusFilter
-    const matchesRisk = riskFilter === "all" || report.riskLevel === riskFilter
+  const filteredReports = reports.filter((report) => {
+    const matchesSearch =
+      report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.target.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.targetEmail.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return matchesSearch && matchesClient && matchesProject && matchesStatus && matchesRisk
-  })
+    const matchesClient =
+      clientFilter === "all" || report.client === clientFilter;
+    const matchesProject =
+      projectFilter === "all" || report.project === projectFilter;
+    const matchesStatus =
+      statusFilter === "all" || report.status === statusFilter;
+    const matchesRisk = riskFilter === "all" || report.riskLevel === riskFilter;
+
+    return (
+      matchesSearch &&
+      matchesClient &&
+      matchesProject &&
+      matchesStatus &&
+      matchesRisk
+    );
+  });
+
+  const sortedReports = [...filteredReports].sort((a, b) => {
+    if (sortConfig !== null) {
+      const key = sortConfig.key;
+      const aValue = a[key];
+      const bValue = b[key];
+      // Handle null or undefined values
+      if (aValue == null && bValue == null) return 0;
+      if (aValue == null) return sortConfig.direction === "ascending" ? -1 : 1;
+      if (bValue == null) return sortConfig.direction === "ascending" ? 1 : -1;
+      if (aValue < bValue) {
+        return sortConfig.direction === "ascending" ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === "ascending" ? 1 : -1;
+      }
+    }
+    return 0;
+  });
+
+  const requestSort = (key: keyof Report) => {
+    let direction = "ascending";
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "ascending"
+    ) {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
 
   const handleRowClick = (reportId: number) => {
-    router.push(`/reports/${reportId}`)
-  }
+    router.push(`/reports/${reportId}`);
+  };
 
-  const handleActionClick = (e: React.MouseEvent, action: string, reportId: number) => {
-    e.stopPropagation() // Prevent row click when clicking action buttons
-    
+  const handleActionClick = (
+    e: React.MouseEvent,
+    action: string,
+    reportId: number
+  ) => {
+    e.stopPropagation(); // Prevent row click when clicking action buttons
+
     switch (action) {
-      case 'view':
-        router.push(`/reports/${reportId}`)
-        break
-      case 'download':
+      case "view":
+        router.push(`/reports/${reportId}`);
+        break;
+      case "download":
         // Handle download logic
-        console.log(`Downloading report ${reportId}`)
-        break
-      case 'more':
+        console.log(`Downloading report ${reportId}`);
+        break;
+      case "more":
         // Handle more options
-        console.log(`More options for report ${reportId}`)
-        break
+        console.log(`More options for report ${reportId}`);
+        break;
     }
-  }
+  };
 
   return (
     <SidebarProvider>
@@ -252,9 +316,11 @@ function ReportsPageContent() {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="flex items-center justify-between">
-            <div>
+            <div className="pl-8">
               <h1 className="text-2xl font-bold">Intelligence Reports</h1>
-              <p className="text-muted-foreground">AI-generated threat analysis and security assessments</p>
+              <p className="text-muted-foreground">
+                AI-generated threat analysis and security assessments
+              </p>
             </div>
             <Link href="/reports/new">
               <Button>
@@ -264,99 +330,173 @@ function ReportsPageContent() {
             </Link>
           </div>
 
-          {/* Filters and Search */}
+          {/* Reports Table with Filters and Search */}
           <Card>
-            <CardContent className="pt-6">
-              <div className="flex flex-col gap-4 md:flex-row md:items-center">
-                <div className="relative flex-1 max-w-sm">
+            <CardHeader className="flex justify-between items-center">
+              <div>
+                <CardTitle>Reports ({sortedReports.length})</CardTitle>
+                <CardDescription>
+                  Comprehensive intelligence reports and security assessments
+                </CardDescription>
+              </div>
+              <div className="flex gap-2 items-center">
+                <div className="relative">
                   <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    placeholder="Search reports..." 
+                  <Input
+                    placeholder="Search..."
                     className="pl-8"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
-                <div className="flex gap-2 flex-wrap">
-                  <Select value={clientFilter} onValueChange={setClientFilter}>
-                    <SelectTrigger className="w-[140px]">
-                      <SelectValue placeholder="Client" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Clients</SelectItem>
-                      {uniqueClients.map(client => (
-                        <SelectItem key={client} value={client}>{client}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  
-                  <Select value={projectFilter} onValueChange={setProjectFilter}>
-                    <SelectTrigger className="w-[160px]">
-                      <SelectValue placeholder="Project" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Projects</SelectItem>
-                      {uniqueProjects.map(project => (
-                        <SelectItem key={project} value={project}>{project}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <Select value={clientFilter} onValueChange={setClientFilter}>
+                  <SelectTrigger className="w-[100px]">
+                    <SelectValue placeholder="Client" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Clients</SelectItem>
+                    {uniqueClients.map((client) => (
+                      <SelectItem key={client} value={client}>
+                        {client}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-[120px]">
-                      <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
-                      {uniqueStatuses.map(status => (
-                        <SelectItem key={status} value={status}>{status}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <Select value={projectFilter} onValueChange={setProjectFilter}>
+                  <SelectTrigger className="w-[100px]">
+                    <SelectValue placeholder="Project" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Projects</SelectItem>
+                    {uniqueProjects.map((project) => (
+                      <SelectItem key={project} value={project}>
+                        {project}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-                  <Select value={riskFilter} onValueChange={setRiskFilter}>
-                    <SelectTrigger className="w-[120px]">
-                      <SelectValue placeholder="Risk" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Risk</SelectItem>
-                      {uniqueRiskLevels.map(risk => (
-                        <SelectItem key={risk} value={risk}>{risk}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[100px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    {uniqueStatuses.map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {status}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={riskFilter} onValueChange={setRiskFilter}>
+                  <SelectTrigger className="w-[100px]">
+                    <SelectValue placeholder="Risk" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Risk</SelectItem>
+                    {uniqueRiskLevels.map((risk) => (
+                      <SelectItem key={risk} value={risk}>
+                        {risk}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Reports Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Reports ({filteredReports.length})</CardTitle>
-              <CardDescription>
-                Comprehensive intelligence reports and security assessments
-              </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Report</TableHead>
-                    <TableHead>Target</TableHead>
-                    <TableHead>Project</TableHead>
-                    <TableHead>Client</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Risk</TableHead>
-                    <TableHead>Generated</TableHead>
-                    <TableHead>Findings</TableHead>
+                    <TableHead onClick={() => requestSort("title")}>
+                      Report
+                      {sortConfig?.key === "title" ? (
+                        sortConfig.direction === "ascending" ? (
+                          <ChevronUp className="inline-block ml-1" />
+                        ) : (
+                          <ChevronDown className="inline-block ml-1" />
+                        )
+                      ) : null}
+                    </TableHead>
+                    <TableHead onClick={() => requestSort("target")}>
+                      Target
+                      {sortConfig?.key === "target" ? (
+                        sortConfig.direction === "ascending" ? (
+                          <ChevronUp className="inline-block ml-1" />
+                        ) : (
+                          <ChevronDown className="inline-block ml-1" />
+                        )
+                      ) : null}
+                    </TableHead>
+                    <TableHead onClick={() => requestSort("project")}>
+                      Project
+                      {sortConfig?.key === "project" ? (
+                        sortConfig.direction === "ascending" ? (
+                          <ChevronUp className="inline-block ml-1" />
+                        ) : (
+                          <ChevronDown className="inline-block ml-1" />
+                        )
+                      ) : null}
+                    </TableHead>
+                    <TableHead onClick={() => requestSort("client")}>
+                      Client
+                      {sortConfig?.key === "client" ? (
+                        sortConfig.direction === "ascending" ? (
+                          <ChevronUp className="inline-block ml-1" />
+                        ) : (
+                          <ChevronDown className="inline-block ml-1" />
+                        )
+                      ) : null}
+                    </TableHead>
+                    <TableHead onClick={() => requestSort("status")}>
+                      Status
+                      {sortConfig?.key === "status" ? (
+                        sortConfig.direction === "ascending" ? (
+                          <ChevronUp className="inline-block ml-1" />
+                        ) : (
+                          <ChevronDown className="inline-block ml-1" />
+                        )
+                      ) : null}
+                    </TableHead>
+                    <TableHead onClick={() => requestSort("riskLevel")}>
+                      Risk
+                      {sortConfig?.key === "riskLevel" ? (
+                        sortConfig.direction === "ascending" ? (
+                          <ChevronUp className="inline-block ml-1" />
+                        ) : (
+                          <ChevronDown className="inline-block ml-1" />
+                        )
+                      ) : null}
+                    </TableHead>
+                    <TableHead onClick={() => requestSort("generated")}>
+                      Generated
+                      {sortConfig?.key === "generated" ? (
+                        sortConfig.direction === "ascending" ? (
+                          <ChevronUp className="inline-block ml-1" />
+                        ) : (
+                          <ChevronDown className="inline-block ml-1" />
+                        )
+                      ) : null}
+                    </TableHead>
+                    <TableHead onClick={() => requestSort("findings")}>
+                      Findings
+                      {sortConfig?.key === "findings" ? (
+                        sortConfig.direction === "ascending" ? (
+                          <ChevronUp className="inline-block ml-1" />
+                        ) : (
+                          <ChevronDown className="inline-block ml-1" />
+                        )
+                      ) : null}
+                    </TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredReports.map((report) => (
-                    <TableRow 
-                      key={report.id} 
+                  {sortedReports.map((report) => (
+                    <TableRow
+                      key={report.id}
                       className="hover:bg-muted/50 cursor-pointer transition-colors"
                       onClick={() => handleRowClick(report.id)}
                     >
@@ -365,18 +505,22 @@ function ReportsPageContent() {
                           <FileText className="h-4 w-4 text-muted-foreground" />
                           <div>
                             <div className="font-medium">{report.title}</div>
-                            <div className="text-sm text-muted-foreground">{report.type}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {report.type}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div>
                           <div className="font-medium">{report.target}</div>
-                          <div className="text-sm text-muted-foreground">{report.targetEmail}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {report.targetEmail}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="secondary" className="text-xs">
                           {report.project}
                         </Badge>
                       </TableCell>
@@ -387,13 +531,15 @@ function ReportsPageContent() {
                             <span className="text-sm">{report.client}</span>
                           </div>
                         ) : (
-                          <span className="text-sm text-muted-foreground">Independent</span>
+                          <span className="text-sm text-muted-foreground">
+                            Independent
+                          </span>
                         )}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2">
                           {getStatusIcon(report.status)}
-                          <Badge variant={getStatusColor(report.status)} className="text-xs">
+                          <Badge variant="secondary" className="text-xs">
                             {report.status}
                           </Badge>
                         </div>
@@ -401,7 +547,7 @@ function ReportsPageContent() {
                       <TableCell>
                         <div className="flex items-center space-x-2">
                           {getRiskIcon(report.riskLevel)}
-                          <Badge variant={getRiskColor(report.riskLevel)} className="text-xs">
+                          <Badge variant="secondary" className="text-xs">
                             {report.riskLevel}
                           </Badge>
                         </div>
@@ -419,26 +565,12 @@ function ReportsPageContent() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end space-x-1">
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="sm"
-                            onClick={(e) => handleActionClick(e, 'view', report.id)}
-                            title="View Report"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={(e) => handleActionClick(e, 'download', report.id)}
-                            title="Download Report"
-                          >
-                            <Download className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={(e) => handleActionClick(e, 'more', report.id)}
+                            onClick={(e) =>
+                              handleActionClick(e, "more", report.id)
+                            }
                             title="More Options"
                           >
                             <MoreHorizontal className="h-4 w-4" />
@@ -451,51 +583,25 @@ function ReportsPageContent() {
               </Table>
             </CardContent>
           </Card>
-
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Report Generation</CardTitle>
-              <CardDescription>Create new intelligence reports using AI agents</CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-2 md:grid-cols-3">
-              <Link href="/reports/new?type=person">
-                <Button variant="outline" className="justify-start w-full">
-                  <User className="h-4 w-4 mr-2" />
-                  Person Analysis
-                </Button>
-              </Link>
-              <Link href="/reports/new?type=company">
-                <Button variant="outline" className="justify-start w-full">
-                  <Building2 className="h-4 w-4 mr-2" />
-                  Company Research
-                </Button>
-              </Link>
-              <Link href="/reports/new?type=threat">
-                <Button variant="outline" className="justify-start w-full">
-                  <Shield className="h-4 w-4 mr-2" />
-                  Threat Assessment
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
 
 export default function ReportsPage() {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p>Loading reports...</p>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+            <p>Loading reports...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <ReportsPageContent />
     </Suspense>
-  )
+  );
 }

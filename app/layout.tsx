@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TGI Intelligence Platform",
+  title: "Intelligence Platform",
   description:
     "AI-powered threat intelligence and security assessment platform",
 };

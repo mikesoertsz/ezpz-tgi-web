@@ -151,7 +151,7 @@ export function generateReportPDF(reportData: ReportData) {
 
 // Sample data structure for testing
 export const sampleReportData: ReportData = {
-  caseNumber: 'TGI-2024-001',
+  caseNumber: '2024-001',
   classification: 'CONFIDENTIAL',
   targetName: 'Investigation Target',
   targetEmail: 'target@example.com',

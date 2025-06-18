@@ -13,6 +13,7 @@ import {
   Activity,
   Search,
   Building2,
+  Triangle,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -31,9 +32,9 @@ import {
 
 const data = {
   user: {
-    name: "TGI Analyst",
-    email: "analyst@tgi.com",
-    avatar: "/tgi-logo.jpg",
+    name: "Analyst",
+    email: "analyst@example.com",
+    avatar: "",
   },
   navMain: [
     {
@@ -182,11 +183,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton size="lg" asChild>
               <a href="/dashboard">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Shield className="size-4" />
+                  <Triangle className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-xs leading-tight">
-                  <span className="truncate font-semibold text-sm">TGI</span>
-                  <span className="truncate text-xs opacity-80">Intelligence Platform</span>
+                  <span className="truncate font-semibold text-sm sr-only">
+                    Triangle
+                  </span>
+                  <span className="truncate text-xs opacity-80">
+                    Intelligence Platform
+                  </span>
                 </div>
               </a>
             </SidebarMenuButton>
