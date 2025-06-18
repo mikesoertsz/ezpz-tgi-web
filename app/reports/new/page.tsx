@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,22 +8,18 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { ReportChat } from "@/components/report-chat"
-import { ReportDocument } from "@/components/report-document"
-import { useSearchParams } from "next/navigation"
-import { Suspense } from "react"
+} from "@/components/ui/sidebar";
+import { ReportChat } from "@/components/report-chat";
+import { ReportDocument } from "@/components/report-document";
+import { Suspense } from "react";
 
 function NewReportPageContent() {
-  const searchParams = useSearchParams()
-  const reportType = searchParams?.get('type') || 'person'
-
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -57,7 +53,7 @@ function NewReportPageContent() {
           <div className="w-1/3 border-r border-border h-full flex flex-col">
             <ReportChat />
           </div>
-          
+
           {/* Right Column - Report Document - Scrollable */}
           <div className="flex-1 h-full overflow-y-auto">
             <ReportDocument />
@@ -65,20 +61,22 @@ function NewReportPageContent() {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
 
 export default function NewReportPage() {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p>Loading...</p>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+            <p>Loading...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <NewReportPageContent />
     </Suspense>
-  )
+  );
 }

@@ -1,20 +1,16 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { 
-  Send, 
-  Bot, 
-  User, 
-  Settings, 
-  Play, 
-  Pause, 
-  RefreshCw,
-  MessageSquare,
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Send,
+  Bot,
+  User,
+  Settings,
+  Play,
+  Pause,
   Shield,
   Search,
   Database,
@@ -28,247 +24,264 @@ import {
   CheckCircle2,
   Loader2,
   ChevronDown,
-  ChevronUp
-} from "lucide-react"
-import { ScrollArea } from "@/components/ui/scroll-area"
+  ChevronUp,
+} from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Message {
-  id: string
-  type: 'user' | 'assistant' | 'system'
-  content: string
-  timestamp: Date
-  agent?: string
+  id: string;
+  type: "user" | "assistant" | "system";
+  content: string;
+  timestamp: Date;
+  agent?: string;
 }
 
 interface Agent {
-  id: string
-  name: string
-  status: 'idle' | 'running' | 'completed' | 'error'
-  icon: any
-  description: string
-  category: 'data-gathering' | 'processing'
-  progress?: number
+  id: string;
+  name: string;
+  status: "idle" | "running" | "completed" | "error";
+  icon: React.ElementType;
+  description: string;
+  category: "data-gathering" | "processing";
+  progress?: number;
 }
 
 interface ReportChatProps {
-  reportId?: string
+  reportId?: string;
 }
 
 export function ReportChat({ reportId }: ReportChatProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: '1',
-      type: 'system',
-      content: reportId 
+      id: "1",
+      type: "system",
+      content: reportId
         ? `Intelligence gathering system loaded for Report #${reportId}. Continuing investigation...`
-        : 'Intelligence gathering system initialized. Ready to begin investigation.',
+        : "Intelligence gathering system initialized. Ready to begin investigation.",
       timestamp: new Date(),
-    }
-  ])
-  const [inputValue, setInputValue] = useState('')
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [agentStatusCollapsed, setAgentStatusCollapsed] = useState(false)
+    },
+  ]);
+  const [inputValue, setInputValue] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [agentStatusCollapsed, setAgentStatusCollapsed] = useState(false);
 
   const [agents, setAgents] = useState<Agent[]>([
     // Data Gathering Agents
     {
-      id: 'personal',
-      name: 'Personal Information',
-      status: reportId ? 'completed' : 'idle',
+      id: "personal",
+      name: "Personal Information",
+      status: reportId ? "completed" : "idle",
       icon: User,
-      description: 'Basic demographics and background',
-      category: 'data-gathering',
-      progress: reportId ? 100 : 0
+      description: "Basic demographics and background",
+      category: "data-gathering",
+      progress: reportId ? 100 : 0,
     },
     {
-      id: 'social',
-      name: 'Social Media Intelligence',
-      status: reportId ? 'running' : 'idle',
+      id: "social",
+      name: "Social Media Intelligence",
+      status: reportId ? "running" : "idle",
       icon: Globe,
-      description: 'Social media profiles and activity',
-      category: 'data-gathering',
-      progress: reportId ? 65 : 0
+      description: "Social media profiles and activity",
+      category: "data-gathering",
+      progress: reportId ? 65 : 0,
     },
     {
-      id: 'financial',
-      name: 'Financial Assets',
-      status: reportId ? 'completed' : 'idle',
+      id: "financial",
+      name: "Financial Assets",
+      status: reportId ? "completed" : "idle",
       icon: DollarSign,
-      description: 'Financial records and assets',
-      category: 'data-gathering',
-      progress: reportId ? 100 : 0
+      description: "Financial records and assets",
+      category: "data-gathering",
+      progress: reportId ? 100 : 0,
     },
     {
-      id: 'business',
-      name: 'Business Interests',
-      status: reportId ? 'idle' : 'idle',
+      id: "business",
+      name: "Business Interests",
+      status: reportId ? "idle" : "idle",
       icon: Building2,
-      description: 'Corporate affiliations and ventures',
-      category: 'data-gathering',
-      progress: 0
+      description: "Corporate affiliations and ventures",
+      category: "data-gathering",
+      progress: 0,
     },
     {
-      id: 'property',
-      name: 'Property Holdings',
-      status: reportId ? 'completed' : 'idle',
+      id: "property",
+      name: "Property Holdings",
+      status: reportId ? "completed" : "idle",
       icon: Home,
-      description: 'Real estate and property holdings',
-      category: 'data-gathering',
-      progress: reportId ? 100 : 0
+      description: "Real estate and property holdings",
+      category: "data-gathering",
+      progress: reportId ? 100 : 0,
     },
     {
-      id: 'legal',
-      name: 'Legal & Litigation',
-      status: reportId ? 'running' : 'idle',
+      id: "legal",
+      name: "Legal & Litigation",
+      status: reportId ? "running" : "idle",
       icon: Scale,
-      description: 'Legal proceedings and litigation',
-      category: 'data-gathering',
-      progress: reportId ? 30 : 0
+      description: "Legal proceedings and litigation",
+      category: "data-gathering",
+      progress: reportId ? 30 : 0,
     },
     {
-      id: 'online',
-      name: 'Online Presence',
-      status: reportId ? 'completed' : 'idle',
+      id: "online",
+      name: "Online Presence",
+      status: reportId ? "completed" : "idle",
       icon: Search,
-      description: 'Digital footprint and web presence',
-      category: 'data-gathering',
-      progress: reportId ? 100 : 0
+      description: "Digital footprint and web presence",
+      category: "data-gathering",
+      progress: reportId ? 100 : 0,
     },
     // Processing Agents
     {
-      id: 'images',
-      name: 'Image Collection',
-      status: reportId ? 'completed' : 'idle',
+      id: "images",
+      name: "Image Collection",
+      status: reportId ? "completed" : "idle",
       icon: Image,
-      description: 'Photos and visual evidence gathering',
-      category: 'processing',
-      progress: reportId ? 100 : 0
+      description: "Photos and visual evidence gathering",
+      category: "processing",
+      progress: reportId ? 100 : 0,
     },
     {
-      id: 'verifier',
-      name: 'Source Verifier',
-      status: reportId ? 'running' : 'idle',
+      id: "verifier",
+      name: "Source Verifier",
+      status: reportId ? "running" : "idle",
       icon: Shield,
-      description: 'Validates sources and prevents hallucination',
-      category: 'processing',
-      progress: reportId ? 80 : 0
+      description: "Validates sources and prevents hallucination",
+      category: "processing",
+      progress: reportId ? 80 : 0,
     },
     {
-      id: 'structurer',
-      name: 'Data Structuring',
-      status: reportId ? 'completed' : 'idle',
+      id: "structurer",
+      name: "Data Structuring",
+      status: reportId ? "completed" : "idle",
       icon: Database,
-      description: 'Cleans and organizes collected data',
-      category: 'processing',
-      progress: reportId ? 100 : 0
+      description: "Cleans and organizes collected data",
+      category: "processing",
+      progress: reportId ? 100 : 0,
     },
     {
-      id: 'reporter',
-      name: 'Report Generator',
-      status: reportId ? 'idle' : 'idle',
+      id: "reporter",
+      name: "Report Generator",
+      status: reportId ? "idle" : "idle",
       icon: FileText,
-      description: 'Compiles final intelligence reports',
-      category: 'processing',
-      progress: 0
-    }
-  ])
+      description: "Compiles final intelligence reports",
+      category: "processing",
+      progress: 0,
+    },
+  ]);
 
-  const dataGatheringAgents = agents.filter(agent => agent.category === 'data-gathering')
-  const processingAgents = agents.filter(agent => agent.category === 'processing')
+  const dataGatheringAgents = agents.filter(
+    (agent) => agent.category === "data-gathering"
+  );
+  const processingAgents = agents.filter(
+    (agent) => agent.category === "processing"
+  );
 
   // Simulate agent progress for existing reports
   useEffect(() => {
     if (reportId) {
       const interval = setInterval(() => {
-        setAgents(prevAgents => 
-          prevAgents.map(agent => {
-            if (agent.status === 'running' && agent.progress! < 100) {
-              const newProgress = Math.min(agent.progress! + Math.random() * 10, 100)
+        setAgents((prevAgents) =>
+          prevAgents.map((agent) => {
+            if (agent.status === "running" && agent.progress! < 100) {
+              const newProgress = Math.min(
+                agent.progress! + Math.random() * 10,
+                100
+              );
               return {
                 ...agent,
                 progress: newProgress,
-                status: newProgress >= 100 ? 'completed' : 'running'
-              }
+                status: newProgress >= 100 ? "completed" : "running",
+              };
             }
-            return agent
+            return agent;
           })
-        )
-      }, 2000)
+        );
+      }, 2000);
 
-      return () => clearInterval(interval)
+      return () => clearInterval(interval);
     }
-  }, [reportId])
+  }, [reportId]);
 
   const handleSendMessage = () => {
-    if (!inputValue.trim()) return
+    if (!inputValue.trim()) return;
 
     const newMessage: Message = {
       id: Date.now().toString(),
-      type: 'user',
+      type: "user",
       content: inputValue,
       timestamp: new Date(),
-    }
+    };
 
-    setMessages(prev => [...prev, newMessage])
-    setInputValue('')
-    setIsGenerating(true)
+    setMessages((prev) => [...prev, newMessage]);
+    setInputValue("");
+    setIsGenerating(true);
 
     // Simulate AI response
     setTimeout(() => {
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
-        type: 'assistant',
-        content: reportId 
+        type: "assistant",
+        content: reportId
           ? `Continuing analysis for "${inputValue}". I'm updating the existing investigation with new information and cross-referencing with current findings.`
           : `I'll help you investigate "${inputValue}". Let me activate the relevant agents to gather comprehensive intelligence. This may take a few minutes as I collect data from multiple sources.`,
         timestamp: new Date(),
-      }
-      setMessages(prev => [...prev, aiResponse])
-      setIsGenerating(false)
-    }, 1000)
-  }
+      };
+      setMessages((prev) => [...prev, aiResponse]);
+      setIsGenerating(false);
+    }, 1000);
+  };
 
   const getStatusIndicator = (agent: Agent) => {
     switch (agent.status) {
-      case 'running':
+      case "running":
         return (
           <div className="flex items-center space-x-1">
             <Loader2 className="h-3 w-3 animate-spin text-blue-500" />
             {agent.progress !== undefined && (
-              <span className="text-xs text-blue-600">{Math.round(agent.progress)}%</span>
+              <span className="text-xs text-blue-600">
+                {Math.round(agent.progress)}%
+              </span>
             )}
           </div>
-        )
-      case 'completed':
-        return <CheckCircle2 className="h-3 w-3 text-green-500" />
-      case 'error':
-        return <div className="w-3 h-3 rounded-full bg-red-500" />
+        );
+      case "completed":
+        return <CheckCircle2 className="h-3 w-3 text-green-500" />;
+      case "error":
+        return <div className="w-3 h-3 rounded-full bg-red-500" />;
       default:
-        return <div className="w-3 h-3 rounded-full bg-gray-300" />
+        return <div className="w-3 h-3 rounded-full bg-gray-300" />;
     }
-  }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'running': return 'text-blue-600'
-      case 'completed': return 'text-green-600'
-      case 'error': return 'text-red-600'
-      default: return 'text-gray-500'
+      case "running":
+        return "text-blue-600";
+      case "completed":
+        return "text-green-600";
+      case "error":
+        return "text-red-600";
+      default:
+        return "text-gray-500";
     }
-  }
+  };
 
   const AgentItem = ({ agent }: { agent: Agent }) => (
     <div className="flex items-center space-x-2 p-2 rounded hover:bg-gray-50 transition-colors">
       {getStatusIndicator(agent)}
-      <span className={`text-xs font-medium truncate ${getStatusColor(agent.status)}`}>
+      <span
+        className={`text-xs font-medium truncate ${getStatusColor(
+          agent.status
+        )}`}
+      >
         {agent.name}
       </span>
     </div>
-  )
+  );
 
-  const completedAgents = agents.filter(a => a.status === 'completed').length
-  const runningAgents = agents.filter(a => a.status === 'running').length
-  const totalAgents = agents.length
+  const completedAgents = agents.filter((a) => a.status === "completed").length;
+  const runningAgents = agents.filter((a) => a.status === "running").length;
+  const totalAgents = agents.length;
 
   return (
     <div className="flex flex-col h-full bg-gray-50">
@@ -277,13 +290,12 @@ export function ReportChat({ reportId }: ReportChatProps) {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold">
-              {reportId ? `Report #${reportId}` : 'AI Intelligence Assistant'}
+              {reportId ? `Report #${reportId}` : "AI Intelligence Assistant"}
             </h2>
             <p className="text-sm text-muted-foreground">
-              {reportId 
+              {reportId
                 ? `${completedAgents}/${totalAgents} agents completed • ${runningAgents} running`
-                : 'Powered by multiple specialized agents'
-              }
+                : "Powered by multiple specialized agents"}
             </p>
           </div>
           <Button variant="ghost" size="sm">
@@ -299,7 +311,9 @@ export function ReportChat({ reportId }: ReportChatProps) {
           className="w-full p-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
         >
           <div className="flex items-center space-x-2">
-            <h3 className="text-sm font-semibold text-gray-900">Agent Status</h3>
+            <h3 className="text-sm font-semibold text-gray-900">
+              Agent Status
+            </h3>
             <Badge variant="secondary" className="text-xs">
               {completedAgents}/{totalAgents} complete
             </Badge>
@@ -315,12 +329,14 @@ export function ReportChat({ reportId }: ReportChatProps) {
             <ChevronUp className="h-4 w-4 text-gray-500" />
           )}
         </button>
-        
+
         {!agentStatusCollapsed && (
           <div className="px-3 pb-3 space-y-3">
             {/* Data Gathering Agents */}
             <div>
-              <h4 className="text-xs font-medium text-gray-700 mb-2">Data Gathering Agents</h4>
+              <h4 className="text-xs font-medium text-gray-700 mb-2">
+                Data Gathering Agents
+              </h4>
               <div className="grid grid-cols-3 gap-1">
                 {dataGatheringAgents.map((agent) => (
                   <AgentItem key={agent.id} agent={agent} />
@@ -330,7 +346,9 @@ export function ReportChat({ reportId }: ReportChatProps) {
 
             {/* Processing & Verification */}
             <div>
-              <h4 className="text-xs font-medium text-gray-700 mb-2">Processing & Verification</h4>
+              <h4 className="text-xs font-medium text-gray-700 mb-2">
+                Processing & Verification
+              </h4>
               <div className="grid grid-cols-3 gap-1">
                 {processingAgents.map((agent) => (
                   <AgentItem key={agent.id} agent={agent} />
@@ -346,24 +364,35 @@ export function ReportChat({ reportId }: ReportChatProps) {
         <ScrollArea className="h-full p-4">
           <div className="space-y-4">
             {messages.map((message) => (
-              <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] rounded-lg p-3 ${
-                  message.type === 'user' 
-                    ? 'bg-primary text-primary-foreground' 
-                    : message.type === 'system'
-                    ? 'bg-muted text-muted-foreground'
-                    : 'bg-white border border-gray-200'
-                }`}>
+              <div
+                key={message.id}
+                className={`flex ${
+                  message.type === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
+                <div
+                  className={`max-w-[80%] rounded-lg p-3 ${
+                    message.type === "user"
+                      ? "bg-primary text-primary-foreground"
+                      : message.type === "system"
+                      ? "bg-muted text-muted-foreground"
+                      : "bg-white border border-gray-200"
+                  }`}
+                >
                   <div className="flex items-center space-x-2 mb-1">
-                    {message.type === 'user' ? (
+                    {message.type === "user" ? (
                       <User className="h-3 w-3" />
-                    ) : message.type === 'system' ? (
+                    ) : message.type === "system" ? (
                       <Shield className="h-3 w-3" />
                     ) : (
                       <Bot className="h-3 w-3" />
                     )}
                     <span className="text-xs font-medium">
-                      {message.type === 'user' ? 'You' : message.type === 'system' ? 'System' : 'AI Assistant'}
+                      {message.type === "user"
+                        ? "You"
+                        : message.type === "system"
+                        ? "System"
+                        : "AI Assistant"}
                     </span>
                     <span className="text-xs opacity-70">
                       {message.timestamp.toLocaleTimeString()}
@@ -400,16 +429,17 @@ export function ReportChat({ reportId }: ReportChatProps) {
           <Input
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder={reportId 
-              ? "Ask questions about this report or request additional analysis..."
-              : "Enter target name, email, or company to investigate..."
+            placeholder={
+              reportId
+                ? "Ask questions about this report or request additional analysis..."
+                : "Enter target name, email, or company to investigate..."
             }
-            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
             disabled={isGenerating}
             className="bg-white"
           />
-          <Button 
-            onClick={handleSendMessage} 
+          <Button
+            onClick={handleSendMessage}
             disabled={!inputValue.trim() || isGenerating}
             size="sm"
           >
@@ -428,13 +458,12 @@ export function ReportChat({ reportId }: ReportChatProps) {
             </Button>
           </div>
           <span className="text-xs text-muted-foreground">
-            {reportId 
+            {reportId
               ? `${completedAgents}/${totalAgents} agents complete`
-              : `${totalAgents} agents ready`
-            }
+              : `${totalAgents} agents ready`}
           </span>
         </div>
       </div>
     </div>
-  )
+  );
 }

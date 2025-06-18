@@ -6,11 +6,9 @@ import {
   ShieldCheck,
   ShieldAlert,
   Edit2,
-  Trash2,
-  Mail,
-  Calendar,
   MoreVertical,
 } from "lucide-react";
+import Image from "next/image";
 
 interface TeamMember {
   id: string;
@@ -165,7 +163,9 @@ const TeamManagementModal: React.FC<TeamManagementModalProps> = ({
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() =>
+                  setActiveTab(tab.id as "members" | "roles" | "settings")
+                }
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === tab.id
                     ? "border-blue-500 text-blue-600"
@@ -231,7 +231,10 @@ const TeamManagementModal: React.FC<TeamManagementModalProps> = ({
                       onChange={(e) =>
                         setNewMember({
                           ...newMember,
-                          role: e.target.value as any,
+                          role: e.target.value as
+                            | "admin"
+                            | "analyst"
+                            | "viewer",
                         })
                       }
                       className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -269,10 +272,12 @@ const TeamManagementModal: React.FC<TeamManagementModalProps> = ({
                     >
                       <div className="flex items-center space-x-4">
                         <div className="relative">
-                          <img
+                          <Image
                             src={member.avatar}
                             alt={member.name}
                             className="w-10 h-10 rounded-full"
+                            width={40}
+                            height={40}
                           />
                           <div
                             className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${

@@ -1,5 +1,13 @@
-import React from 'react';
-import { ShieldAlert, Share2, Lock, Download, Settings, Circle } from 'lucide-react';
+import React from "react";
+import {
+  ShieldAlert,
+  Share2,
+  Lock,
+  Download,
+  Settings,
+  Circle,
+} from "lucide-react";
+import Image from "next/image";
 
 interface ReportHeaderProps {
   caseNumber: string;
@@ -11,13 +19,25 @@ interface ReportHeaderProps {
 const ReportHeader: React.FC<ReportHeaderProps> = ({
   caseNumber,
   classification,
-  subject,
-  dateCompiled
+  dateCompiled,
 }) => {
   const collaborators = [
-    { id: 1, image: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg", online: true },
-    { id: 2, image: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg", online: true },
-    { id: 3, image: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg", online: false }
+    {
+      id: 1,
+      image: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg",
+      online: true,
+    },
+    {
+      id: 2,
+      image: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg",
+      online: true,
+    },
+    {
+      id: 3,
+      image:
+        "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg",
+      online: false,
+    },
   ];
 
   return (
@@ -26,7 +46,9 @@ const ReportHeader: React.FC<ReportHeaderProps> = ({
         <div className="flex items-center space-x-3">
           <ShieldAlert size={20} className="text-gray-400" />
           <div>
-            <h1 className="text-sm font-medium text-gray-900">INTELLIGENCE BRIEFING</h1>
+            <h1 className="text-sm font-medium text-gray-900">
+              INTELLIGENCE BRIEFING
+            </h1>
             <p className="text-xs text-gray-500">Case: {caseNumber}</p>
           </div>
         </div>
@@ -36,9 +58,11 @@ const ReportHeader: React.FC<ReportHeaderProps> = ({
           <div className="flex -space-x-2">
             {collaborators.map((collaborator) => (
               <div key={collaborator.id} className="relative">
-                <img
+                <Image
                   src={collaborator.image}
                   alt="Collaborator"
+                  width={24}
+                  height={24}
                   className="w-6 h-6 rounded-full border-2 border-white"
                 />
                 {collaborator.online && (

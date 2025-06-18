@@ -50,7 +50,7 @@ export async function saveReportData(reportData: ReportData): Promise<boolean> {
 export function updateReportSection(
   reportData: ReportData,
   sectionId: string,
-  updates: Partial<any>
+  updates: Partial<Record<string, unknown>>
 ): ReportData {
   const updatedReport = { ...reportData };
 
