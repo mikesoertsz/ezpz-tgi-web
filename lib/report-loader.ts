@@ -1,4 +1,9 @@
-import { ReportData } from "./report-data";
+import {
+  ReportData,
+  BusinessInterest,
+  PropertyHolding,
+  SocialMediaProfile,
+} from "./report-data";
 
 // Cache for loaded reports
 const reportCache = new Map<string, ReportData>();
@@ -64,7 +69,8 @@ export function updateReportSection(
       break;
     case "social":
       if (updates.profiles) {
-        updatedReport.socialMediaProfiles = updates.profiles;
+        updatedReport.socialMediaProfiles =
+          updates.profiles as SocialMediaProfile[];
       }
       break;
     case "financial":
@@ -75,12 +81,13 @@ export function updateReportSection(
       break;
     case "business":
       if (updates.interests) {
-        updatedReport.businessInterests = updates.interests;
+        updatedReport.businessInterests =
+          updates.interests as BusinessInterest[];
       }
       break;
     case "property":
       if (updates.holdings) {
-        updatedReport.propertyHoldings = updates.holdings;
+        updatedReport.propertyHoldings = updates.holdings as PropertyHolding[];
       }
       break;
     case "legal":

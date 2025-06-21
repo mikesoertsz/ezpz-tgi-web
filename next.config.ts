@@ -1,10 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Disable static optimization for pages with dynamic routing
-  experimental: {
-    missingSuspenseWithCSRBailout: false,
-  },
   // Ensure proper handling of client-side routing
   trailingSlash: false,
   // Add proper error handling

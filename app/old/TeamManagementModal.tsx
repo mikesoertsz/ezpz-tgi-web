@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import {
   X,
@@ -10,11 +11,13 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
+type TeamMemberRole = "admin" | "analyst" | "viewer";
+
 interface TeamMember {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "analyst" | "viewer";
+  role: TeamMemberRole;
   status: "active" | "pending" | "inactive";
   lastActive: string;
   joinDate: string;
@@ -34,10 +37,14 @@ const TeamManagementModal: React.FC<TeamManagementModalProps> = ({
     "members"
   );
   const [showAddMember, setShowAddMember] = useState(false);
-  const [newMember, setNewMember] = useState({
+  const [newMember, setNewMember] = useState<{
+    name: string;
+    email: string;
+    role: TeamMemberRole;
+  }>({
     name: "",
     email: "",
-    role: "viewer" as const,
+    role: "viewer",
   });
 
   const teamMembers: TeamMember[] = [
@@ -231,10 +238,7 @@ const TeamManagementModal: React.FC<TeamManagementModalProps> = ({
                       onChange={(e) =>
                         setNewMember({
                           ...newMember,
-                          role: e.target.value as
-                            | "admin"
-                            | "analyst"
-                            | "viewer",
+                          role: e.target.value as TeamMemberRole,
                         })
                       }
                       className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
