@@ -24,7 +24,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createEmptyReport, saveReportData } from "@/lib/report-loader";
 import { PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -50,21 +49,37 @@ export function CreateReportDialog() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const targetName = `${values.firstName} ${values.lastName}`;
-    const newReport = createEmptyReport(targetName, values.email);
+    try {
+      const response = await fetch(
+        "http://localhost:5678/webhook-test/e44672a7-527e-4e10-a619-edc9b189cdef",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        }
+      );
 
-    if (values.linkedinUrl) {
-      newReport.targetLinkedIn = values.linkedinUrl;
-    }
+      if (response.ok) {
+        const result = await response.json();
+        const reportId = result.id; // Assuming the response contains the report ID
 
-    const success = await saveReportData(newReport);
-    if (success) {
-      form.reset();
-      setOpen(false);
-      router.push(`/reports/${newReport.id}`);
-    } else {
+        if (reportId) {
+          form.reset();
+          setOpen(false);
+          router.push(`/reports/${reportId}`);
+        } else {
+          console.error("Webhook response did not contain a report ID.");
+          // TODO: Handle error with a toast notification
+        }
+      } else {
+        console.error("Webhook submission failed:", await response.text());
+        // TODO: Handle error with a toast notification
+      }
+    } catch (error) {
+      console.error("Error submitting to webhook:", error);
       // TODO: Handle error with a toast notification
-      console.error("Failed to save the new report.");
     }
   }
 
