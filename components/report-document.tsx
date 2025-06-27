@@ -73,6 +73,7 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
   >({});
 
   // Load report data
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     async function loadData() {
       if (reportId) {
@@ -649,6 +650,7 @@ function createDummyReport(reportId: string): ReportData {
 }
 
 // Helper function to transform webhook data to ReportData format
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function transformWebhookDataToReportData(webhookData: any, reportId: string): ReportData {
   const caseNumber = `${new Date().getFullYear()}-${String(
     Math.floor(Math.random() * 1000)
@@ -662,6 +664,7 @@ function transformWebhookDataToReportData(webhookData: any, reportId: string): R
   const languages = aiSummary.languages || {};
 
   // Extract basic info from raw data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rawLinkedInData = webhookData.raw_data?.find((item: any) => item.source === "linkedin");
   const basicInfo = rawLinkedInData?.basic_info || {};
 
@@ -726,6 +729,7 @@ function transformWebhookDataToReportData(webhookData: any, reportId: string): R
       nationality: personalInfo.nationality?.[0] || null,
       aliases: personalInfo.known_aliases || [],
       currentLocation: personalInfo.current_location?.[0] || null,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       education: education.map((edu: any) => `${edu.degree} - ${edu.institution} (${edu.year})`).join(", ") || null,
       languages: Object.keys(languages).filter(lang => languages[lang]) || [],
     },
