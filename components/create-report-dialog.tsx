@@ -50,27 +50,34 @@ export function CreateReportDialog() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      // Prepare payload as requested by user
+      const payload = {
+        email: values.email,
+        name: `${values.firstName} ${values.lastName}`
+      };
+
       const response = await fetch(
-        "http://localhost:5678/webhook-test/e44672a7-527e-4e10-a619-edc9b189cdef",
+        "https://ezpzagents.app.n8n.cloud/webhook/fd129a13-c8e3-49d0-8b6c-a22503634f4b",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(values),
+          body: JSON.stringify(payload),
         }
       );
 
       if (response.ok) {
         const result = await response.json();
-        const reportId = result.id; // Assuming the response contains the report ID
+        const executionId = result.execution_id;
 
-        if (reportId) {
+        if (executionId) {
           form.reset();
           setOpen(false);
-          router.push(`/reports/${reportId}`);
+          // Redirect to reports page with execution_id instead of hardcoded 1
+          router.push(`/reports/${executionId}`);
         } else {
-          console.error("Webhook response did not contain a report ID.");
+          console.error("Webhook response did not contain an execution_id.");
           // TODO: Handle error with a toast notification
         }
       } else {

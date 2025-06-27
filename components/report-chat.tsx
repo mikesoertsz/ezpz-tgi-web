@@ -51,12 +51,16 @@ interface ReportChatProps {
 }
 
 export function ReportChat({ reportId }: ReportChatProps) {
+  const isNewExecution = reportId && /^\d+$/.test(reportId);
+  
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
       type: "system",
       content: reportId
-        ? `Intelligence gathering system loaded for Report #${reportId}. Continuing investigation...`
+        ? isNewExecution 
+          ? `New investigation initiated with execution ID #${reportId}. AI agents are beginning intelligence gathering...`
+          : `Intelligence gathering system loaded for Report #${reportId}. Continuing investigation...`
         : "Intelligence gathering system initialized. Ready to begin investigation.",
       timestamp: new Date(),
     },
@@ -70,29 +74,29 @@ export function ReportChat({ reportId }: ReportChatProps) {
     {
       id: "personal",
       name: "Personal Information",
-      status: reportId ? "completed" : "idle",
+      status: reportId ? (isNewExecution ? "running" : "completed") : "idle",
       icon: User,
       description: "Basic demographics and background",
       category: "data-gathering",
-      progress: reportId ? 100 : 0,
+      progress: reportId ? (isNewExecution ? 15 : 100) : 0,
     },
     {
       id: "social",
       name: "Social Media Intelligence",
-      status: reportId ? "running" : "idle",
+      status: reportId ? (isNewExecution ? "running" : "running") : "idle",
       icon: Globe,
       description: "Social media profiles and activity",
       category: "data-gathering",
-      progress: reportId ? 65 : 0,
+      progress: reportId ? (isNewExecution ? 25 : 65) : 0,
     },
     {
       id: "financial",
       name: "Financial Assets",
-      status: reportId ? "completed" : "idle",
+      status: reportId ? (isNewExecution ? "idle" : "completed") : "idle",
       icon: DollarSign,
       description: "Financial records and assets",
       category: "data-gathering",
-      progress: reportId ? 100 : 0,
+      progress: reportId ? (isNewExecution ? 0 : 100) : 0,
     },
     {
       id: "business",
@@ -106,57 +110,57 @@ export function ReportChat({ reportId }: ReportChatProps) {
     {
       id: "property",
       name: "Property Holdings",
-      status: reportId ? "completed" : "idle",
+      status: reportId ? (isNewExecution ? "idle" : "completed") : "idle",
       icon: Home,
       description: "Real estate and property holdings",
       category: "data-gathering",
-      progress: reportId ? 100 : 0,
+      progress: reportId ? (isNewExecution ? 0 : 100) : 0,
     },
     {
       id: "legal",
       name: "Legal & Litigation",
-      status: reportId ? "running" : "idle",
+      status: reportId ? (isNewExecution ? "idle" : "running") : "idle",
       icon: Scale,
       description: "Legal proceedings and litigation",
       category: "data-gathering",
-      progress: reportId ? 30 : 0,
+      progress: reportId ? (isNewExecution ? 0 : 30) : 0,
     },
     {
       id: "online",
       name: "Online Presence",
-      status: reportId ? "completed" : "idle",
+      status: reportId ? (isNewExecution ? "running" : "completed") : "idle",
       icon: Search,
       description: "Digital footprint and web presence",
       category: "data-gathering",
-      progress: reportId ? 100 : 0,
+      progress: reportId ? (isNewExecution ? 10 : 100) : 0,
     },
     // Processing Agents
     {
       id: "images",
       name: "Image Collection",
-      status: reportId ? "completed" : "idle",
+      status: reportId ? (isNewExecution ? "idle" : "completed") : "idle",
       icon: Image,
       description: "Photos and visual evidence gathering",
       category: "processing",
-      progress: reportId ? 100 : 0,
+      progress: reportId ? (isNewExecution ? 0 : 100) : 0,
     },
     {
       id: "verifier",
       name: "Source Verifier",
-      status: reportId ? "running" : "idle",
+      status: reportId ? (isNewExecution ? "idle" : "running") : "idle",
       icon: Shield,
       description: "Validates sources and prevents hallucination",
       category: "processing",
-      progress: reportId ? 80 : 0,
+      progress: reportId ? (isNewExecution ? 0 : 80) : 0,
     },
     {
       id: "structurer",
       name: "Data Structuring",
-      status: reportId ? "completed" : "idle",
+      status: reportId ? (isNewExecution ? "idle" : "completed") : "idle",
       icon: Database,
       description: "Cleans and organizes collected data",
       category: "processing",
-      progress: reportId ? 100 : 0,
+      progress: reportId ? (isNewExecution ? 0 : 100) : 0,
     },
     {
       id: "reporter",
