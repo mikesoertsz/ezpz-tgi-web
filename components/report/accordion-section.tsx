@@ -44,7 +44,7 @@ export default function AccordionSection({
   const bibliography = section?.bibliography || [];
 
   return (
-    <div className="bg-white border border-stone-200 rounded-sm hover:shadow-sm transition duration-200 ease-in-out">
+    <div className="bg-white border border-stone-200 rounded-sm hover:shadow-sm transition duration-200 ease-in-out overflow-hidden">
       <button
         onClick={() => toggleSection(sectionId)}
         className="flex items-center justify-between w-full p-4 py-2 transition-colors "
@@ -67,9 +67,8 @@ export default function AccordionSection({
       </button>
 
       {isOpen && (
-        <div className="px-4 pb-4">
+        <div className="">
           <div className="mb-3 p-4">{children}</div>
-
           <SectionFooter
             sectionId={sectionId}
             creditCost={creditCost}
