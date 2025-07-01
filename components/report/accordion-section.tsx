@@ -47,11 +47,15 @@ export default function AccordionSection({
     <div className="bg-white border border-stone-200 rounded-sm hover:shadow-sm transition duration-200 ease-in-out">
       <button
         onClick={() => toggleSection(sectionId)}
-        className="flex items-center justify-between w-full p-4 py-2 transition-colors hover:bg-gray-50"
+        className="flex items-center justify-between w-full p-4 py-2 transition-colors "
       >
-        <div className="flex items-center space-x-2">
-          <Icon className="h-4 w-4 text-muted-foreground" size={14} />
-          <h3 className="text-[11px] uppercase font-mono font-medium text-stone-800">
+        <div className="flex items-center justify-center space-x-2">
+          <Icon
+            className="text-stone-500 subpixel-antialiased"
+            size={12}
+            strokeWidth={2}
+          />
+          <h3 className="text-[11px] uppercase font-mono text-stone-600 tracking-wider subpixel-antialiased">
             {title}
           </h3>
         </div>
