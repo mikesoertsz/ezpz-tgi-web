@@ -1,0 +1,225 @@
+[
+    {
+        "source": "linkedin",
+        "education": [
+            {
+                "degree": "Associate's degree, Computer Science and Business Administration",
+                "school": "Northern Virginia Community College",
+                "duration": "2018 - 2020",
+                "end_date": {
+                    "year": 2020
+                },
+                "school_id": "16058",
+                "activities": "Northern Virginia Men's Soccer Team",
+                "start_date": {
+                    "year": 2018
+                },
+                "degree_name": "Associate's degree",
+                "field_of_study": "Computer Science and Business Administration",
+                "school_logo_url": "https://media.licdn.com/dms/image/v2/D4E0BAQEtc02XNFyR0A/company-logo_400_400/company-logo_400_400/0/1693582179064/northern_virginia_community_college_logo?e=1756944000&v=beta&t=Y70UJ0lGas2qmj6E5PbmUrfGM8tW8MiQgHGwx2Z1F0c",
+                "school_linkedin_url": "https://www.linkedin.com/company/16058/"
+            }
+        ],
+        "basic_info": {
+            "urn": "ACoAACh_DTYBEeMmJXOQxtCY-GKMuqUB_r-kWe0",
+            "about": "As a seasoned IT & Cybersecurity professional, I have a deep understanding of the technology landscape and a proven track record of delivering enterprise-level solutions. Throughout my career, I have honed my skills in a range of technologies, including Microsoft Suite, Google Workspace, & JAMF. My expertise in troubleshooting, system optimization, and user support, combined with a proactive approach to cybersecurity, enables me to protect sensitive data and maintain high standards of operational efficiency. I am passionate about leveraging technology to solve complex problems and enhance organizational security.",
+            "fullname": "Ali Khan",
+            "headline": "Cybersecurity analyst | Desktop Administrator\n| Security+ ce | Able to obtain any government clearance ",
+            "location": {
+                "city": "Sterling, Virginia",
+                "full": "Sterling, Virginia, United States",
+                "country": "United States",
+                "country_code": "US"
+            },
+            "last_name": "Khan",
+            "first_name": "Ali",
+            "is_creator": true,
+            "is_premium": false,
+            "is_influencer": false,
+            "follower_count": 584,
+            "current_company": "Arnold Ventures",
+            "connection_count": 553,
+            "creator_hashtags": [],
+            "created_timestamp": 1535394470466,
+            "public_identifier": "ali-khan-04665016b",
+            "current_company_url": "https://www.linkedin.com/company/arnold-ventures",
+            "current_company_urn": "9119121",
+            "profile_picture_url": "https://media.licdn.com/dms/image/v2/D4E03AQGCdv62CTXukw/profile-displayphoto-shrink_800_800/B4EZSy47tDG0Ag-/0/1738168057388?e=1756944000&v=beta&t=4KlOMl61igiV83GPJILwbI4sbRjv3CkY9FdJdFj_r38",
+            "show_follower_count": true,
+            "background_picture_url": "https://media.licdn.com/dms/image/v2/D4E16AQHZ9QaIow61PQ/profile-displaybackgroundimage-shrink_350_1400/profile-displaybackgroundimage-shrink_350_1400/0/1729213216366?e=1756944000&v=beta&t=Nlvi5YIaZmZxbrrMGNd0rhvV-rxcb6WUgKG61O-WBGU"
+        },
+        "experience": [
+            {
+                "title": "IT and Training Analyst",
+                "skills": [
+                    "Microsoft 365 Security",
+                    "Microsoft Azure"
+                ],
+                "company": "Arnold",
+                "duration": "Jul 2024 - Present · 1 yr",
+                "location": "Washington DC-Baltimore Area",
+                "company_id": "9119121",
+                "is_current": true,
+                "skills_url": "https://www.linkedin.com/in/ali-khan-04665016b/overlay/urn:li:fsd_profilePosition:(ACoAACh_DTYBEeMmJXOQxtCY-GKMuqUB_r-kWe0,2434217882)/skill-associations-details?profileUrn=urn%3Ali%3Afsd_profile%3AACoAACh_DTYBEeMmJXOQxtCY-GKMuqUB_r-kWe0",
+                "start_date": {
+                    "year": 2024,
+                    "month": "Jul"
+                },
+                "description": "- Perform advanced on-site and remote diagnostics, analysis, and resolution of complex hardware, software, and network-related issues, implementing corrective actions as needed.\n- Respond to service requests submitted via ticketing systems, phone, and email, ensuring timely resolution in accordance with established service-level agreements (SLAs).\n- Deliver high-touch, boutique-style support and on-site troubleshooting, ensuring a premium user experience.\n- Conduct structured training sessions for end users on key business systems, applications, and technologies to enhance user proficiency and adoption.\n- Configure, deploy, maintain, monitor, and troubleshoot end-user computing environments, including desktops, laptops, mobile devices, software, and peripherals.\n- Collaborate with senior members of the Data Systems and Technology team to support and optimize the organization’s IT infrastructure and service delivery.\n- Assist in the asset management lifecycle, including tracking, inventory, and maintenance of all end-user hardware and peripheral devices.",
+                "location_type": "Hybrid",
+                "employment_type": "Ventures",
+                "company_logo_url": "https://media.licdn.com/dms/image/v2/C4E0BAQHzbgYnwA8u4g/company-logo_400_400/company-logo_400_400/0/1630594194877/laura_and_john_arnold_foundation_logo?e=1756944000&v=beta&t=zELHTa4G0SHEQ6nZkM8rFHWpEyjPgXJu26tohppv4XQ",
+                "company_linkedin_url": "https://www.linkedin.com/company/9119121/"
+            },
+            {
+                "title": "Cyber Security Analyst/Desktop Administrator",
+                "company": "Urgently",
+                "duration": "Dec 2022 - Jul 2024 · 1 yr 8 mos",
+                "end_date": {
+                    "year": 2024,
+                    "month": "Jul"
+                },
+                "location": "Hybrid",
+                "company_id": "3127671",
+                "is_current": false,
+                "start_date": {
+                    "year": 2022,
+                    "month": "Dec"
+                },
+                "company_logo_url": "https://media.licdn.com/dms/image/v2/C4E0BAQHemL0g7mVjoA/company-logo_400_400/company-logo_400_400/0/1638294044051/urgently_logo?e=1756944000&v=beta&t=N_D3B5JmuoZDui5mGCdF-PYeEEeT8azNdmqaPVAoYHo",
+                "company_linkedin_url": "https://www.linkedin.com/company/3127671/"
+            },
+            {
+                "title": "Desktop Support Administrator / Security Analyst",
+                "company": "Urgently",
+                "duration": "Jun 2022 - Jul 2024 · 2 yrs 2 mos",
+                "end_date": {
+                    "year": 2024,
+                    "month": "Jul"
+                },
+                "location": "Vienna, Virginia, United States",
+                "company_id": "3127671",
+                "is_current": false,
+                "start_date": {
+                    "year": 2022,
+                    "month": "Jun"
+                },
+                "company_logo_url": "https://media.licdn.com/dms/image/v2/C4E0BAQHemL0g7mVjoA/company-logo_400_400/company-logo_400_400/0/1638294044051/urgently_logo?e=1756944000&v=beta&t=N_D3B5JmuoZDui5mGCdF-PYeEEeT8azNdmqaPVAoYHo",
+                "company_linkedin_url": "https://www.linkedin.com/company/3127671/"
+            },
+            {
+                "title": "Enterprise Support Manager",
+                "company": "AMI Expeditionary Healthcare",
+                "duration": "Feb 2022 - Aug 2022 · 7 mos",
+                "end_date": {
+                    "year": 2022,
+                    "month": "Aug"
+                },
+                "company_id": "20502598",
+                "is_current": false,
+                "start_date": {
+                    "year": 2022,
+                    "month": "Feb"
+                },
+                "employment_type": "Full-time",
+                "company_logo_url": "https://media.licdn.com/dms/image/v2/C4E0BAQG-7RtpwrMUDQ/company-logo_400_400/company-logo_400_400/0/1630606007348/aspenmedicalint_logo?e=1756944000&v=beta&t=PVOiVFWykoYr5ZbGRdVEvObKdRD88gvnpVTzMSF9KUg",
+                "company_linkedin_url": "https://www.linkedin.com/company/20502598/"
+            },
+            {
+                "title": "Information Technology Analyst",
+                "company": "AMI Expeditionary Healthcare",
+                "duration": "Mar 2021 - Aug 2022 · 1 yr 6 mos",
+                "end_date": {
+                    "year": 2022,
+                    "month": "Aug"
+                },
+                "company_id": "20502598",
+                "is_current": false,
+                "start_date": {
+                    "year": 2021,
+                    "month": "Mar"
+                },
+                "employment_type": "Full-time",
+                "company_logo_url": "https://media.licdn.com/dms/image/v2/C4E0BAQG-7RtpwrMUDQ/company-logo_400_400/company-logo_400_400/0/1630606007348/aspenmedicalint_logo?e=1756944000&v=beta&t=PVOiVFWykoYr5ZbGRdVEvObKdRD88gvnpVTzMSF9KUg",
+                "company_linkedin_url": "https://www.linkedin.com/company/20502598/"
+            },
+            {
+                "title": "Geek Squad Specialist",
+                "company": "Best",
+                "duration": "Oct 2019 - Mar 2021 · 1 yr 6 mos",
+                "end_date": {
+                    "year": 2021,
+                    "month": "Mar"
+                },
+                "location": "Sterling, Virginia, United States",
+                "company_id": "2127",
+                "is_current": false,
+                "start_date": {
+                    "year": 2019,
+                    "month": "Oct"
+                },
+                "description": "•\tProvide on-site and in-home IT support and resolved customers technical issues/inquiries with clear and concise resolution updates.\n•\tInstall, configure, support, upgrade, and troubleshoot a wide range of hardware (PCs, laptops, phones, landlines  & printers) and software used in the company.\n•\tProvide informal assistance such as technical guidance, and/or training to coworkers.\n•\tWorked diligently on customers’ requests as well as provided on-phone support 24/7x365\n•\tMaintain a positive and professional relationship with staff and remote support",
+                "location_type": "On-site",
+                "employment_type": "Buy",
+                "company_logo_url": "https://media.licdn.com/dms/image/v2/D560BAQGT2K1dnyeIlA/company-logo_400_400/company-logo_400_400/0/1732018895513/best_buy_logo?e=1756944000&v=beta&t=VnB8pNXXjI2ht-G82HGo_QOHxmp1bdJe81OOa9y3iBk",
+                "company_linkedin_url": "https://www.linkedin.com/company/2127/"
+            }
+        ],
+        "profileUrl": "https://linkedin.com/in/ahmad-khan-04665016b",
+        "certifications": [
+            {
+                "name": "Preventing and Addressing Harassment: Foundations for Employees",
+                "issuer": "Paradigm ",
+                "issued_date": "Issued Jul 2024"
+            },
+            {
+                "name": "CompTIA Security+ ce Certification",
+                "issuer": "CompTIA",
+                "issued_date": "Issued Jun 2024 · Expires Jun 2027"
+            }
+        ]
+    },
+    
+    {
+        "source": "linkedin",
+        "projects": [
+            {
+                "name": "Morph L2",
+                "is_current": false,
+                "description": "The project included developing a cohesive logo, refining the color palette, crafting animations, and producing high-quality digital assets that aligned with the brand’s vision.",
+                "associated_with": "Yabai Labs"
+            }
+        ],
+        "education": [
+            {
+                "degree": "Bachelor of Science (B.S.), Political Science",
+                "school": "Boston University",
+                "school_id": "3556",
+                "degree_name": "Bachelor of Science (B.S.)",
+                "field_of_study": "Political Science",
+                "school_logo_url": "https://media.licdn.com/dms/image/v2/C560BAQFBK74krMig1Q/company-logo_400_400/company-logo_400_400/0/1631319084422?e=1756944000&v=beta&t=bUshyozQ96TMtvzYBOl7708HLIbjBJVVNs8JytdahUE",
+                "school_linkedin_url": "https://www.linkedin.com/company/3556/"
+            },
+            {
+                "degree": "User Experience and Interface Design ",
+                "school": "General Assembly",
+                "school_id": "2408664",
+                "degree_name": "User Experience and Interface Design ",
+                "school_logo_url": "https://media.licdn.com/dms/image/v2/C4E0BAQEwAxD22k-HBw/company-logo_400_400/company-logo_400_400/0/1630655071297/generalassembly_logo?e=1756944000&v=beta&t=ZGrVZLvArMv8U1tZCn44A_9b5C9n9QnAnuGodGaapn0",
+                "school_linkedin_url": "https://www.linkedin.com/company/2408664/"
+            }
+        ],
+        "languages": [
+            {
+                "language": "Hindi"
+            },
+            {
+                "language": "Spanish"
+            }
+        ],
+        "basic_info": {
+            "urn": "ACoAAAbOVEYBAcuGw1lO148yrr2yV5uCbnpQQ58",
+            "about": "I'm a product designer and creative technologist exploring the intersection of design, AI, and internet culture. \n\nI design intuitive, visually-driven digital products with a focus on clarity, ease of use, and brand impact. My background spans UX/UI, branding, and multimedia pro..."
+        }
+    }
+]

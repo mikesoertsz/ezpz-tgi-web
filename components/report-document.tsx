@@ -93,10 +93,10 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
           const pollForData = async () => {
             setPollingAttempt(prev => prev + 1);
             setLoadingRealData(true);
-            
+            console.log(reportId)
             try {
               const response = await fetch(
-                `https://ezpzagents.app.n8n.cloud/webhook/b84ee335-266e-4732-b52f-3ae2c03e60ee?execution_id=${reportId}`
+                `https://ezpzagents.app.n8n.cloud/webhook-test/b84ee335-266e-4732-b52f-3ae2c03e60ee?execution_id=${reportId}`
               );
               
               if (response.ok) {

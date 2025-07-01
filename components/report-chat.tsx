@@ -309,7 +309,7 @@ export function ReportChat({ reportId }: ReportChatProps) {
       </div>
 
       {/* Agent Status - Collapsible */}
-      <div className="border-b border-border bg-white shrink-0">
+      {/* <div className="border-b border-border bg-white shrink-0">
         <button
           onClick={() => setAgentStatusCollapsed(!agentStatusCollapsed)}
           className="w-full p-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
@@ -336,7 +336,6 @@ export function ReportChat({ reportId }: ReportChatProps) {
 
         {!agentStatusCollapsed && (
           <div className="px-3 pb-3 space-y-3">
-            {/* Data Gathering Agents */}
             <div>
               <h4 className="text-xs font-medium text-gray-700 mb-2">
                 Data Gathering Agents
@@ -348,7 +347,6 @@ export function ReportChat({ reportId }: ReportChatProps) {
               </div>
             </div>
 
-            {/* Processing & Verification */}
             <div>
               <h4 className="text-xs font-medium text-gray-700 mb-2">
                 Processing & Verification
@@ -361,9 +359,8 @@ export function ReportChat({ reportId }: ReportChatProps) {
             </div>
           </div>
         )}
-      </div>
+      </div> */}
 
-      {/* Chat Messages - Scrollable Area */}
       <div className="flex-1 min-h-0">
         <ScrollArea className="h-full p-4">
           <div className="space-y-4">

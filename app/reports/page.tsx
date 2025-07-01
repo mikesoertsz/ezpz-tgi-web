@@ -57,6 +57,8 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
+import { useProfiles } from "@/hooks/use-profiles";
+import { Profile } from "@/types/database";
 
 function ReportsPageContent() {
   const router = useRouter();
@@ -65,6 +67,8 @@ function ReportsPageContent() {
   const [projectFilter, setProjectFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [riskFilter, setRiskFilter] = useState("all");
+
+  const { profiles, loading, error } = useProfiles();
 
   type Report = {
     id: number;
@@ -79,6 +83,9 @@ function ReportsPageContent() {
     generated: string;
     findings: number;
     type: string;
+    execution_id?: string | null;
+    ai_summary?: any;
+    raw_data?: any;
   };
 
   const [sortConfig, setSortConfig] = useState<{
@@ -86,92 +93,85 @@ function ReportsPageContent() {
     direction: string;
   } | null>(null);
 
-  const reports: Report[] = [
-    {
-      id: 1,
-      title: "Executive Background Check - John Smith",
-      project: "Corporate Security Assessment",
-      client: "Acme Corporation",
-      target: "John Smith",
-      targetEmail: "john.smith@example.com",
-      targetLinkedIn: "linkedin.com/in/johnsmith",
-      status: "Completed",
-      riskLevel: "High",
-      generated: "2024-01-25 14:30",
-      findings: 12,
-      type: "Background Check",
-    },
-    {
-      id: 2,
-      title: "Social Media Analysis - Sarah Johnson",
-      project: "Executive Background Check",
-      client: "Global Dynamics",
-      target: "Sarah Johnson",
-      targetEmail: "sarah.j@globaldynamics.com",
-      targetLinkedIn: "linkedin.com/in/sarahjohnson",
-      status: "In Progress",
-      riskLevel: "Medium",
-      generated: "2024-01-25 10:15",
-      findings: 8,
-      type: "Social Media Analysis",
-    },
-    {
-      id: 3,
-      title: "Corporate Intelligence - TechCorp Inc",
-      project: "Competitive Intelligence",
-      client: null,
-      target: "TechCorp Inc",
-      targetEmail: "info@techcorp.com",
-      targetLinkedIn: "linkedin.com/company/techcorp",
-      status: "Completed",
-      riskLevel: "Low",
-      generated: "2024-01-24 16:45",
-      findings: 5,
-      type: "Corporate Intelligence",
-    },
-    {
-      id: 4,
-      title: "Threat Assessment - Michael Brown",
-      project: "Security Assessment",
-      client: "TechStart Inc",
-      target: "Michael Brown",
-      targetEmail: "m.brown@techstart.com",
-      targetLinkedIn: "linkedin.com/in/michaelbrown",
-      status: "Processing",
-      riskLevel: "Unknown",
-      generated: "2024-01-25 09:00",
-      findings: 0,
-      type: "Threat Assessment",
-    },
-    {
-      id: 5,
-      title: "Financial Assets Analysis - Jennifer Davis",
-      project: "Due Diligence Review",
-      client: "Investment Partners LLC",
-      target: "Jennifer Davis",
-      targetEmail: "j.davis@example.com",
-      targetLinkedIn: "linkedin.com/in/jenniferdavis",
-      status: "Completed",
-      riskLevel: "Medium",
-      generated: "2024-01-23 11:20",
-      findings: 15,
-      type: "Financial Analysis",
-    },
-    {
-      id: 6,
-      title: "Property Holdings Investigation - Robert Wilson",
-      project: "Asset Verification",
-      client: "Legal Associates",
-      target: "Robert Wilson",
-      targetEmail: "r.wilson@example.com",
-      targetLinkedIn: "linkedin.com/in/robertwilson",
-      status: "In Progress",
-      riskLevel: "High",
-      generated: "2024-01-24 08:45",
-      findings: 7,
-      type: "Property Investigation",
-    },
-  ];
+  // Transform profiles data into reports format
+  const transformProfileToReport = (profile: Profile): Report => {
+    const name = profile.name || 'Unknown';
+    const email = profile.email || 'N/A';
+    
+    // Extract data from raw_data if it exists
+    let linkedInUrl = 'N/A';
+    let company = null;
+    let findings = 0;
+    let riskFactors = 0;
+    let headline = '';
+    
+    if (profile.raw_data && Array.isArray(profile.raw_data)) {
+      const firstEntry = profile.raw_data[0];
+      if (firstEntry) {
+        linkedInUrl = firstEntry.profileUrl || 'N/A';
+        company = firstEntry.basic_info?.current_company || null;
+        headline = firstEntry.basic_info?.headline || '';
+        
+        // Count findings from different sections
+        findings = (firstEntry.experience?.length || 0) + 
+                  (firstEntry.education?.length || 0) + 
+                  (firstEntry.certifications?.length || 0) +
+                  (firstEntry.projects?.length || 0);
+        
+        // Calculate risk factors based on profile completeness and security-related content
+        if (headline.toLowerCase().includes('security') || headline.toLowerCase().includes('cyber')) {
+          riskFactors += 1;
+        }
+        if (firstEntry.experience?.some((exp: any) => 
+          exp.title?.toLowerCase().includes('security') || 
+          exp.title?.toLowerCase().includes('admin'))) {
+          riskFactors += 1;
+        }
+        if (firstEntry.certifications?.length > 0) {
+          riskFactors += 1;
+        }
+      }
+    }
+
+    // Determine status and risk based on data availability and content
+    let status = 'Processing';
+    let riskLevel = 'Unknown';
+    
+    if (profile.ai_summary) {
+      status = 'Completed';
+      // Determine risk based on findings and risk factors
+      if (riskFactors >= 2 || findings > 10) {
+        riskLevel = 'High';
+      } else if (riskFactors >= 1 || findings > 5) {
+        riskLevel = 'Medium';
+      } else {
+        riskLevel = 'Low';
+      }
+    } else if (profile.raw_data && findings > 0) {
+      status = 'In Progress';
+      riskLevel = 'Medium';
+    }
+
+    return {
+      id: profile.id,
+      title: `Profile Analysis - ${name}`,
+      project: company ? `${company} Assessment` : 'Individual Profile Analysis',
+      client: company,
+      target: name,
+      targetEmail: email,
+      targetLinkedIn: linkedInUrl,
+      status,
+      riskLevel,
+      generated: new Date(profile.created_at).toLocaleString(),
+      findings,
+      type: 'LinkedIn Profile Analysis',
+      execution_id: profile.execution_id,
+      ai_summary: profile.ai_summary,
+      raw_data: profile.raw_data
+    };
+  };
+
+  const reports: Report[] = profiles.map(transformProfileToReport);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -265,7 +265,10 @@ function ReportsPageContent() {
   };
 
   const handleRowClick = (reportId: number) => {
-    router.push(`/reports/${reportId}`);
+    // Find the report to get execution_id
+    const report = reports.find(r => r.id === reportId);
+    const navigationId = report?.execution_id || reportId;
+    router.push(`/reports/${navigationId}`);
   };
 
   const handleActionClick = (
@@ -334,7 +337,7 @@ function ReportsPageContent() {
           <Card>
             <CardHeader className="flex justify-between items-center">
               <div>
-                <CardTitle>Reports ({sortedReports.length})</CardTitle>
+                <CardTitle>Intelligence Reports ({sortedReports.length})</CardTitle>
                 <CardDescription>
                   Comprehensive intelligence reports and security assessments
                 </CardDescription>
@@ -407,7 +410,26 @@ function ReportsPageContent() {
               </div>
             </CardHeader>
             <CardContent>
-              <Table>
+              {error && (
+                <div className="p-4 mb-4 text-red-800 bg-red-100 rounded-lg">
+                  <strong>Error:</strong> {error}
+                </div>
+              )}
+              {loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">Loading profiles...</p>
+                  </div>
+                </div>
+              ) : reports.length === 0 && !loading ? (
+                <div className="text-center py-8">
+                  <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-muted-foreground mb-2">No reports found</h3>
+                  <p className="text-muted-foreground">Get started by creating your first intelligence report.</p>
+                </div>
+              ) : (
+                <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead onClick={() => requestSort("title")}>
@@ -581,6 +603,7 @@ function ReportsPageContent() {
                   ))}
                 </TableBody>
               </Table>
+              )}
             </CardContent>
           </Card>
         </div>

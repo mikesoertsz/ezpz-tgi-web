@@ -26,6 +26,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -36,6 +37,7 @@ const formSchema = z.object({
 
 export function CreateReportDialog() {
   const [open, setOpen] = React.useState(false);
+  const [isChecking, setIsChecking] = React.useState(false);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -48,9 +50,43 @@ export function CreateReportDialog() {
     },
   });
 
+  async function checkEmailExists(email: string) {
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('execution_id')
+        .eq('email', email)
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+        throw error;
+      }
+
+      return data?.execution_id || null;
+    } catch (error) {
+      console.error('Error checking email:', error);
+      return null;
+    }
+  }
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      // Prepare payload as requested by user
+      setIsChecking(true);
+      
+      // First, check if the email already exists in the database
+      const existingExecutionId = await checkEmailExists(values.email);
+      
+      if (existingExecutionId) {
+        // Email exists, redirect to existing report
+        form.reset();
+        setOpen(false);
+        setIsChecking(false);
+        router.push(`/reports/${existingExecutionId}`);
+        return;
+      }
+
+      // Email doesn't exist, proceed with webhook call
       const payload = {
         email: values.email,
         name: `${values.firstName} ${values.lastName}`
@@ -74,24 +110,34 @@ export function CreateReportDialog() {
         if (executionId) {
           form.reset();
           setOpen(false);
-          // Redirect to reports page with execution_id instead of hardcoded 1
+          setIsChecking(false);
+          // Redirect to reports page with execution_id
           router.push(`/reports/${executionId}`);
         } else {
+          setIsChecking(false);
           console.error("Webhook response did not contain an execution_id.");
           // TODO: Handle error with a toast notification
         }
       } else {
+        setIsChecking(false);
         console.error("Webhook submission failed:", await response.text());
         // TODO: Handle error with a toast notification
       }
     } catch (error) {
+      setIsChecking(false);
       console.error("Error submitting to webhook:", error);
       // TODO: Handle error with a toast notification
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(isOpen) => {
+      setOpen(isOpen);
+      if (!isOpen) {
+        setIsChecking(false);
+        form.reset();
+      }
+    }}>
       <DialogTrigger asChild>
         <Button className="w-full justify-between bg-orange-500 text-white hover:bg-orange-400 hover:text-black">
           Create new Report
@@ -173,9 +219,14 @@ export function CreateReportDialog() {
               <Button
                 type="submit"
                 className="bg-orange-400 text-white"
-                disabled={form.formState.isSubmitting}
+                disabled={form.formState.isSubmitting || isChecking}
               >
-                {form.formState.isSubmitting ? "Creating..." : "Create Report"}
+                {isChecking 
+                  ? form.formState.isSubmitting 
+                    ? "Creating new report..." 
+                    : "Checking existing reports..."
+                  : "Create Report"
+                }
               </Button>
             </DialogFooter>
           </form>
