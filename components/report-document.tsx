@@ -313,7 +313,7 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
   };
 
   return (
-    <ScrollArea className="h-screen overflow-y-scroll">
+    <ScrollArea className="h-screen">
       <div className="bg-[#F7F0E8] w-full max-w-full overflow-hidden">
         {/* Watermark */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] select-none z-0">
@@ -560,7 +560,7 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 />
               </AccordionSection>
               {/* JSON   */}
-              <div className="overflow-hidden max-w-[50vw]">
+              <div className="overflow-hidden max-w-[52vw]">
 
               <AccordionSection
                 sectionId="json"
