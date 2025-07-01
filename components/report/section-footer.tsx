@@ -119,7 +119,7 @@ export function SectionFooter({
                 } transition-colors duration-300`}
               />
             </button>
-            <div className="flex items-center space-x-1 bg-gray-100 px-2 py-1 rounded-md">
+            <div className="flex items-center space-x-1 bg-gray-100 px-2 py-1 rounded-md hidden">
               <Coins size={10} className="text-gray-500" />
               <span className="text-xs text-gray-600 font-medium">
                 {creditCost}
@@ -130,7 +130,7 @@ export function SectionFooter({
             onClick={() => {
               /* Copy functionality */
             }}
-            className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
+            className="p-1.5 hover:bg-gray-100 rounded-md transition-colors hidden"
             title="Copy"
           >
             <Copy size={14} className="text-gray-600" />

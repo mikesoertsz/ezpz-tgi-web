@@ -1,38 +1,57 @@
 import React from "react";
 import { Download, Printer, Lock, Settings } from "lucide-react";
+import {
+  Menubar,
+  MenubarMenu,
+  MenubarTrigger,
+  MenubarContent,
+  MenubarItem,
+  MenubarShortcut,
+} from "@/components/ui/menubar";
 
 export default function ReportToolbar() {
-  const buttons = [
-    {
-      icon: Download,
-      onClick: () => console.log("Download"),
-      label: "Download",
-    },
-    { icon: Printer, onClick: () => console.log("Print"), label: "Print" },
-    { icon: Lock, onClick: () => console.log("Lock"), label: "Lock" },
-    {
-      icon: Settings,
-      onClick: () => console.log("Settings"),
-      label: "Settings",
-    },
-  ];
-
   return (
-    <div className="flex items-center ">
-      {buttons.map((button, index) => (
-        <button
-          key={index}
-          onClick={button.onClick}
-          className="flex items-center justify-center h-8 w-8 hover:bg-gray-100 rounded-sm transition duration-200 ease-in-out cursor-pointer group"
-          aria-label={button.label}
-        >
-          <button.icon
-            className="text-gray-500 antialiased group-hover:text-black transition duration-200 ease-in"
-            size={14}
-            strokeWidth={2}
-          />
-        </button>
-      ))}
-    </div>
+    <Menubar className="bg-transparent border-none">
+      <MenubarMenu>
+        <MenubarTrigger>
+          <Download className="text-gray-500 antialiased hover:text-black transition duration-200 ease-in" size={12} strokeWidth={2} />
+        </MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem onClick={() => console.log("Download")}>
+            Download <MenubarShortcut>⌘D</MenubarShortcut>
+          </MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>
+          <Printer className="text-gray-500 antialiased hover:text-black transition duration-200 ease-in" size={12} strokeWidth={2} />
+        </MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem onClick={() => console.log("Print")}>
+            Print <MenubarShortcut>⌘P</MenubarShortcut>
+          </MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>
+          <Lock className="text-gray-500 antialiased hover:text-black transition duration-200 ease-in" size={12} strokeWidth={2} />
+        </MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem onClick={() => console.log("Lock")}>
+            Lock <MenubarShortcut>⌘L</MenubarShortcut>
+          </MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>
+          <Settings className="text-gray-500 antialiased hover:text-black transition duration-200 ease-in" size={12} strokeWidth={2} />
+        </MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem onClick={() => console.log("Settings")}>
+            Settings <MenubarShortcut>⌘S</MenubarShortcut>
+          </MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
   );
 }

@@ -9,6 +9,7 @@ import {
 } from "@/lib/report-loader";
 import {
   Building2,
+  Code,
   DollarSign,
   Globe,
   Home,
@@ -418,7 +419,7 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
               <AccordionSection
                 sectionId="json"
                 title="JSON"
-                icon={Search}
+                icon={Code}
                 creditCost={2.7}
                 reportData={reportData}
                 openSections={openSections}

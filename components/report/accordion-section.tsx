@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { ReportData } from "@/lib/report-data";
 import type { LucideIcon } from "lucide-react";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -48,19 +47,16 @@ export default function AccordionSection({
   const bibliography = section?.bibliography || [];
 
   return (
-    <div className="mb-3 bg-white border border-gray-200 rounded-lg shadow-sm">
+    <div className="bg-white border border-stone-200 rounded-sm hover:shadow-sm transition duration-200 ease-in-out">
       <button
         onClick={() => toggleSection(sectionId)}
         className="flex items-center justify-between w-full p-4 transition-colors hover:bg-gray-50"
       >
         <div className="flex items-center space-x-2">
           <Icon className="h-4 w-4 text-muted-foreground" />
-          <h3 className="text-sm font-medium text-gray-900">{title}</h3>
-          {section?.hasData && (
-            <Badge variant="secondary" className="text-xs">
-              Data Available
-            </Badge>
-          )}
+          <h3 className="text-xs uppercase font-mono font-medium text-stone-600">
+            {title}
+          </h3>
         </div>
         {isOpen ? (
           <ChevronUp className="h-4 w-4" />
@@ -71,7 +67,7 @@ export default function AccordionSection({
 
       {isOpen && (
         <div className="px-4 pb-4">
-          <div className="mb-3">{children}</div>
+          <div className="mb-3 p-4">{children}</div>
 
           <SectionFooter
             sectionId={sectionId}
