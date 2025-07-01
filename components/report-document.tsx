@@ -17,6 +17,7 @@ import {
   Search,
   Shield,
   User,
+  Image as ImageIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -33,6 +34,7 @@ import { PropertyHoldingsSection } from "./report/property-holdings-section";
 import { SocialMediaSection } from "./report/social-media-section";
 import { transformWebhookDataToReportData } from "./report/transform-webhook-data-to-report-data";
 import ReportToolbar from "./report-toolbar";
+import { ImagesSection } from "./report/images-section";
 
 interface ReportDocumentProps {
   reportId?: string;
@@ -271,6 +273,25 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                     )
                   }
                 />
+              </AccordionSection>
+
+              {/* Images Section */}
+              <AccordionSection
+                sectionId="images"
+                title="Images"
+                icon={ImageIcon}
+                creditCost={2.5}
+                reportData={reportData}
+                openSections={openSections}
+                editingSections={editingSections}
+                refreshingSections={refreshingSections}
+                approvedSections={approvedSections}
+                toggleSection={toggleSection}
+                handleApprovalToggle={handleApprovalToggle}
+                handleRefresh={handleRefresh}
+                handleEdit={handleEdit}
+              >
+                <ImagesSection images={reportData.images?.images || []} />
               </AccordionSection>
 
               {/* Social Media Intelligence */}

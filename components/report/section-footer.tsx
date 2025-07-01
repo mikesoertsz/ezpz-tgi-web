@@ -10,8 +10,6 @@ import {
   Copy,
   Trash2,
   Edit,
-  CheckCircle,
-  Circle,
   Coins,
   ChevronDown,
   ChevronUp,
@@ -26,10 +24,8 @@ interface SectionFooterProps {
   bibliography: BibliographySource[];
   isRefreshing: boolean;
   isEditing: boolean;
-  isApproved: boolean;
   onRefresh: (sectionId: string) => void;
   onEdit: (sectionId: string) => void;
-  onApprovalToggle: (sectionId: string) => void;
 }
 
 export function SectionFooter({
@@ -38,10 +34,8 @@ export function SectionFooter({
   bibliography,
   isRefreshing,
   isEditing,
-  isApproved,
   onRefresh,
   onEdit,
-  onApprovalToggle,
 }: SectionFooterProps) {
   const [bibliographyOpen, setBibliographyOpen] = useState(false);
   const [hoveredSource, setHoveredSource] = useState<string | null>(null);
@@ -56,7 +50,7 @@ export function SectionFooter({
     <>
       {/* Bibliography Section */}
       {bibliography.length > 0 && (
-        <div className="border-t border-gray-100 pt-3 mb-3">
+        <div className="border-t border-gray-100">
           <Collapsible
             open={bibliographyOpen}
             onOpenChange={setBibliographyOpen}
@@ -99,13 +93,13 @@ export function SectionFooter({
       )}
 
       {/* Footer with action buttons */}
-      <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-        <div className="flex items-center space-x-2">
-          <div className="flex items-center space-x-1">
+      <div className="flex items-center justify-between w-full h-8 pt-0 px-2 border-t border-gray-200 bg-white">
+        <div className="flex items-center space-x-2 h-full">
+          <div className="flex items-center space-x-1 h-full">
             <button
               onClick={() => onRefresh(sectionId)}
               disabled={isRefreshing}
-              className={`p-1.5 rounded-md transition-all duration-300 ${
+              className={`p-1.5 rounded-md transition-all duration-300 h-full ${
                 isRefreshing
                   ? "bg-green-100 text-green-600 cursor-not-allowed"
                   : "hover:bg-gray-100 text-gray-600"
@@ -114,12 +108,12 @@ export function SectionFooter({
             >
               <RefreshCw
                 size={14}
-                className={`${
+                className={`$${
                   isRefreshing ? "animate-spin text-green-600" : "text-gray-600"
                 } transition-colors duration-300`}
               />
             </button>
-            <div className="flex items-center space-x-1 bg-gray-100 px-2 py-1 rounded-md hidden">
+            <div className=" items-center space-x-1 bg-gray-100 px-2 py-1 rounded-md hidden">
               <Coins size={10} className="text-gray-500" />
               <span className="text-xs text-gray-600 font-medium">
                 {creditCost}
@@ -130,7 +124,7 @@ export function SectionFooter({
             onClick={() => {
               /* Copy functionality */
             }}
-            className="p-1.5 hover:bg-gray-100 rounded-md transition-colors hidden"
+            className="p-1.5 hover:bg-gray-100 rounded-md transition-colors hidden h-full"
             title="Copy"
           >
             <Copy size={14} className="text-gray-600" />
@@ -139,14 +133,14 @@ export function SectionFooter({
             onClick={() => {
               /* Clear functionality */
             }}
-            className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
+            className="p-1.5 hover:bg-gray-100 rounded-md transition-colors h-full"
             title="Clear"
           >
             <Trash2 size={14} className="text-gray-600" />
           </button>
           <button
             onClick={() => onEdit(sectionId)}
-            className={`p-1.5 rounded-md transition-colors ${
+            className={`p-1.5 rounded-md transition-colors h-full ${
               isEditing
                 ? "bg-blue-100 text-blue-600"
                 : "hover:bg-gray-100 text-gray-600"
@@ -159,22 +153,6 @@ export function SectionFooter({
             />
           </button>
         </div>
-
-        <button
-          onClick={() => onApprovalToggle(sectionId)}
-          className={`p-1.5 rounded-md transition-colors ${
-            isApproved
-              ? "hover:bg-green-50 text-green-600"
-              : "hover:bg-gray-100 text-gray-400"
-          }`}
-          title={isApproved ? "Content Approved" : "Approve Content"}
-        >
-          {isApproved ? (
-            <CheckCircle size={14} className="text-green-600" />
-          ) : (
-            <Circle size={14} className="text-gray-400" />
-          )}
-        </button>
       </div>
     </>
   );
