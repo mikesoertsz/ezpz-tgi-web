@@ -9,10 +9,10 @@ export const HeaderWrap = tw.div`flex flex-col items-center justify-center w-ful
 export const HeaderWrapLeft = tw.div`flex flex-col items-start justify-start w-full md:justify-start md:text-left text-center`;
 export const Icon = tw.div`flex items-start justify-start mb-3`;
 export const ImageWrap = tw.div`relative w-10 h-10 py-4`;
-export const PreHeading = tw.h4`uppercase text-[12px] tracking-[0.3em] font-bold font-mono text-orange-700`;
+export const PreHeading = tw.h4`uppercase text-[12px] tracking-[0.3em] font-semibold font-mono`;
 export const Heading = tw.h2`text-4xl font-light tracking-tight font-roboto`;
-export const SubHeading = tw.h3`text-lg md:text-2xl lg:text-3xl tracking-tight balanced font-medium font-body pt-1`;
-export const Body = tw.p`max-w-prose text-sm font-body leading-relaxed`;
+export const SubHeading = tw.h3`text-lg md:text-2xl lg:text-2xl tracking-tight balanced font-light font-mono pt-1`;
+export const Body = tw.p`max-w-prose text-sm font-body leading-relaxed text-stone-500`;
 
 export const Left = tw.div`relative flex flex-col items-center justify-center w-full xl:w-1/2 min-h-full bg-brand-p2 text-white z-10 py-8 xl:p-12`;
 export const Right = tw.div`relative flex items-center justify-center w-full xl:w-1/2 min-h-full z-10`;

@@ -110,8 +110,10 @@ export function updateReportSection(
   ) {
     const section =
       updatedReport.sections[sectionId as keyof typeof updatedReport.sections];
-    section.lastUpdated = new Date().toISOString();
-    section.hasData = true;
+    if (section) {
+      section.lastUpdated = new Date().toISOString();
+      section.hasData = true;
+    }
   }
 
   // Update overall report metadata

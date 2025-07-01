@@ -80,6 +80,16 @@ export interface ReportSection {
   bibliography: BibliographySource[];
 }
 
+export interface ImageItem {
+  url: string;
+  caption?: string;
+  date?: string;
+}
+
+export interface ImagesSection {
+  images: ImageItem[];
+}
+
 export interface ReportData {
   // Report metadata
   id: string;
@@ -115,7 +125,10 @@ export interface ReportData {
     property: ReportSection;
     legal: ReportSection;
     online: ReportSection;
+    images?: ReportSection;
   };
+
+  images?: ImagesSection;
 }
 
 // Helper function to check if a value is empty/null

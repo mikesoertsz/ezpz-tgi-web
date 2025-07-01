@@ -1,32 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import ChatMessages from "@/components/report-chat-messages";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import {
-  Send,
-  Bot,
-  User,
-  Settings,
-  Play,
-  Pause,
-  Shield,
-  Search,
+  Building2,
   Database,
+  DollarSign,
   FileText,
   Globe,
-  Building2,
-  DollarSign,
   Home,
-  Scale,
   Image,
-  CheckCircle2,
-  Loader2,
-  ChevronDown,
-  ChevronUp,
+  Scale,
+  Search,
+  Send,
+  Settings,
+  Shield,
+  User,
 } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { useEffect, useState } from "react";
 
 interface Message {
   id: string;
@@ -52,13 +44,13 @@ interface ReportChatProps {
 
 export function ReportChat({ reportId }: ReportChatProps) {
   const isNewExecution = reportId && /^\d+$/.test(reportId);
-  
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
       type: "system",
       content: reportId
-        ? isNewExecution 
+        ? isNewExecution
           ? `New investigation initiated with execution ID #${reportId}. AI agents are beginning intelligence gathering...`
           : `Intelligence gathering system loaded for Report #${reportId}. Continuing investigation...`
         : "Intelligence gathering system initialized. Ready to begin investigation.",
@@ -67,7 +59,6 @@ export function ReportChat({ reportId }: ReportChatProps) {
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [agentStatusCollapsed, setAgentStatusCollapsed] = useState(false);
 
   const [agents, setAgents] = useState<Agent[]>([
     // Data Gathering Agents
@@ -173,13 +164,6 @@ export function ReportChat({ reportId }: ReportChatProps) {
     },
   ]);
 
-  const dataGatheringAgents = agents.filter(
-    (agent) => agent.category === "data-gathering"
-  );
-  const processingAgents = agents.filter(
-    (agent) => agent.category === "processing"
-  );
-
   // Simulate agent progress for existing reports
   useEffect(() => {
     if (reportId) {
@@ -235,54 +219,6 @@ export function ReportChat({ reportId }: ReportChatProps) {
     }, 1000);
   };
 
-  const getStatusIndicator = (agent: Agent) => {
-    switch (agent.status) {
-      case "running":
-        return (
-          <div className="flex items-center space-x-1">
-            <Loader2 className="h-3 w-3 animate-spin text-blue-500" />
-            {agent.progress !== undefined && (
-              <span className="text-xs text-blue-600">
-                {Math.round(agent.progress)}%
-              </span>
-            )}
-          </div>
-        );
-      case "completed":
-        return <CheckCircle2 className="h-3 w-3 text-green-500" />;
-      case "error":
-        return <div className="w-3 h-3 rounded-full bg-red-500" />;
-      default:
-        return <div className="w-3 h-3 rounded-full bg-gray-300" />;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "running":
-        return "text-blue-600";
-      case "completed":
-        return "text-green-600";
-      case "error":
-        return "text-red-600";
-      default:
-        return "text-gray-500";
-    }
-  };
-
-  const AgentItem = ({ agent }: { agent: Agent }) => (
-    <div className="flex items-center space-x-2 p-2 rounded hover:bg-gray-50 transition-colors">
-      {getStatusIndicator(agent)}
-      <span
-        className={`text-xs font-medium truncate ${getStatusColor(
-          agent.status
-        )}`}
-      >
-        {agent.name}
-      </span>
-    </div>
-  );
-
   const completedAgents = agents.filter((a) => a.status === "completed").length;
   const runningAgents = agents.filter((a) => a.status === "running").length;
   const totalAgents = agents.length;
@@ -290,7 +226,7 @@ export function ReportChat({ reportId }: ReportChatProps) {
   return (
     <div className="flex flex-col h-full bg-gray-50">
       {/* Header */}
-      <div className="p-4 border-b border-border bg-white shrink-0">
+      <div className="p-4 border-b border-border bg-[#FDF6EE] shrink-0">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold">
@@ -308,124 +244,11 @@ export function ReportChat({ reportId }: ReportChatProps) {
         </div>
       </div>
 
-      {/* Agent Status - Collapsible */}
-      {/* <div className="border-b border-border bg-white shrink-0">
-        <button
-          onClick={() => setAgentStatusCollapsed(!agentStatusCollapsed)}
-          className="w-full p-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
-        >
-          <div className="flex items-center space-x-2">
-            <h3 className="text-sm font-semibold text-gray-900">
-              Agent Status
-            </h3>
-            <Badge variant="secondary" className="text-xs">
-              {completedAgents}/{totalAgents} complete
-            </Badge>
-            {runningAgents > 0 && (
-              <Badge variant="outline" className="text-xs text-blue-600">
-                {runningAgents} running
-              </Badge>
-            )}
-          </div>
-          {agentStatusCollapsed ? (
-            <ChevronDown className="h-4 w-4 text-gray-500" />
-          ) : (
-            <ChevronUp className="h-4 w-4 text-gray-500" />
-          )}
-        </button>
-
-        {!agentStatusCollapsed && (
-          <div className="px-3 pb-3 space-y-3">
-            <div>
-              <h4 className="text-xs font-medium text-gray-700 mb-2">
-                Data Gathering Agents
-              </h4>
-              <div className="grid grid-cols-3 gap-1">
-                {dataGatheringAgents.map((agent) => (
-                  <AgentItem key={agent.id} agent={agent} />
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-xs font-medium text-gray-700 mb-2">
-                Processing & Verification
-              </h4>
-              <div className="grid grid-cols-3 gap-1">
-                {processingAgents.map((agent) => (
-                  <AgentItem key={agent.id} agent={agent} />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-      </div> */}
-
-      <div className="flex-1 min-h-0">
-        <ScrollArea className="h-full p-4">
-          <div className="space-y-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${
-                  message.type === "user" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div
-                  className={`max-w-[80%] rounded-lg p-3 ${
-                    message.type === "user"
-                      ? "bg-primary text-primary-foreground"
-                      : message.type === "system"
-                      ? "bg-muted text-muted-foreground"
-                      : "bg-white border border-gray-200"
-                  }`}
-                >
-                  <div className="flex items-center space-x-2 mb-1">
-                    {message.type === "user" ? (
-                      <User className="h-3 w-3" />
-                    ) : message.type === "system" ? (
-                      <Shield className="h-3 w-3" />
-                    ) : (
-                      <Bot className="h-3 w-3" />
-                    )}
-                    <span className="text-xs font-medium">
-                      {message.type === "user"
-                        ? "You"
-                        : message.type === "system"
-                        ? "System"
-                        : "AI Assistant"}
-                    </span>
-                    <span className="text-xs opacity-70">
-                      {message.timestamp.toLocaleTimeString()}
-                    </span>
-                  </div>
-                  <p className="text-sm">{message.content}</p>
-                  {message.agent && (
-                    <Badge variant="secondary" className="mt-2 text-xs">
-                      {message.agent}
-                    </Badge>
-                  )}
-                </div>
-              </div>
-            ))}
-            {isGenerating && (
-              <div className="flex justify-start">
-                <div className="bg-white border border-gray-200 rounded-lg p-3 max-w-[80%]">
-                  <div className="flex items-center space-x-2">
-                    <Bot className="h-3 w-3" />
-                    <span className="text-xs font-medium">AI Assistant</span>
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                  </div>
-                  <p className="text-sm mt-1">Thinking...</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </ScrollArea>
-      </div>
+      {/* Chat Messages - Scrollable Area */}
+      <ChatMessages messages={messages} isGenerating={isGenerating} />
 
       {/* Input Area - Fixed at Bottom */}
-      <div className="p-4 border-t border-border bg-white shrink-0">
+      <div className="p-4 border-t border-border bg-gray-50 shrink-0">
         <div className="flex space-x-2">
           <Input
             value={inputValue}
@@ -437,32 +260,17 @@ export function ReportChat({ reportId }: ReportChatProps) {
             }
             onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
             disabled={isGenerating}
-            className="bg-white"
+            className="bg-white h-8 rounded-sm shadow-sm border-gray-300"
           />
           <Button
             onClick={handleSendMessage}
             disabled={!inputValue.trim() || isGenerating}
             size="sm"
+            variant="outline"
+            className="aspect-square h-8 w-8"
           >
             <Send className="h-4 w-4" />
           </Button>
-        </div>
-        <div className="flex items-center justify-between mt-3">
-          <div className="flex space-x-2">
-            <Button variant="outline" size="sm">
-              <Play className="h-3 w-3 mr-1" />
-              Start All
-            </Button>
-            <Button variant="outline" size="sm">
-              <Pause className="h-3 w-3 mr-1" />
-              Pause
-            </Button>
-          </div>
-          <span className="text-xs text-muted-foreground">
-            {reportId
-              ? `${completedAgents}/${totalAgents} agents complete`
-              : `${totalAgents} agents ready`}
-          </span>
         </div>
       </div>
     </div>
