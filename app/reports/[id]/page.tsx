@@ -28,7 +28,7 @@ function ReportPageContent() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <div className="flex flex-1 overflow-hidden h-screen bg-[#F4F3EC]">
+        <div className="flex flex-1 overflow-hidden h-screen bg-[#F7F0E8]">
           {/* Left Column - AI Chat - Fixed Height */}
           <div className="w-1/3 border-r h-full flex flex-col">
             <ReportChat reportId={reportId} />

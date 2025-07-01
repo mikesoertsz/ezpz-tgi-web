@@ -34,6 +34,7 @@ import { PropertyHoldingsSection } from "./report/property-holdings-section";
 import { SocialMediaSection } from "./report/social-media-section";
 import { transformWebhookDataToReportData } from "./report/transform-webhook-data-to-report-data";
 import ReportToolbar from "./report-toolbar";
+import { TitleBlock } from "./ui/titleblock";
 import { ImagesSection } from "./report/images-section";
 
 interface ReportDocumentProps {
@@ -210,7 +211,7 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
 
   return (
     <ScrollArea className="h-screen overflow-y-scroll">
-      <div className="bg-[#F4F3EC]">
+      <div className="bg-[#F7F0E8]">
         {/* Watermark */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] select-none z-0">
           <div className="transform rotate-45 text-black text-9xl font-bold">
@@ -234,7 +235,10 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
           <div className="mb-6">
             <div className="flex p-4">
               <div className="flex-grow">
-                <h2 className="mb-2 text-lg font-medium text-gray-900">
+                <p className="text-[11px] uppercase font-mono text-orange-600 tracking-widest subpixel-antialiased mb-1 font-medium">
+                  Report <span className="animate-pulse">/</span>
+                </p>
+                <h2 className="mb-2 text-md font-semibold text-gray-900">
                   {reportData.targetName}
                 </h2>
               </div>

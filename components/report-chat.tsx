@@ -226,7 +226,7 @@ export function ReportChat({ reportId }: ReportChatProps) {
   return (
     <div className="flex flex-col h-full bg-gray-50">
       {/* Header */}
-      <div className="p-4 border-b border-border bg-[#F4F3EC] shrink-0">
+      <div className="p-4 border-b border-border bg-[#FDF6EE] shrink-0">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold">
