@@ -44,6 +44,7 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
   const [reportData, setReportData] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
   const [processingReport, setProcessingReport] = useState(false);
+  const [loadingRealData, setLoadingRealData] = useState(false);
   const [pollingAttempt, setPollingAttempt] = useState(0);
   const [maxPollingAttempts] = useState(15);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -82,13 +83,14 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
           setReportData(dummyData);
           setLoading(false);
 
-          // Poll every 30 seconds until we get data, max 10 attempts
+          // Poll starting after 2 seconds, then every 30 seconds until we get data, max 15 attempts
           const pollForData = async () => {
             setPollingAttempt((prev) => prev + 1);
+            setLoadingRealData(true);
 
             try {
               const response = await fetch(
-                `https://ezpzagents.app.n8n.cloud/webhook-test/b84ee335-266e-4732-b52f-3ae2c03e60ee?execution_id=${reportId}`
+                `https://ezpzagents.app.n8n.cloud/webhook/9a215e95-ecd0-482c-931e-3c5f72328878?execution_id=${reportId}`
               );
 
               if (response.ok) {
@@ -99,6 +101,7 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 );
                 setReportData(transformedData);
                 setProcessingReport(false);
+                setLoadingRealData(false);
                 return; // Success - stop polling
               } else {
                 console.log(
@@ -116,9 +119,11 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
               );
             }
 
+            setLoadingRealData(false);
+
             // If we haven't reached max attempts, schedule next poll
             if (pollingAttempt < maxPollingAttempts - 1) {
-              setTimeout(pollForData, 30000); // 30 seconds
+              setTimeout(pollForData, 30000); // 30 seconds for subsequent polls
             } else {
               console.error(
                 "Max polling attempts reached. Investigation may still be processing."
@@ -128,8 +133,8 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
             }
           };
 
-          // Start polling after 30 seconds
-          setTimeout(pollForData, 30000);
+          // Start first poll after 2 seconds
+          setTimeout(pollForData, 2000);
         } else {
           // This is an existing report - load normally
           const data = await loadReportData(reportId);

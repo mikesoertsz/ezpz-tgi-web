@@ -93,7 +93,7 @@ export function CreateReportDialog() {
       };
 
       const response = await fetch(
-        "https://ezpzagents.app.n8n.cloud/webhook/fd129a13-c8e3-49d0-8b6c-a22503634f4b",
+        "https://ezpzagents.app.n8n.cloud/webhook/3b25a043-ab9e-400a-a956-5583125b84c0",
         {
           method: "POST",
           headers: {
