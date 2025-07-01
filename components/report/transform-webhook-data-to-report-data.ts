@@ -5,7 +5,7 @@ export type WebhookData = {
   ai_summary?: {
     personal_info?: {
       dob?: string;
-      nationality?: string[];
+      nationality?: string;
       known_aliases?: string[];
       current_location?: string[];
       travel?: string;
@@ -128,7 +128,7 @@ export function transformWebhookDataToReportData(
 
     personalInformation: {
       dob: personalInfo.dob || null,
-      nationality: personalInfo.nationality?.[0] || null,
+      nationality: personalInfo.nationality || null,
       aliases: personalInfo.known_aliases || [],
       currentLocation: personalInfo.current_location?.[0] || null,
       education:
@@ -223,6 +223,14 @@ export function transformWebhookDataToReportData(
       online: {
         id: "online",
         title: "Online Presence",
+        hasData: true,
+        lastUpdated: new Date().toISOString(),
+        agentStatus: "completed",
+        bibliography: [],
+      },
+      json: {
+        id: "json",
+        title: "Raw JSON Data",
         hasData: true,
         lastUpdated: new Date().toISOString(),
         agentStatus: "completed",

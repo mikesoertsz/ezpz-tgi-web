@@ -16,10 +16,12 @@ export type AccordionSectionProps = {
   editingSections: Record<string, boolean>;
   refreshingSections: Record<string, boolean>;
   approvedSections: Record<string, boolean>;
+  savingSections?: Record<string, boolean>;
   toggleSection: (id: string) => void;
   handleApprovalToggle: (sectionId: string) => void;
   handleRefresh: (sectionId: string) => void;
   handleEdit: (sectionId: string) => void;
+  handleSave?: (sectionId: string) => void;
 };
 
 export default function AccordionSection({
@@ -32,19 +34,22 @@ export default function AccordionSection({
   openSections,
   editingSections,
   refreshingSections,
+  savingSections = {},
   toggleSection,
   handleRefresh,
   handleEdit,
+  handleSave,
 }: AccordionSectionProps) {
   const isOpen = openSections[sectionId];
   const isEditing = editingSections[sectionId];
   const isRefreshing = refreshingSections[sectionId];
+  const isSaving = savingSections[sectionId];
   const section =
     reportData.sections[sectionId as keyof typeof reportData.sections];
   const bibliography = section?.bibliography || [];
 
   return (
-    <div className="bg-white border border-stone-200 rounded-sm hover:shadow-sm transition duration-200 ease-in-out overflow-hidden">
+    <div className="bg-white border border-stone-200 rounded-sm hover:shadow-sm transition duration-200 ease-in-out overflow-hidden w-full max-w-full">
       <button
         onClick={() => toggleSection(sectionId)}
         className="flex items-center justify-between w-full p-4 py-2 transition-colors "
@@ -75,8 +80,10 @@ export default function AccordionSection({
             bibliography={bibliography}
             isRefreshing={isRefreshing || false}
             isEditing={isEditing || false}
+            isSaving={isSaving || false}
             onRefresh={handleRefresh}
             onEdit={handleEdit}
+            onSave={handleSave}
           />
         </div>
       )}

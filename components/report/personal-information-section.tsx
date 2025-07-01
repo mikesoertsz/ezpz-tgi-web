@@ -26,43 +26,44 @@ export function PersonalInformationSection({
 }: PersonalInformationSectionProps) {
   return (
     <div className="space-y-3 text-sm">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="flex items-center gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 min-w-0">
+        <div className="flex items-center gap-2 min-w-0">
           <Calendar className="h-3 w-3 text-gray-500 flex-shrink-0" />
-          <span className="text-gray-600 min-w-[60px]">DOB:</span>
+          <span className="text-gray-600 min-w-[60px] flex-shrink-0">DOB:</span>
           {isEditing ? (
             <EditableText
               value={data.dob}
               isEditing={true}
               onSave={(value) => onSave("dob", value)}
-              className="flex-1"
+              className="flex-1 min-w-0"
+              fieldType="date"
             />
           ) : (
             <TerminalText
               text={data.dob}
               isAnimating={isRefreshing}
               delay={200}
-              className="flex-1 font-medium"
+              className="flex-1 font-medium min-w-0 break-words"
             />
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-w-0">
           <MapPin className="h-3 w-3 text-gray-500 flex-shrink-0" />
-          <span className="text-gray-600 min-w-[80px]">Nationality:</span>
+          <span className="text-gray-600 min-w-[80px] flex-shrink-0">Nationality:</span>
           {isEditing ? (
             <EditableText
               value={data.nationality}
               isEditing={true}
               onSave={(value) => onSave("nationality", value)}
-              className="flex-1"
+              className="flex-1 min-w-0"
             />
           ) : (
             <TerminalText
               text={data.nationality}
               isAnimating={isRefreshing}
               delay={400}
-              className="flex-1 font-medium"
+              className="flex-1 font-medium min-w-0 break-words"
             />
           )}
         </div>

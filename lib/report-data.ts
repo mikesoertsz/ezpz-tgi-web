@@ -126,6 +126,7 @@ export interface ReportData {
     legal: ReportSection;
     online: ReportSection;
     images?: ReportSection;
+    json?: ReportSection;
   };
 
   images?: ImagesSection;

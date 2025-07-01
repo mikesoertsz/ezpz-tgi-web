@@ -18,6 +18,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -53,22 +59,23 @@ import {
   Plus,
   Search,
   Shield,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
 import { useProfiles } from "@/hooks/use-profiles";
 import { Profile } from "@/types/database";
+import { createClient } from "@/utils/supabase/client";
 
 function ReportsPageContent() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [clientFilter, setClientFilter] = useState("all");
-  const [projectFilter, setProjectFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [riskFilter, setRiskFilter] = useState("all");
 
-  const { profiles, loading, error } = useProfiles();
+  const { profiles, loading, error, refetch } = useProfiles();
+  const [deletingIds, setDeletingIds] = useState<Set<number>>(new Set());
 
   type Report = {
     id: number;
@@ -162,7 +169,11 @@ function ReportsPageContent() {
       targetLinkedIn: linkedInUrl,
       status,
       riskLevel,
-      generated: new Date(profile.created_at).toLocaleString(),
+      generated: new Date(profile.created_at).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      }),
       findings,
       type: 'LinkedIn Profile Analysis',
       execution_id: profile.execution_id,
@@ -203,11 +214,7 @@ function ReportsPageContent() {
   const uniqueClients = [
     ...new Set(reports.map((r) => r.client).filter((c): c is string => !!c)),
   ];
-  const uniqueProjects = [...new Set(reports.map((r) => r.project))];
   const uniqueStatuses = [...new Set(reports.map((r) => r.status))];
-  const uniqueRiskLevels = [
-    ...new Set(reports.map((r) => r.riskLevel).filter((r) => r !== "Unknown")),
-  ];
 
   // Filter reports based on search and filters
   const filteredReports = reports.filter((report) => {
@@ -218,18 +225,13 @@ function ReportsPageContent() {
 
     const matchesClient =
       clientFilter === "all" || report.client === clientFilter;
-    const matchesProject =
-      projectFilter === "all" || report.project === projectFilter;
     const matchesStatus =
       statusFilter === "all" || report.status === statusFilter;
-    const matchesRisk = riskFilter === "all" || report.riskLevel === riskFilter;
 
     return (
       matchesSearch &&
       matchesClient &&
-      matchesProject &&
-      matchesStatus &&
-      matchesRisk
+      matchesStatus
     );
   });
 
@@ -271,6 +273,38 @@ function ReportsPageContent() {
     router.push(`/reports/${navigationId}`);
   };
 
+  const handleDeleteReport = async (reportId: number) => {
+    if (!confirm('Are you sure you want to delete this report? This action cannot be undone.')) {
+      return;
+    }
+
+    setDeletingIds(prev => new Set(prev).add(reportId));
+
+    try {
+      const supabase = createClient();
+      const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', reportId);
+
+      if (error) {
+        throw error;
+      }
+
+      // Refresh the data after successful deletion
+      await refetch();
+    } catch (error) {
+      console.error('Error deleting report:', error);
+      alert('Failed to delete report. Please try again.');
+    } finally {
+      setDeletingIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(reportId);
+        return newSet;
+      });
+    }
+  };
+
   const handleActionClick = (
     e: React.MouseEvent,
     action: string,
@@ -285,6 +319,9 @@ function ReportsPageContent() {
       case "download":
         // Handle download logic
         console.log(`Downloading report ${reportId}`);
+        break;
+      case "delete":
+        handleDeleteReport(reportId);
         break;
       case "more":
         // Handle more options
@@ -366,20 +403,6 @@ function ReportsPageContent() {
                   </SelectContent>
                 </Select>
 
-                <Select value={projectFilter} onValueChange={setProjectFilter}>
-                  <SelectTrigger className="w-[100px]">
-                    <SelectValue placeholder="Project" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Projects</SelectItem>
-                    {uniqueProjects.map((project) => (
-                      <SelectItem key={project} value={project}>
-                        {project}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-[100px]">
                     <SelectValue placeholder="Status" />
@@ -389,20 +412,6 @@ function ReportsPageContent() {
                     {uniqueStatuses.map((status) => (
                       <SelectItem key={status} value={status}>
                         {status}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={riskFilter} onValueChange={setRiskFilter}>
-                  <SelectTrigger className="w-[100px]">
-                    <SelectValue placeholder="Risk" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Risk</SelectItem>
-                    {uniqueRiskLevels.map((risk) => (
-                      <SelectItem key={risk} value={risk}>
-                        {risk}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -433,28 +442,8 @@ function ReportsPageContent() {
                 <TableHeader>
                   <TableRow>
                     <TableHead onClick={() => requestSort("title")}>
-                      Report
+                      Report & Target
                       {sortConfig?.key === "title" ? (
-                        sortConfig.direction === "ascending" ? (
-                          <ChevronUp className="inline-block ml-1" />
-                        ) : (
-                          <ChevronDown className="inline-block ml-1" />
-                        )
-                      ) : null}
-                    </TableHead>
-                    <TableHead onClick={() => requestSort("target")}>
-                      Target
-                      {sortConfig?.key === "target" ? (
-                        sortConfig.direction === "ascending" ? (
-                          <ChevronUp className="inline-block ml-1" />
-                        ) : (
-                          <ChevronDown className="inline-block ml-1" />
-                        )
-                      ) : null}
-                    </TableHead>
-                    <TableHead onClick={() => requestSort("project")}>
-                      Project
-                      {sortConfig?.key === "project" ? (
                         sortConfig.direction === "ascending" ? (
                           <ChevronUp className="inline-block ml-1" />
                         ) : (
@@ -475,16 +464,6 @@ function ReportsPageContent() {
                     <TableHead onClick={() => requestSort("status")}>
                       Status
                       {sortConfig?.key === "status" ? (
-                        sortConfig.direction === "ascending" ? (
-                          <ChevronUp className="inline-block ml-1" />
-                        ) : (
-                          <ChevronDown className="inline-block ml-1" />
-                        )
-                      ) : null}
-                    </TableHead>
-                    <TableHead onClick={() => requestSort("riskLevel")}>
-                      Risk
-                      {sortConfig?.key === "riskLevel" ? (
                         sortConfig.direction === "ascending" ? (
                           <ChevronUp className="inline-block ml-1" />
                         ) : (
@@ -528,23 +507,13 @@ function ReportsPageContent() {
                           <div>
                             <div className="font-medium">{report.title}</div>
                             <div className="text-sm text-muted-foreground">
-                              {report.type}
+                              Target: {report.target}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {report.targetEmail}
                             </div>
                           </div>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{report.target}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {report.targetEmail}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary" className="text-xs">
-                          {report.project}
-                        </Badge>
                       </TableCell>
                       <TableCell>
                         {report.client ? (
@@ -567,14 +536,6 @@ function ReportsPageContent() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center space-x-2">
-                          {getRiskIcon(report.riskLevel)}
-                          <Badge variant="secondary" className="text-xs">
-                            {report.riskLevel}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                      <TableCell>
                         <div className="flex items-center space-x-1">
                           <Calendar className="h-3 w-3 text-muted-foreground" />
                           <span className="text-sm">{report.generated}</span>
@@ -586,18 +547,56 @@ function ReportsPageContent() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex items-center justify-end space-x-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) =>
-                              handleActionClick(e, "more", report.id)
-                            }
-                            title="More Options"
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </div>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => e.stopPropagation()}
+                              title="More Options"
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleActionClick(e, "view", report.id);
+                              }}
+                            >
+                              View Report
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleActionClick(e, "download", report.id);
+                              }}
+                            >
+                              Download
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleActionClick(e, "delete", report.id);
+                              }}
+                              className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                              disabled={deletingIds.has(report.id)}
+                            >
+                              {deletingIds.has(report.id) ? (
+                                <div className="flex items-center space-x-2">
+                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div>
+                                  <span>Deleting...</span>
+                                </div>
+                              ) : (
+                                <div className="flex items-center space-x-2">
+                                  <Trash2 className="h-4 w-4" />
+                                  <span>Delete</span>
+                                </div>
+                              )}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   ))}

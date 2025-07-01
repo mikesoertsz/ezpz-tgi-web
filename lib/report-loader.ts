@@ -243,6 +243,14 @@ export function createEmptyReport(
         agentStatus: "idle",
         bibliography: [],
       },
+      json: {
+        id: "json",
+        title: "Raw JSON Data",
+        hasData: false,
+        lastUpdated: null,
+        agentStatus: "idle",
+        bibliography: [],
+      },
     },
   };
 }

@@ -56,7 +56,11 @@ export default function ChatMessages({
                       : "AI Assistant"}
                   </span>
                   <span className="text-xs opacity-70">
-                    {message.timestamp.toLocaleTimeString()}
+                    {message.timestamp.toLocaleTimeString('en-US', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: true
+                    })}
                   </span>
                 </div>
                 <p className="text-sm">{message.content}</p>

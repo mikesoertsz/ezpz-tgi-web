@@ -35,6 +35,8 @@ import { SocialMediaSection } from "./report/social-media-section";
 import { transformWebhookDataToReportData } from "./report/transform-webhook-data-to-report-data";
 import ReportToolbar from "./report-toolbar";
 import { ImagesSection } from "./report/images-section";
+import { useProfileUpdate } from "@/hooks/use-profile-update";
+import { createClient } from "@/utils/supabase/client";
 
 interface ReportDocumentProps {
   reportId?: string;
@@ -47,6 +49,7 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
   const [loadingRealData, setLoadingRealData] = useState(false);
   const [pollingAttempt, setPollingAttempt] = useState(0);
   const [maxPollingAttempts] = useState(15);
+  const { updatePersonalInfo, updating, error: updateError } = useProfileUpdate();
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     personal: true,
     social: false,
@@ -62,10 +65,14 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
   const [refreshingSections, setRefreshingSections] = useState<
     Record<string, boolean>
   >({});
+  const [savingSections, setSavingSections] = useState<
+    Record<string, boolean>
+  >({});
   const [approvedSections, setApprovedSections] = useState<
     Record<string, boolean>
   >({});
 
+  const [realData, setRealData] = useState<any>(null);
   // Load report data
 
   useEffect(() => {
@@ -94,9 +101,14 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
               );
 
               if (response.ok) {
-                const realData = await response.json();
+                const webhookData = await response.json();
+                
+                // Store the raw data for JSON section
+                setRealData(webhookData);
+                
+                // Transform data for the report sections
                 const transformedData = transformWebhookDataToReportData(
-                  realData,
+                  webhookData,
                   reportId
                 );
                 setReportData(transformedData);
@@ -134,11 +146,51 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
           };
 
           // Start first poll after 2 seconds
-          setTimeout(pollForData, 2000);
+          setTimeout(pollForData, 500);
         } else {
-          // This is an existing report - load normally
+          // This is an existing report - load normally and check for database updates
           const data = await loadReportData(reportId);
-          setReportData(data);
+          
+          // Try to load updated data from Supabase
+          if (data) {
+            try {
+              const supabase = createClient();
+              const { data: profileData, error } = await supabase
+                .from('profiles')
+                .select('ai_summary, raw_data')
+                .eq('execution_id', reportId)
+                .single();
+
+              if (!error && profileData) {
+                // Set raw data for JSON section
+                if (profileData.raw_data) {
+                  setRealData(profileData.raw_data);
+                }
+                
+                // Merge database data with local data if personal info exists
+                if (profileData.ai_summary?.personal_info) {
+                  const mergedData: ReportData = {
+                    ...data,
+                    personalInformation: {
+                      ...data.personalInformation,
+                      ...profileData.ai_summary.personal_info
+                    }
+                  };
+                  setReportData(mergedData);
+                } else {
+                  setReportData(data);
+                }
+              } else {
+                setReportData(data);
+              }
+            } catch (error) {
+              console.error('Error loading from database:', error);
+              setReportData(data);
+            }
+          } else {
+            setReportData(data);
+          }
+          
           setLoading(false);
         }
       } else {
@@ -204,18 +256,65 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
     field: string,
     value: string | string[]
   ) => {
-    if (!reportData) return;
+    if (!reportData || !reportId) return;
 
     const updates = { [field]: value };
     const updatedReport = updateReportSection(reportData, sectionId, updates);
 
+    // Update local state immediately for UI responsiveness
     setReportData(updatedReport);
+
+    // Save to local storage for persistence
     await saveReportData(updatedReport);
+
+    // If this is personal information and we have a valid reportId, also save to Supabase
+    if (sectionId === "personal" && reportId) {
+      try {
+        const personalInfo = {
+          ...updatedReport.personalInformation,
+          [field]: value
+        };
+        
+        const success = await updatePersonalInfo(reportId, personalInfo);
+        if (!success && updateError) {
+          console.error('Failed to save to database:', updateError);
+          // You could show a toast notification here
+        }
+      } catch (error) {
+        console.error('Error saving personal information:', error);
+      }
+    }
+  };
+
+  const handleSave = async (sectionId: string) => {
+    if (!reportData || !reportId) return;
+
+    // Set saving state
+    setSavingSections(prev => ({ ...prev, [sectionId]: true }));
+
+    try {
+      if (sectionId === "personal") {
+        const success = await updatePersonalInfo(reportId, reportData.personalInformation);
+        if (success) {
+          console.log('Personal information saved successfully');
+        } else {
+          console.error('Failed to save personal information:', updateError);
+        }
+      }
+      // Add more section save logic here for other sections as needed
+    } catch (error) {
+      console.error('Error saving section:', error);
+    } finally {
+      // Clear saving state after a delay
+      setTimeout(() => {
+        setSavingSections(prev => ({ ...prev, [sectionId]: false }));
+      }, 1000);
+    }
   };
 
   return (
     <ScrollArea className="h-screen overflow-y-scroll">
-      <div className="bg-[#F7F0E8]">
+      <div className="bg-[#F7F0E8] w-full max-w-full overflow-hidden">
         {/* Watermark */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] select-none z-0">
           <div className="transform rotate-45 text-black text-9xl font-bold">
@@ -224,7 +323,7 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 p-6">
+        <div className="relative z-10 p-6 w-full max-w-full overflow-hidden">
           <div className="flex w-full items-center justify-between gap-3 py-0 px-4 bg-gray-50 rounded-sm mb-4 border border-gray-200">
             {processingReport && (
               <ProcessingStatusBar
@@ -263,11 +362,13 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 openSections={openSections}
                 editingSections={editingSections}
                 refreshingSections={refreshingSections}
+                savingSections={savingSections}
                 approvedSections={approvedSections}
                 toggleSection={toggleSection}
                 handleApprovalToggle={handleApprovalToggle}
                 handleRefresh={handleRefresh}
                 handleEdit={handleEdit}
+                handleSave={handleSave}
               >
                 <PersonalInformationSection
                   data={reportData.personalInformation}
@@ -293,11 +394,13 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 openSections={openSections}
                 editingSections={editingSections}
                 refreshingSections={refreshingSections}
+                savingSections={savingSections}
                 approvedSections={approvedSections}
                 toggleSection={toggleSection}
                 handleApprovalToggle={handleApprovalToggle}
                 handleRefresh={handleRefresh}
                 handleEdit={handleEdit}
+                handleSave={handleSave}
               >
                 <ImagesSection images={reportData.images?.images || []} />
               </AccordionSection>
@@ -312,11 +415,13 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 openSections={openSections}
                 editingSections={editingSections}
                 refreshingSections={refreshingSections}
+                savingSections={savingSections}
                 approvedSections={approvedSections}
                 toggleSection={toggleSection}
                 handleApprovalToggle={handleApprovalToggle}
                 handleRefresh={handleRefresh}
                 handleEdit={handleEdit}
+                handleSave={handleSave}
               >
                 <SocialMediaSection profiles={reportData.socialMediaProfiles} />
               </AccordionSection>
@@ -331,11 +436,13 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 openSections={openSections}
                 editingSections={editingSections}
                 refreshingSections={refreshingSections}
+                savingSections={savingSections}
                 approvedSections={approvedSections}
                 toggleSection={toggleSection}
                 handleApprovalToggle={handleApprovalToggle}
                 handleRefresh={handleRefresh}
                 handleEdit={handleEdit}
+                handleSave={handleSave}
               >
                 <FinancialAssetsSection
                   data={reportData.financialAssets}
@@ -361,11 +468,13 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 openSections={openSections}
                 editingSections={editingSections}
                 refreshingSections={refreshingSections}
+                savingSections={savingSections}
                 approvedSections={approvedSections}
                 toggleSection={toggleSection}
                 handleApprovalToggle={handleApprovalToggle}
                 handleRefresh={handleRefresh}
                 handleEdit={handleEdit}
+                handleSave={handleSave}
               >
                 <BusinessInterestsSection
                   businesses={reportData.businessInterests}
@@ -382,11 +491,13 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 openSections={openSections}
                 editingSections={editingSections}
                 refreshingSections={refreshingSections}
+                savingSections={savingSections}
                 approvedSections={approvedSections}
                 toggleSection={toggleSection}
                 handleApprovalToggle={handleApprovalToggle}
                 handleRefresh={handleRefresh}
                 handleEdit={handleEdit}
+                handleSave={handleSave}
               >
                 <PropertyHoldingsSection
                   properties={reportData.propertyHoldings}
@@ -403,11 +514,13 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 openSections={openSections}
                 editingSections={editingSections}
                 refreshingSections={refreshingSections}
+                savingSections={savingSections}
                 approvedSections={approvedSections}
                 toggleSection={toggleSection}
                 handleApprovalToggle={handleApprovalToggle}
                 handleRefresh={handleRefresh}
                 handleEdit={handleEdit}
+                handleSave={handleSave}
               >
                 <LegalRecordsSection
                   data={reportData.legalRecords}
@@ -429,11 +542,13 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 openSections={openSections}
                 editingSections={editingSections}
                 refreshingSections={refreshingSections}
+                savingSections={savingSections}
                 approvedSections={approvedSections}
                 toggleSection={toggleSection}
                 handleApprovalToggle={handleApprovalToggle}
                 handleRefresh={handleRefresh}
                 handleEdit={handleEdit}
+                handleSave={handleSave}
               >
                 <OnlinePresenceSection
                   data={reportData.onlinePresence}
@@ -445,25 +560,48 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 />
               </AccordionSection>
               {/* JSON   */}
+              <div className="overflow-hidden max-w-[50vw]">
+
               <AccordionSection
                 sectionId="json"
                 title="JSON"
                 icon={Code}
-                creditCost={2.7}
-                reportData={reportData}
+                creditCost={0}
+                reportData={{
+                  ...reportData,
+                  sections: {
+                    ...reportData.sections,
+                    json: {
+                      id: "json",
+                      title: "Raw JSON Data",
+                      hasData: !!realData,
+                      lastUpdated: new Date().toISOString(),
+                      agentStatus: "completed",
+                      bibliography: [],
+                    }
+                  }
+                }}
                 openSections={openSections}
                 editingSections={editingSections}
                 refreshingSections={refreshingSections}
+                savingSections={savingSections}
                 approvedSections={approvedSections}
                 toggleSection={toggleSection}
                 handleApprovalToggle={handleApprovalToggle}
                 handleRefresh={handleRefresh}
                 handleEdit={handleEdit}
+                // No handleSave for JSON section - it's read-only
               >
-                <pre className="text-xs text-gray-500">
-                  {JSON.stringify(reportData, null, 2)}
-                </pre>
+                <div className="max-w-full overflow-hidden">
+                  <div className="overflow-x-auto overflow-y-hidden">
+                    <pre className="text-xs text-gray-500 whitespace-pre font-mono block max-w-none">
+                      {realData ? JSON.stringify(realData, null, 2) : 'Waiting for webhook data...'}
+                    </pre>
+                  </div>
+                </div>
               </AccordionSection>
+              </div>
+
             </div>
           </div>
         </div>

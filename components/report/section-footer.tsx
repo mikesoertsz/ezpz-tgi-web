@@ -14,6 +14,7 @@ import {
   ChevronDown,
   ChevronUp,
   ExternalLink,
+  Save,
 } from "lucide-react";
 import { useState } from "react";
 import { BibliographySource } from "@/lib/report-data";
@@ -24,8 +25,10 @@ interface SectionFooterProps {
   bibliography: BibliographySource[];
   isRefreshing: boolean;
   isEditing: boolean;
+  isSaving?: boolean;
   onRefresh: (sectionId: string) => void;
   onEdit: (sectionId: string) => void;
+  onSave?: (sectionId: string) => void;
 }
 
 export function SectionFooter({
@@ -34,8 +37,10 @@ export function SectionFooter({
   bibliography,
   isRefreshing,
   isEditing,
+  isSaving = false,
   onRefresh,
   onEdit,
+  onSave,
 }: SectionFooterProps) {
   const [bibliographyOpen, setBibliographyOpen] = useState(false);
   const [hoveredSource, setHoveredSource] = useState<string | null>(null);
@@ -84,6 +89,17 @@ export function SectionFooter({
       ),
       onClick: () => onEdit(sectionId),
     },
+    ...(onSave ? [{
+      title: "Save to Database",
+      icon: (
+        <Save
+          size={14}
+          className={isSaving ? "text-green-600" : "text-blue-600"}
+        />
+      ),
+      onClick: () => onSave(sectionId),
+      disabled: isSaving,
+    }] : []),
   ];
 
   return (

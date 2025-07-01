@@ -35,8 +35,8 @@ function ReportPageContent() {
           </div>
 
           {/* Right Column - Report Document - Scrollable */}
-          <div className="flex-1 h-full overflow-y-auto">
-            <ReportDocument reportId={reportId} />
+          <div className="flex-1 h-full overflow-hidden w-[50vw]">
+              <ReportDocument reportId={reportId} />
           </div>
         </div>
       </SidebarInset>

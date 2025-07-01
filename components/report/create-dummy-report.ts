@@ -158,6 +158,14 @@ export function createDummyReport(reportId: string): ReportData {
         agentStatus: "completed",
         bibliography: [],
       },
+      json: {
+        id: "json",
+        title: "Raw JSON Data",
+        hasData: false,
+        lastUpdated: null,
+        agentStatus: "idle",
+        bibliography: [],
+      },
     },
   };
 }
