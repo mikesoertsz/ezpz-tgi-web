@@ -1,0 +1,91 @@
+import { Badge } from "@/components/ui/badge";
+import { ReportData } from "@/lib/report-data";
+import type { LucideIcon } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import React from "react";
+import { SectionFooter } from "./section-footer";
+
+// Local type definition for AccordionSection props
+export type AccordionSectionProps = {
+  sectionId: string;
+  title: string;
+  icon: LucideIcon;
+  children: React.ReactNode;
+  creditCost?: number;
+  reportData: ReportData;
+  openSections: Record<string, boolean>;
+  editingSections: Record<string, boolean>;
+  refreshingSections: Record<string, boolean>;
+  approvedSections: Record<string, boolean>;
+  toggleSection: (id: string) => void;
+  handleApprovalToggle: (sectionId: string) => void;
+  handleRefresh: (sectionId: string) => void;
+  handleEdit: (sectionId: string) => void;
+};
+
+export default function AccordionSection({
+  sectionId,
+  title,
+  icon: Icon,
+  children,
+  creditCost = 2.1,
+  reportData,
+  openSections,
+  editingSections,
+  refreshingSections,
+  approvedSections,
+  toggleSection,
+  handleApprovalToggle,
+  handleRefresh,
+  handleEdit,
+}: AccordionSectionProps) {
+  const isOpen = openSections[sectionId];
+  const isEditing = editingSections[sectionId];
+  const isRefreshing = refreshingSections[sectionId];
+  const isApproved = approvedSections[sectionId];
+  const section =
+    reportData.sections[sectionId as keyof typeof reportData.sections];
+  const bibliography = section?.bibliography || [];
+
+  return (
+    <div className="mb-3 bg-white border border-gray-200 rounded-lg shadow-sm">
+      <button
+        onClick={() => toggleSection(sectionId)}
+        className="flex items-center justify-between w-full p-4 transition-colors hover:bg-gray-50"
+      >
+        <div className="flex items-center space-x-2">
+          <Icon className="h-4 w-4 text-muted-foreground" />
+          <h3 className="text-sm font-medium text-gray-900">{title}</h3>
+          {section?.hasData && (
+            <Badge variant="secondary" className="text-xs">
+              Data Available
+            </Badge>
+          )}
+        </div>
+        {isOpen ? (
+          <ChevronUp className="h-4 w-4" />
+        ) : (
+          <ChevronDown className="h-4 w-4" />
+        )}
+      </button>
+
+      {isOpen && (
+        <div className="px-4 pb-4">
+          <div className="mb-3">{children}</div>
+
+          <SectionFooter
+            sectionId={sectionId}
+            creditCost={creditCost}
+            bibliography={bibliography}
+            isRefreshing={isRefreshing || false}
+            isEditing={isEditing || false}
+            isApproved={isApproved || false}
+            onRefresh={handleRefresh}
+            onEdit={handleEdit}
+            onApprovalToggle={handleApprovalToggle}
+          />
+        </div>
+      )}
+    </div>
+  );
+}

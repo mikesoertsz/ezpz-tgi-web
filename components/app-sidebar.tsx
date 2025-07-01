@@ -28,6 +28,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { CreateReportDialog } from "./create-report-dialog";
 
@@ -194,6 +195,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     Intelligence Platform
                   </span>
                 </div>
+                <SidebarTrigger className="-ml-1" />
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
