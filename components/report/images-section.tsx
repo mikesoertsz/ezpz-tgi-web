@@ -58,7 +58,9 @@ export function ImagesSection({ images }: ImagesSectionProps) {
           {images.map((img, idx) => (
             <div
               key={img.url}
-              ref={(el) => (imageRefs.current[idx] = el)}
+              ref={(el) => {
+                imageRefs.current[idx] = el;
+              }}
               tabIndex={0}
               className="relative group cursor-pointer border rounded overflow-hidden focus:ring-2 focus:ring-blue-400 aspect-square"
               onClick={() => openPreview(idx)}
@@ -86,7 +88,9 @@ export function ImagesSection({ images }: ImagesSectionProps) {
           {images.map((img, idx) => (
             <div
               key={img.url}
-              ref={(el) => (imageRefs.current[idx] = el)}
+              ref={(el) => {
+                imageRefs.current[idx] = el;
+              }}
               tabIndex={0}
               className="flex items-center gap-4 py-2 cursor-pointer focus:ring-2 focus:ring-blue-400"
               onClick={() => openPreview(idx)}

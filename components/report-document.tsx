@@ -34,7 +34,6 @@ import { PropertyHoldingsSection } from "./report/property-holdings-section";
 import { SocialMediaSection } from "./report/social-media-section";
 import { transformWebhookDataToReportData } from "./report/transform-webhook-data-to-report-data";
 import ReportToolbar from "./report-toolbar";
-import { TitleBlock } from "./ui/titleblock";
 import { ImagesSection } from "./report/images-section";
 
 interface ReportDocumentProps {
