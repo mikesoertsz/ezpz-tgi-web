@@ -560,7 +560,7 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 />
               </AccordionSection>
               {/* JSON   */}
-              <div className="overflow-hidden max-w-[52vw]">
+              <div className="overflow-hidden max-w-[50vw]">
 
               <AccordionSection
                 sectionId="json"
