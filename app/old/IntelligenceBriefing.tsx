@@ -28,7 +28,8 @@ type SectionKey =
   | "business"
   | "property"
   | "legal"
-  | "online";
+  | "online"
+  | "rawJson";
 
 const IntelligenceBriefing: React.FC = () => {
   // Use the imported JSON as the initial data
@@ -45,6 +46,7 @@ const IntelligenceBriefing: React.FC = () => {
       property: false,
       legal: false,
       online: false,
+      rawJson: false,
     }
   );
   const [approvedSections, setApprovedSections] = useState<
@@ -64,6 +66,7 @@ const IntelligenceBriefing: React.FC = () => {
     property: Math.round((Math.random() * 3 + 1) * 10) / 10,
     legal: Math.round((Math.random() * 3 + 1) * 10) / 10,
     online: Math.round((Math.random() * 3 + 1) * 10) / 10,
+    rawJson: 0,
   });
 
   // Bibliography data for each section (move to a separate file if needed)
@@ -225,6 +228,7 @@ const IntelligenceBriefing: React.FC = () => {
         type: "document",
       },
     ],
+    rawJson: [],
   };
 
   const toggleSection = (id: SectionKey) => {
@@ -445,6 +449,31 @@ const IntelligenceBriefing: React.FC = () => {
                       isRefreshing={refreshingSections.online || false}
                       onSave={handleSaveField}
                     />
+                  </Accordion>
+                  <Accordion
+                    title="Raw JSON Data"
+                    isOpen={openSections.rawJson || false}
+                    onToggle={() =>
+                      setOpenSections((prev) => ({
+                        ...prev,
+                        rawJson: !prev.rawJson,
+                      }))
+                    }
+                    sectionId="rawJson"
+                    approvedSections={approvedSections}
+                    onApprovalToggle={handleApprovalToggle}
+                    bibliography={[]}
+                    onRefresh={() => {}}
+                    isRefreshing={false}
+                    onEdit={() => {}}
+                    isEditing={false}
+                    creditCost={0}
+                  >
+                    <div className="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto max-h-[80dvh] font-mono">
+                      <pre className="whitespace-pre-wrap break-all">
+                        {JSON.stringify(personData, null, 2)}
+                      </pre>
+                    </div>
                   </Accordion>
                 </div>
               </div>
