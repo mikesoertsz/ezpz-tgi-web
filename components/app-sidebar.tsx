@@ -124,22 +124,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <a href="/dashboard">
                 <div className="flex aspect-square items-center justify-center">
                   <Brain
-                    className="text-orange-500"
+                    className="text-orange-300"
                     size={20}
                     strokeWidth={2}
                   />
                 </div>
                 <div className="flex text-left text-xs items-center justify-between w-full gap-1 h-8">
                   <div className="flex">
-                    <span className="truncate font-semibold text-sm sr-only">
-                      Triangle
-                    </span>
                     <span className="font-mono font-semibold text-sm text-orange-500">
                       PENSA
                     </span>
                   </div>
                   <TerminalTextLine
-                    className="font-mono font-semibold text-[11px] text-stone-400 mt-1"
+                    className="font-mono font-semibold text-[11px] text-orange-300 mt-1"
                     text="v0.02a"
                   />
                 </div>

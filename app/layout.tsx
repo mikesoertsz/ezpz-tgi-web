@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Intelligence Platform",
+  title: "Pensa | Intelligence & Data Platform",
   description:
     "AI-powered threat intelligence and security assessment platform",
 };

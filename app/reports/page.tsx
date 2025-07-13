@@ -340,10 +340,10 @@ function ReportsPageContent() {
   }
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+    <SidebarInset className="rounded-sm">
+      <SidebarProvider>
+        <AppSidebar />
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-4">
           {/* Reports Table with Filters and Search */}
           <Card>
             <CardHeader className="flex justify-between items-center">
@@ -596,8 +596,8 @@ function ReportsPageContent() {
             </CardContent>
           </Card>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+      </SidebarProvider>
+    </SidebarInset>
   );
 }
 
