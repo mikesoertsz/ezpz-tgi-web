@@ -1,25 +1,19 @@
 "use client";
 
-import * as React from "react";
 import {
-  Shield,
-  Users,
-  FolderOpen,
-  FileText,
   Bot,
-  Settings2,
+  Brain,
+  FolderSearch2,
   LifeBuoy,
-  Send,
-  Activity,
   Search,
-  Building2,
-  Triangle,
+  Send,
+  Shield,
+  SquareDashedBottom,
+  Users,
 } from "lucide-react";
+import * as React from "react";
 
 import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
-import { NavSecondary } from "@/components/nav-secondary";
-import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -28,9 +22,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { CreateReportDialog } from "./create-report-dialog";
+import NavUser from "./nav-user";
+import TerminalTextLine from "./TerminalTextLine";
 
 const data = {
   user: {
@@ -42,13 +37,13 @@ const data = {
     {
       title: "Dashboard",
       url: "/dashboard",
-      icon: Activity,
+      icon: SquareDashedBottom,
       isActive: true,
     },
     {
       title: "Reports",
       url: "/reports",
-      icon: FileText,
+      icon: FolderSearch2,
       items: [
         {
           title: "All Reports",
@@ -69,40 +64,6 @@ const data = {
       ],
     },
     {
-      title: "Projects",
-      url: "/projects",
-      icon: FolderOpen,
-      items: [
-        {
-          title: "All Projects",
-          url: "/projects",
-        },
-        {
-          title: "Active",
-          url: "/projects/active",
-        },
-        {
-          title: "Completed",
-          url: "/projects/completed",
-        },
-      ],
-    },
-    {
-      title: "Clients",
-      url: "/clients",
-      icon: Building2,
-      items: [
-        {
-          title: "All Clients",
-          url: "/clients",
-        },
-        {
-          title: "Add Client",
-          url: "/clients/new",
-        },
-      ],
-    },
-    {
       title: "AI Agents",
       url: "/agents",
       icon: Bot,
@@ -118,29 +79,6 @@ const data = {
         {
           title: "Search History",
           url: "/agents/history",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "/settings",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "/settings",
-        },
-        {
-          title: "Security",
-          url: "/settings/security",
-        },
-        {
-          title: "API Keys",
-          url: "/settings/api",
-        },
-        {
-          title: "Notifications",
-          url: "/settings/notifications",
         },
       ],
     },
@@ -184,33 +122,40 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="/dashboard">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Triangle className="size-4" />
+                <div className="flex aspect-square items-center justify-center">
+                  <Brain
+                    className="text-orange-500"
+                    size={20}
+                    strokeWidth={2}
+                  />
                 </div>
-                <div className="grid flex-1 text-left text-xs leading-tight">
-                  <span className="truncate font-semibold text-sm sr-only">
-                    Triangle
-                  </span>
-                  <span className="truncate text-xs opacity-80">
-                    Intelligence Platform
-                  </span>
+                <div className="flex text-left text-xs items-center justify-between w-full gap-1 h-8">
+                  <div className="flex">
+                    <span className="truncate font-semibold text-sm sr-only">
+                      Triangle
+                    </span>
+                    <span className="font-mono font-semibold text-sm text-orange-500">
+                      PENSA
+                    </span>
+                  </div>
+                  <TerminalTextLine
+                    className="font-mono font-semibold text-[11px] text-stone-400 mt-1"
+                    text="v0.02a"
+                  />
                 </div>
-                <SidebarTrigger className="-ml-1" />
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+      <div className="mt-auto p-3">
+        <CreateReportDialog />
+      </div>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
-        <div className="mt-auto p-3">
-          <CreateReportDialog />
-        </div>
-        <NavSecondary items={data.navSecondary} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );
