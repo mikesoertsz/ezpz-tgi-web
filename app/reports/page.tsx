@@ -17,17 +17,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import {
-  Building2,
-  Calendar,
   CheckCircle,
   ChevronDown,
   ChevronUp,
@@ -49,8 +40,6 @@ import { toast } from "sonner";
 function ReportsPageContent() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
-  const [clientFilter, setClientFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
 
   const { profiles, loading, error, refetch } = useProfiles();
   const [deletingIds, setDeletingIds] = useState<Set<number>>(new Set());
@@ -213,12 +202,6 @@ function ReportsPageContent() {
     }
   };
 
-  // Get unique values for filters
-  const uniqueClients = [
-    ...new Set(reports.map((r) => r.client).filter((c): c is string => !!c)),
-  ];
-  const uniqueStatuses = [...new Set(reports.map((r) => r.status))];
-
   // Filter reports based on search and filters
   const filteredReports = reports.filter((report) => {
     const matchesSearch =
@@ -226,10 +209,8 @@ function ReportsPageContent() {
       report.target.toLowerCase().includes(searchTerm.toLowerCase()) ||
       report.targetEmail.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesClient =
-      clientFilter === "all" || report.client === clientFilter;
-    const matchesStatus =
-      statusFilter === "all" || report.status === statusFilter;
+    const matchesClient = true; // Removed clientFilter === "all" || report.client === clientFilter;
+    const matchesStatus = true; // Removed statusFilter === "all" || report.status === statusFilter;
 
     return matchesSearch && matchesClient && matchesStatus;
   });
@@ -365,32 +346,7 @@ function ReportsPageContent() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
-                <Select value={clientFilter} onValueChange={setClientFilter}>
-                  <SelectTrigger className="w-[100px]">
-                    <SelectValue placeholder="Client" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Clients</SelectItem>
-                    {uniqueClients.map((client) => (
-                      <SelectItem key={client} value={client}>
-                        {client}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-[100px]">
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    {uniqueStatuses.map((status) => (
-                      <SelectItem key={status} value={status}>
-                        {status}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {/* Removed client and status dropdowns */}
               </div>
             </CardHeader>
             <CardContent>
@@ -415,11 +371,37 @@ function ReportsPageContent() {
                 <TableView
                   columns={[
                     {
-                      key: "title",
-                      label: "Report & Target",
-                      onSort: () => requestSort("title"),
+                      key: "generated",
+                      label: "Date",
+                      onSort: () => requestSort("generated"),
                       sortIcon:
-                        sortConfig?.key === "title" ? (
+                        sortConfig?.key === "generated" ? (
+                          sortConfig.direction === "ascending" ? (
+                            <ChevronUp className="inline-block ml-1" />
+                          ) : (
+                            <ChevronDown className="inline-block ml-1" />
+                          )
+                        ) : null,
+                    },
+                    {
+                      key: "target",
+                      label: "Name",
+                      onSort: () => requestSort("target"),
+                      sortIcon:
+                        sortConfig?.key === "target" ? (
+                          sortConfig.direction === "ascending" ? (
+                            <ChevronUp className="inline-block ml-1" />
+                          ) : (
+                            <ChevronDown className="inline-block ml-1" />
+                          )
+                        ) : null,
+                    },
+                    {
+                      key: "targetEmail",
+                      label: "Email",
+                      onSort: () => requestSort("targetEmail"),
+                      sortIcon:
+                        sortConfig?.key === "targetEmail" ? (
                           sortConfig.direction === "ascending" ? (
                             <ChevronUp className="inline-block ml-1" />
                           ) : (
@@ -454,32 +436,6 @@ function ReportsPageContent() {
                         ) : null,
                     },
                     {
-                      key: "generated",
-                      label: "Generated",
-                      onSort: () => requestSort("generated"),
-                      sortIcon:
-                        sortConfig?.key === "generated" ? (
-                          sortConfig.direction === "ascending" ? (
-                            <ChevronUp className="inline-block ml-1" />
-                          ) : (
-                            <ChevronDown className="inline-block ml-1" />
-                          )
-                        ) : null,
-                    },
-                    {
-                      key: "findings",
-                      label: "Findings",
-                      onSort: () => requestSort("findings"),
-                      sortIcon:
-                        sortConfig?.key === "findings" ? (
-                          sortConfig.direction === "ascending" ? (
-                            <ChevronUp className="inline-block ml-1" />
-                          ) : (
-                            <ChevronDown className="inline-block ml-1" />
-                          )
-                        ) : null,
-                    },
-                    {
                       key: "actions",
                       label: "Actions",
                       className: "text-right",
@@ -492,26 +448,12 @@ function ReportsPageContent() {
                       className="hover:bg-muted/50 cursor-pointer transition-colors"
                       onClick={() => handleRowClick(report.id)}
                     >
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <FileText className="h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <div className="font-medium">{report.title}</div>
-                            <div className="text-sm text-muted-foreground">
-                              Target: {report.target}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              {report.targetEmail}
-                            </div>
-                          </div>
-                        </div>
-                      </TableCell>
+                      <TableCell>{report.generated}</TableCell>
+                      <TableCell>{report.target}</TableCell>
+                      <TableCell>{report.targetEmail}</TableCell>
                       <TableCell>
                         {report.client ? (
-                          <div className="flex items-center space-x-1">
-                            <Building2 className="h-3 w-3" />
-                            <span className="text-sm">{report.client}</span>
-                          </div>
+                          <span className="text-sm">{report.client}</span>
                         ) : (
                           <span className="text-sm text-muted-foreground">
                             Independent
@@ -525,17 +467,6 @@ function ReportsPageContent() {
                             {report.status}
                           </Badge>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-1">
-                          <Calendar className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-sm">{report.generated}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary" className="text-xs">
-                          {report.findings} findings
-                        </Badge>
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
