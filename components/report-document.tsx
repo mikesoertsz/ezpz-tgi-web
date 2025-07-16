@@ -46,10 +46,9 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
   const [reportData, setReportData] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
   const [processingReport, setProcessingReport] = useState(false);
-  const [loadingRealData, setLoadingRealData] = useState(false);
   const [pollingAttempt, setPollingAttempt] = useState(0);
   const [maxPollingAttempts] = useState(15);
-  const { updatePersonalInfo, updating, error: updateError } = useProfileUpdate();
+  const { updatePersonalInfo, error: updateError } = useProfileUpdate();
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     personal: true,
     social: false,
@@ -65,14 +64,14 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
   const [refreshingSections, setRefreshingSections] = useState<
     Record<string, boolean>
   >({});
-  const [savingSections, setSavingSections] = useState<
-    Record<string, boolean>
-  >({});
+  const [savingSections, setSavingSections] = useState<Record<string, boolean>>(
+    {}
+  );
   const [approvedSections, setApprovedSections] = useState<
     Record<string, boolean>
   >({});
 
-  const [realData, setRealData] = useState<any>(null);
+  const [realData, setRealData] = useState<unknown>(null);
   // Load report data
 
   useEffect(() => {
@@ -93,7 +92,6 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
           // Poll starting after 2 seconds, then every 30 seconds until we get data, max 15 attempts
           const pollForData = async () => {
             setPollingAttempt((prev) => prev + 1);
-            setLoadingRealData(true);
 
             try {
               const response = await fetch(
@@ -102,10 +100,10 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
 
               if (response.ok) {
                 const webhookData = await response.json();
-                
+
                 // Store the raw data for JSON section
                 setRealData(webhookData);
-                
+
                 // Transform data for the report sections
                 const transformedData = transformWebhookDataToReportData(
                   webhookData,
@@ -113,7 +111,6 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 );
                 setReportData(transformedData);
                 setProcessingReport(false);
-                setLoadingRealData(false);
                 return; // Success - stop polling
               } else {
                 console.log(
@@ -130,8 +127,6 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 error
               );
             }
-
-            setLoadingRealData(false);
 
             // If we haven't reached max attempts, schedule next poll
             if (pollingAttempt < maxPollingAttempts - 1) {
@@ -150,15 +145,15 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
         } else {
           // This is an existing report - load normally and check for database updates
           const data = await loadReportData(reportId);
-          
+
           // Try to load updated data from Supabase
           if (data) {
             try {
               const supabase = createClient();
               const { data: profileData, error } = await supabase
-                .from('profiles')
-                .select('ai_summary, raw_data')
-                .eq('execution_id', reportId)
+                .from("profiles")
+                .select("ai_summary, raw_data")
+                .eq("execution_id", reportId)
                 .single();
 
               if (!error && profileData) {
@@ -166,15 +161,15 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 if (profileData.raw_data) {
                   setRealData(profileData.raw_data);
                 }
-                
+
                 // Merge database data with local data if personal info exists
                 if (profileData.ai_summary?.personal_info) {
                   const mergedData: ReportData = {
                     ...data,
                     personalInformation: {
                       ...data.personalInformation,
-                      ...profileData.ai_summary.personal_info
-                    }
+                      ...profileData.ai_summary.personal_info,
+                    },
                   };
                   setReportData(mergedData);
                 } else {
@@ -184,13 +179,13 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 setReportData(data);
               }
             } catch (error) {
-              console.error('Error loading from database:', error);
+              console.error("Error loading from database:", error);
               setReportData(data);
             }
           } else {
             setReportData(data);
           }
-          
+
           setLoading(false);
         }
       } else {
@@ -272,16 +267,16 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
       try {
         const personalInfo = {
           ...updatedReport.personalInformation,
-          [field]: value
+          [field]: value,
         };
-        
+
         const success = await updatePersonalInfo(reportId, personalInfo);
         if (!success && updateError) {
-          console.error('Failed to save to database:', updateError);
+          console.error("Failed to save to database:", updateError);
           // You could show a toast notification here
         }
       } catch (error) {
-        console.error('Error saving personal information:', error);
+        console.error("Error saving personal information:", error);
       }
     }
   };
@@ -290,31 +285,34 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
     if (!reportData || !reportId) return;
 
     // Set saving state
-    setSavingSections(prev => ({ ...prev, [sectionId]: true }));
+    setSavingSections((prev) => ({ ...prev, [sectionId]: true }));
 
     try {
       if (sectionId === "personal") {
-        const success = await updatePersonalInfo(reportId, reportData.personalInformation);
+        const success = await updatePersonalInfo(
+          reportId,
+          reportData.personalInformation
+        );
         if (success) {
-          console.log('Personal information saved successfully');
+          console.log("Personal information saved successfully");
         } else {
-          console.error('Failed to save personal information:', updateError);
+          console.error("Failed to save personal information:", updateError);
         }
       }
       // Add more section save logic here for other sections as needed
     } catch (error) {
-      console.error('Error saving section:', error);
+      console.error("Error saving section:", error);
     } finally {
       // Clear saving state after a delay
       setTimeout(() => {
-        setSavingSections(prev => ({ ...prev, [sectionId]: false }));
+        setSavingSections((prev) => ({ ...prev, [sectionId]: false }));
       }, 1000);
     }
   };
 
   return (
     <ScrollArea className="h-screen">
-      <div className="bg-[#F7F0E8] w-full max-w-full overflow-hidden">
+      <div className="bg-[#F7F0E8] w-full max-w-full  rounded-2xl overflow-hidden">
         {/* Watermark */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] select-none z-0">
           <div className="transform rotate-45 text-black text-9xl font-bold">
@@ -559,9 +557,8 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                   }
                 />
               </AccordionSection>
-              {/* JSON   */}
-              <div className="overflow-hidden max-w-[50vw]">
 
+              {/* JSON */}
               <AccordionSection
                 sectionId="json"
                 title="JSON"
@@ -578,8 +575,8 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                       lastUpdated: new Date().toISOString(),
                       agentStatus: "completed",
                       bibliography: [],
-                    }
-                  }
+                    },
+                  },
                 }}
                 openSections={openSections}
                 editingSections={editingSections}
@@ -595,13 +592,13 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 <div className="max-w-full overflow-hidden">
                   <div className="overflow-x-auto overflow-y-hidden">
                     <pre className="text-xs text-gray-500 whitespace-pre font-mono block max-w-none">
-                      {realData ? JSON.stringify(realData, null, 2) : 'Waiting for webhook data...'}
+                      {realData
+                        ? JSON.stringify(realData, null, 2)
+                        : "Waiting for webhook data..."}
                     </pre>
                   </div>
                 </div>
               </AccordionSection>
-              </div>
-
             </div>
           </div>
         </div>

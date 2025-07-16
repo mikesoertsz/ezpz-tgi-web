@@ -1,7 +1,7 @@
 "use client";
 
 import { AppSidebar } from "@/components/app-sidebar";
-import { ReportChat } from "@/components/report-chat";
+import ReportChat from "@/components/report-chat";
 import { ReportDocument } from "@/components/report-document";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useParams } from "next/navigation";
@@ -27,16 +27,16 @@ function ReportPageContent() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
-        <div className="flex flex-1 overflow-hidden h-screen bg-[#F7F0E8]">
+      <SidebarInset className="m-0 p-0">
+        <div className="flex overflow-hidden h-screen gap-4">
           {/* Left Column - AI Chat - Fixed Height */}
-          <div className="w-1/3 border-r h-full flex flex-col">
+          <div className="w-1/3 border-r h-[98%] flex flex-col rounded-2xl overflow-hidden">
             <ReportChat reportId={reportId} />
           </div>
 
           {/* Right Column - Report Document - Scrollable */}
-          <div className="flex-1 h-full overflow-hidden w-[50vw]">
-              <ReportDocument reportId={reportId} />
+          <div className="flex-1 h-[98%] overflow-hidden rounded-2xl w-[50vw]">
+            <ReportDocument reportId={reportId} />
           </div>
         </div>
       </SidebarInset>

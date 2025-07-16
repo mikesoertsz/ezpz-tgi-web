@@ -10,13 +10,9 @@ export default function ProcessingStatusBar({
   maxPollingAttempts,
 }: ProcessingStatusBarProps) {
   const percent = Math.min(100, (pollingAttempt / maxPollingAttempts) * 100);
-  const minutesLeft = Math.max(
-    0,
-    Number(((maxPollingAttempts - pollingAttempt) * 0.5).toFixed(1))
-  );
 
   return (
-    <div className="w-[500px] flex items-center ">
+    <div className="w-[500px] flex items-center">
       <span className="text-[11px] font-semibold font-mono uppercase tracking-wide subpixel-antialiased text-stone-600 min-w-[48px]">
         Status
       </span>
@@ -28,8 +24,8 @@ export default function ProcessingStatusBar({
           ></div>
         </div>
       </div>
-      <span className="text-[10px] font-semibold font-mono uppercase tracking-wide subpixel-antialiased text-stone-600 min-w-[90px] text-right">
-        {minutesLeft} min left
+      <span className="text-[10px] font-semibold font-mono uppercase tracking-wide subpixel-antialiased text-stone-600 min-w-[90px] text-right animate-pulse">
+        Researching...
       </span>
     </div>
   );

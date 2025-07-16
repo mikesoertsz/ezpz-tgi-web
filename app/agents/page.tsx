@@ -3,14 +3,6 @@
 import { AgentSettingsDialog } from "@/components/agent-settings-dialog";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Badge } from "@/components/ui/badge";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,26 +11,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { TableCell, TableRow } from "@/components/ui/table";
 import {
   Activity,
   AlertCircle,
   Bot,
   Briefcase,
-  CheckCircle,
   Clock,
   Database,
   DollarSign,
@@ -47,13 +26,18 @@ import {
   Home,
   Image,
   Pause,
-  Play,
   Scale,
   Settings,
   Shield,
   User,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import { useState } from "react";
+import TerminalTextLine from "@/components/TerminalTextLine";
+import TableView from "@/components/ui/table-view";
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 export type Agent = {
   id: number;
@@ -61,7 +45,7 @@ export type Agent = {
   description: string;
   status: string;
   lastRun: string;
-  successRate: number;
+  successRate: number | "Unknown";
   tasksCompleted: number;
   icon: React.ElementType;
   category: string;
@@ -71,13 +55,18 @@ export type Agent = {
 export default function AgentsPage() {
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof Agent;
+    direction: string;
+  } | null>(null);
 
   const agents: Agent[] = [
     {
       id: 1,
       name: "Personal Information Agent",
       description:
-        "Gathers basic personal details, demographics, and background information",
+        "Gathers basic personal details, demographics, and background information.",
       status: "Active",
       lastRun: "2 minutes ago",
       successRate: 96,
@@ -91,7 +80,7 @@ export default function AgentsPage() {
       id: 2,
       name: "Social Media Intelligence",
       description:
-        "Analyzes social media profiles, posts, connections, and digital footprint",
+        "Analyzes social media profiles, posts, connections, and digital footprint.",
       status: "Active",
       lastRun: "1 minute ago",
       successRate: 91,
@@ -105,10 +94,10 @@ export default function AgentsPage() {
       id: 3,
       name: "Financial Assets Analyzer",
       description:
-        "Investigates financial records, assets, investments, and economic indicators",
-      status: "Active",
+        "Investigates financial records, assets, investments, and economic indicators.",
+      status: "Offline",
       lastRun: "5 minutes ago",
-      successRate: 88,
+      successRate: "Unknown",
       tasksCompleted: 743,
       icon: DollarSign,
       category: "Financial Intelligence",
@@ -119,10 +108,10 @@ export default function AgentsPage() {
       id: 4,
       name: "Business Interests Agent",
       description:
-        "Researches corporate affiliations, business ventures, and professional networks",
-      status: "Active",
+        "Researches corporate affiliations, business ventures, and professional networks.",
+      status: "Offline",
       lastRun: "3 minutes ago",
-      successRate: 93,
+      successRate: "Unknown",
       tasksCompleted: 1205,
       icon: Briefcase,
       category: "Corporate Intelligence",
@@ -133,10 +122,10 @@ export default function AgentsPage() {
       id: 5,
       name: "Property Holdings Scanner",
       description:
-        "Identifies real estate ownership, property records, and asset holdings",
+        "Identifies real estate ownership, property records, and asset holdings.",
       status: "Idle",
       lastRun: "1 hour ago",
-      successRate: 89,
+      successRate: "Unknown",
       tasksCompleted: 567,
       icon: Home,
       category: "Asset Intelligence",
@@ -147,10 +136,10 @@ export default function AgentsPage() {
       id: 6,
       name: "Legal & Litigation Monitor",
       description:
-        "Tracks legal proceedings, court records, and litigation history",
-      status: "Active",
+        "Tracks legal proceedings, court records, and litigation history.",
+      status: "Offline",
       lastRun: "10 minutes ago",
-      successRate: 94,
+      successRate: "Unknown",
       tasksCompleted: 892,
       icon: Scale,
       category: "Legal Intelligence",
@@ -161,7 +150,7 @@ export default function AgentsPage() {
       id: 7,
       name: "Online Presence Tracker",
       description:
-        "Maps digital footprint, web presence, and online activity patterns",
+        "Maps digital footprint, web presence, and online activity patterns.",
       status: "Active",
       lastRun: "30 seconds ago",
       successRate: 92,
@@ -175,10 +164,10 @@ export default function AgentsPage() {
       id: 8,
       name: "Report Generation Agent",
       description:
-        "Compiles and structures intelligence data into comprehensive analytical reports",
-      status: "Active",
+        "Compiles and structures intelligence data into comprehensive analytical reports.",
+      status: "Offline",
       lastRun: "5 minutes ago",
-      successRate: 95,
+      successRate: "Unknown",
       tasksCompleted: 1423,
       icon: FileText,
       category: "Analysis & Reporting",
@@ -189,7 +178,7 @@ export default function AgentsPage() {
       id: 9,
       name: "Verifier Agent",
       description:
-        "Validates source authenticity and prevents AI hallucination by cross-referencing data",
+        "Validates source authenticity and prevents AI hallucination by cross-referencing data.",
       status: "Active",
       lastRun: "2 minutes ago",
       successRate: 98,
@@ -203,7 +192,7 @@ export default function AgentsPage() {
       id: 10,
       name: "Data Structuring Agent",
       description:
-        "Cleans, organizes, and optimizes data structure while removing false matches",
+        "Cleans, organizes, and optimizes data structure while removing false matches.",
       status: "Active",
       lastRun: "1 minute ago",
       successRate: 94,
@@ -217,10 +206,10 @@ export default function AgentsPage() {
       id: 11,
       name: "Image Collection Agent",
       description:
-        "Finds, downloads, and catalogs images related to targets and investigations",
-      status: "Active",
+        "Finds, downloads, and catalogs images related to targets and investigations.",
+      status: "Offline",
       lastRun: "3 minutes ago",
-      successRate: 91,
+      successRate: "Unknown",
       tasksCompleted: 1247,
       icon: Image,
       category: "Digital Intelligence",
@@ -237,6 +226,8 @@ export default function AgentsPage() {
         return <Clock className="h-4 w-4 text-yellow-500" />;
       case "Error":
         return <AlertCircle className="h-4 w-4 text-red-500" />;
+      case "Offline":
+        return <Pause className="h-4 w-4 text-gray-500" />;
       default:
         return <Bot className="h-4 w-4" />;
     }
@@ -250,6 +241,8 @@ export default function AgentsPage() {
         return "secondary";
       case "Error":
         return "destructive";
+      case "Offline":
+        return "secondary";
       default:
         return "outline";
     }
@@ -261,146 +254,161 @@ export default function AgentsPage() {
     setSettingsOpen(true);
   };
 
+  // Filter agents by search (for visual parity, not functional yet)
+  const filteredAgents = agents.filter((agent) => {
+    return (
+      agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      agent.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
+  // Sort filtered agents
+  const sortedAgents = [...filteredAgents].sort((a, b) => {
+    if (sortConfig !== null) {
+      const key = sortConfig.key;
+      const aValue = a[key];
+      const bValue = b[key];
+      if (aValue == null && bValue == null) return 0;
+      if (aValue == null) return sortConfig.direction === "ascending" ? -1 : 1;
+      if (bValue == null) return sortConfig.direction === "ascending" ? 1 : -1;
+      if (aValue < bValue) {
+        return sortConfig.direction === "ascending" ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === "ascending" ? 1 : -1;
+      }
+    }
+    return 0;
+  });
+
+  const requestSort = (key: keyof Agent) => {
+    let direction = "ascending";
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "ascending"
+    ) {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
+
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>AI Agents</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-          <div className="ml-auto flex items-center gap-2 px-4">
-            <Button variant="outline" size="sm" title="Start All Agents">
-              <Play className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="sm" title="Pause All Agents">
-              <Pause className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="sm" title="Global Configuration">
-              <Settings className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="sm" title="View Logs">
-              <FileText className="h-4 w-4" />
-            </Button>
-            <Separator orientation="vertical" className="h-6" />
-            <Button>
-              <Settings className="h-4 w-4 mr-2" />
-              Agent Settings
-            </Button>
-          </div>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold">AI Agent Management</h1>
-              <p className="text-muted-foreground">
-                Monitor and control your intelligence gathering agents
-              </p>
-            </div>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Active Agents
-                </CardTitle>
-                <Activity className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">10</div>
-                <p className="text-xs text-muted-foreground">1 idle agent</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Tasks Today
-                </CardTitle>
-                <CheckCircle className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">387</div>
-                <p className="text-xs text-muted-foreground">
-                  +85 from yesterday
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Success Rate
-                </CardTitle>
-                <Bot className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">93%</div>
-                <p className="text-xs text-muted-foreground">
-                  +1% from last week
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Data Processed
-                </CardTitle>
-                <Activity className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">8.4GB</div>
-                <p className="text-xs text-muted-foreground">Last 24 hours</p>
-              </CardContent>
-            </Card>
-          </div>
-
+    <SidebarInset className="rounded-sm">
+      <SidebarProvider>
+        <AppSidebar />
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-4">
           <Card>
-            <CardHeader>
-              <CardTitle>Intelligence Agents</CardTitle>
-              <CardDescription>
-                Specialized AI agents for comprehensive threat analysis and
-                intelligence gathering
-              </CardDescription>
+            <CardHeader className="flex justify-between items-center">
+              <div>
+                <TerminalTextLine
+                  text="Agents"
+                  className="text-xs mb-3 text-orange-600"
+                />
+                <CardTitle>Agents Catalogue</CardTitle>
+                <CardDescription className="text-sm mt-2 text-stone-500 font-medium">
+                  Specialized AI agents for comprehensive threat analysis and
+                  intelligence gathering.
+                </CardDescription>
+              </div>
+              <div className="flex gap-2 items-center">
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search..."
+                    className="pl-8"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Agent</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Last Run</TableHead>
-                    <TableHead>Success Rate</TableHead>
-                    <TableHead>Tasks</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {agents.map((agent) => {
+              {sortedAgents.length === 0 ? (
+                <div className="text-center py-8">
+                  <Bot className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-muted-foreground mb-2">
+                    No agents found
+                  </h3>
+                  <p className="text-muted-foreground">
+                    No matching agents. Try a different search.
+                  </p>
+                </div>
+              ) : (
+                <TableView
+                  columns={[
+                    {
+                      key: "name",
+                      label: "Agent",
+                      onSort: () => requestSort("name"),
+                      sortIcon:
+                        sortConfig?.key === "name" ? (
+                          sortConfig.direction === "ascending" ? (
+                            <ChevronUp className="inline-block ml-1" />
+                          ) : (
+                            <ChevronDown className="inline-block ml-1" />
+                          )
+                        ) : null,
+                    },
+                    {
+                      key: "category",
+                      label: "Category",
+                      onSort: () => requestSort("category"),
+                      sortIcon:
+                        sortConfig?.key === "category" ? (
+                          sortConfig.direction === "ascending" ? (
+                            <ChevronUp className="inline-block ml-1" />
+                          ) : (
+                            <ChevronDown className="inline-block ml-1" />
+                          )
+                        ) : null,
+                    },
+                    {
+                      key: "status",
+                      label: "Status",
+                      onSort: () => requestSort("status"),
+                      sortIcon:
+                        sortConfig?.key === "status" ? (
+                          sortConfig.direction === "ascending" ? (
+                            <ChevronUp className="inline-block ml-1" />
+                          ) : (
+                            <ChevronDown className="inline-block ml-1" />
+                          )
+                        ) : null,
+                    },
+                    {
+                      key: "successRate",
+                      label: "Success Rate",
+                      onSort: () => requestSort("successRate"),
+                      sortIcon:
+                        sortConfig?.key === "successRate" ? (
+                          sortConfig.direction === "ascending" ? (
+                            <ChevronUp className="inline-block ml-1" />
+                          ) : (
+                            <ChevronDown className="inline-block ml-1" />
+                          )
+                        ) : null,
+                    },
+                    {
+                      key: "actions",
+                      label: "Actions",
+                      className: "text-right",
+                    },
+                  ]}
+                  data={sortedAgents}
+                  renderRow={(agent) => {
                     const IconComponent = agent.icon;
                     return (
-                      <TableRow key={agent.id}>
+                      <TableRow
+                        key={agent.id}
+                        className="hover:bg-muted/50 cursor-pointer transition-colors"
+                      >
                         <TableCell>
                           <div className="flex items-center space-x-3">
                             <IconComponent className="h-5 w-5 text-muted-foreground" />
                             <div>
                               <div className="font-medium">{agent.name}</div>
-                              <div className="text-sm text-muted-foreground">
+                              <div className="text-xs mt-1 text-stone-500 font-medium">
                                 {agent.description}
                               </div>
                             </div>
@@ -416,48 +424,43 @@ export default function AgentsPage() {
                             {getStatusIcon(agent.status)}
                             <Badge
                               variant={getStatusColor(agent.status)}
-                              className="text-xs"
+                              className="text-xs w-20 text-center flex items-center justify-center"
                             >
                               {agent.status}
                             </Badge>
                           </div>
                         </TableCell>
-                        <TableCell className="text-sm">
-                          {agent.lastRun}
-                        </TableCell>
                         <TableCell>
-                          <div className="flex items-center space-x-2">
-                            <span className="text-sm font-medium">
-                              {agent.successRate}%
-                            </span>
-                            <div className="w-16 h-2 bg-muted rounded-full">
-                              <div
-                                className="h-2 bg-green-500 rounded-full"
-                                style={{ width: `${agent.successRate}%` }}
-                              />
+                          {agent.successRate === "Unknown" ? (
+                            <Badge
+                              variant="secondary"
+                              className="text-xs w-24 text-center flex items-center justify-center"
+                            >
+                              Unknown
+                            </Badge>
+                          ) : (
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm font-medium">
+                                {agent.successRate}%
+                              </span>
+                              <div className="w-16 h-2 bg-muted rounded-full">
+                                <div
+                                  className="h-2 bg-green-500 rounded-full"
+                                  style={{ width: `${agent.successRate}%` }}
+                                />
+                              </div>
                             </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-sm font-medium">
-                          {agent.tasksCompleted.toLocaleString()}
+                          )}
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end space-x-2">
-                            {agent.status === "Active" ? (
-                              <Button variant="outline" size="sm">
-                                <Pause className="h-3 w-3 mr-1" />
-                                Pause
-                              </Button>
-                            ) : (
-                              <Button variant="outline" size="sm">
-                                <Play className="h-3 w-3 mr-1" />
-                                Start
-                              </Button>
-                            )}
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleSettingsClick(agent)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSettingsClick(agent);
+                              }}
                             >
                               <Settings className="h-4 w-4" />
                             </Button>
@@ -465,13 +468,12 @@ export default function AgentsPage() {
                         </TableCell>
                       </TableRow>
                     );
-                  })}
-                </TableBody>
-              </Table>
+                  }}
+                />
+              )}
             </CardContent>
           </Card>
         </div>
-
         {selectedAgent && (
           <AgentSettingsDialog
             open={settingsOpen}
@@ -479,7 +481,7 @@ export default function AgentsPage() {
             agent={selectedAgent}
           />
         )}
-      </SidebarInset>
-    </SidebarProvider>
+      </SidebarProvider>
+    </SidebarInset>
   );
 }
