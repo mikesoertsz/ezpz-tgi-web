@@ -36,6 +36,7 @@ import { createClient } from "@/utils/supabase/client";
 import TableView from "@/components/ui/table-view";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { toast } from "sonner";
+import TerminalTextLine from "@/components/TerminalTextLine";
 
 function ReportsPageContent() {
   const router = useRouter();
@@ -329,11 +330,13 @@ function ReportsPageContent() {
           <Card>
             <CardHeader className="flex justify-between items-center">
               <div>
-                <CardTitle>
-                  Intelligence Reports ({sortedReports.length})
-                </CardTitle>
-                <CardDescription>
-                  Comprehensive intelligence reports and security assessments
+                <TerminalTextLine
+                  text="Research"
+                  className="text-xs mb-3 text-orange-600"
+                />
+                <CardTitle>Intelligence Reports</CardTitle>
+                <CardDescription className="text-sm mt-2 text-stone-500">
+                  Comprehensive intelligence reports and security assessments.
                 </CardDescription>
               </div>
               <div className="flex gap-2 items-center">

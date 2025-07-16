@@ -46,7 +46,9 @@ export default function TerminalTextLine({
             {char === " " ? "\u00A0" : char}
           </span>
         ))}
-      <span className="animate-pulse text-[10px] ml-0.5 pb-0.5">/</span>
+      <span className="animate-pulse text-[12px] ml-0.5">
+        {text.length > 0 ? "/" : ""}
+      </span>
     </span>
   );
 }
