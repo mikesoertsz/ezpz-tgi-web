@@ -18,6 +18,8 @@ import {
   Shield,
   User,
   Image as ImageIcon,
+  Copy as CopyIcon,
+  Download as DownloadIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -37,6 +39,11 @@ import ReportToolbar from "./report-toolbar";
 import { ImagesSection } from "./report/images-section";
 import { useProfileUpdate } from "@/hooks/use-profile-update";
 import { createClient } from "@/utils/supabase/client";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 
 interface ReportDocumentProps {
   reportId?: string;
@@ -588,6 +595,63 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                 handleRefresh={handleRefresh}
                 handleEdit={handleEdit}
                 // No handleSave for JSON section - it's read-only
+                headerActions={
+                  <>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            if (realData) {
+                              await navigator.clipboard.writeText(
+                                JSON.stringify(realData, null, 2)
+                              );
+                            }
+                          }}
+                          title="Copy JSON"
+                          tabIndex={-1}
+                        >
+                          <CopyIcon size={16} className="text-gray-600" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent>Copy JSON</TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (realData) {
+                              const blob = new Blob(
+                                [JSON.stringify(realData, null, 2)],
+                                { type: "application/json" }
+                              );
+                              const url = URL.createObjectURL(blob);
+                              const a = document.createElement("a");
+                              a.href = url;
+                              a.download = `report-${reportId || "data"}.json`;
+                              document.body.appendChild(a);
+                              a.click();
+                              setTimeout(() => {
+                                document.body.removeChild(a);
+                                URL.revokeObjectURL(url);
+                              }, 0);
+                            }
+                          }}
+                          title="Download JSON"
+                          tabIndex={-1}
+                        >
+                          <DownloadIcon size={16} className="text-gray-600" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent>Download JSON</TooltipContent>
+                    </Tooltip>
+                  </>
+                }
               >
                 <div className="max-w-full overflow-hidden">
                   <div className="overflow-x-auto overflow-y-hidden">

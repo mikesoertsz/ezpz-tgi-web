@@ -22,6 +22,7 @@ export type AccordionSectionProps = {
   handleRefresh: (sectionId: string) => void;
   handleEdit: (sectionId: string) => void;
   handleSave?: (sectionId: string) => void;
+  headerActions?: React.ReactNode; // <-- add this
 };
 
 export default function AccordionSection({
@@ -39,6 +40,7 @@ export default function AccordionSection({
   handleRefresh,
   handleEdit,
   handleSave,
+  headerActions, // <-- add this
 }: AccordionSectionProps) {
   const isOpen = openSections[sectionId];
   const isEditing = editingSections[sectionId];
@@ -64,11 +66,14 @@ export default function AccordionSection({
             {title}
           </h3>
         </div>
-        {isOpen ? (
-          <ChevronUp className="h-4 w-4" />
-        ) : (
-          <ChevronDown className="h-4 w-4" />
-        )}
+        <div className="flex items-center gap-2">
+          {headerActions}
+          {isOpen ? (
+            <ChevronUp className="h-4 w-4" />
+          ) : (
+            <ChevronDown className="h-4 w-4" />
+          )}
+        </div>
       </button>
 
       {isOpen && (
