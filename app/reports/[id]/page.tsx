@@ -35,7 +35,7 @@ function ReportPageContent() {
           </div>
 
           {/* Right Column - Report Document - Scrollable */}
-          <div className="flex-1 h-[98%] overflow-hidden rounded-2xl w-[50vw]">
+          <div className="flex-1 h-[98%] overflow-hidden rounded-2xl w-[50vw] min-w-0">
             <ReportDocument reportId={reportId} />
           </div>
         </div>

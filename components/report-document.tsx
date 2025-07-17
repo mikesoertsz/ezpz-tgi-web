@@ -319,7 +319,7 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
 
   return (
     <ScrollArea className="h-screen">
-      <div className="bg-[#F7F0E8] w-full max-w-full  rounded-2xl overflow-hidden">
+      <div className="bg-[#F7F0E8] rounded-2xl overflow-hidden">
         {/* Watermark */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] select-none z-0">
           <div className="transform rotate-45 text-black text-9xl font-bold">
@@ -653,14 +653,12 @@ export function ReportDocument({ reportId }: ReportDocumentProps) {
                   </>
                 }
               >
-                <div className="max-w-full overflow-hidden">
-                  <div className="overflow-x-auto overflow-y-hidden">
-                    <pre className="text-xs text-gray-500 whitespace-pre font-mono block max-w-none">
-                      {realData
-                        ? JSON.stringify(realData, null, 2)
-                        : "Waiting for webhook data..."}
-                    </pre>
-                  </div>
+                <div className="w-full max-w-full overflow-x-auto">
+                  <pre className="text-xs text-gray-500 whitespace-pre font-mono block min-w-0 w-full max-w-full max-h-[400px] overflow-auto">
+                    {realData
+                      ? JSON.stringify(realData, null, 2)
+                      : "Waiting for webhook data..."}
+                  </pre>
                 </div>
               </AccordionSection>
             </div>
