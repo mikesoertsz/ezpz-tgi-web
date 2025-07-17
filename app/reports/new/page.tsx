@@ -15,9 +15,9 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { ReportChat } from "@/components/report-chat";
 import { ReportDocument } from "@/components/report-document";
 import { Suspense } from "react";
+import ReportChat from "@/components/report-chat";
 
 function NewReportPageContent() {
   return (
